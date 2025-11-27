@@ -1,0 +1,376 @@
+@import url('https://fonts.googleapis.com/css2?family=Parisienne&family=Ruge+Boogie&display=swap');
+.App {
+  text-align: center;
+  position: relative;
+  height: 99vh;
+}
+svg {
+  margin: auto;
+  max-width: 800px;
+}
+
+h1, h2, h3, label {
+  font-family: 'Parisienne', cursive;
+  font-weight: 100;
+}
+h1 {
+  font-family: 'Ruge Boogie', cursive;
+  font-size: 5em;
+  line-height: 0.9em;
+  margin: 0;
+}
+h3, label {
+  font-size: 2em;
+  line-height: 1em;
+  margin: 0;
+}
+label {
+  font-size: 1.5em;
+  line-height: 1em;
+  margin: 0;
+}
+.blockCenter {
+  margin: 0 auto;
+  display: inline-block;
+
+}
+.modal {
+  position: absolute;
+  z-index: 100;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: rgb(255,255,255,0.75);
+  padding: 25px;
+  border: solid 1px #000;
+  border-radius: 10px;
+
+  input {
+  background: none;
+  border: none;
+  }
+  input:focus {
+    background: white;
+    border: 1px solid grey;
+  }
+}
+.displayNone {
+  display: none;
+}
+
+#canvas {
+  position: relative;
+  width: 100%;
+  height: 80vh;
+  overflow: hidden;
+}
+.pointer{
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.col {
+  flex-grow: 1;
+}
+#colorWheelId {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+#poupee {
+    position: absolute;
+    z-index: 0;
+    display: inline-block;
+    width: 80vw;
+    left: 50%;
+    transform: translateX(-50%);
+
+    .fille0{fill:#FFE4D9;stroke:#1D1D1B;}
+    .fille1{fill:#FFE4D9;stroke:#1D1D1B;}
+    .fille2{fill:#FFFFFF;stroke:#000000;}    
+    .fille3{fill:none;stroke:#000000;}
+    .fille4{fill:#FF7A84;stroke:#1D1D1B;}
+    .fille5{fill:#FFE4D9;}
+    .fille6{fill:#FFFFFF;}
+    .fille7{fill:#1CB6C6;stroke:#000000;}
+    .fille8{fill:#1D1D1B;}
+    .fille9{fill:#FF7A84;stroke:#1D1D1B;}
+    .fille10{fill:url(#SVGID_1_);}
+    .fille11{fill:url(#SVGID_2_);}
+    .fille12{opacity:0.50;fill:#FFFFFF;}
+    .fille13{stroke:#000000;}
+}
+#cheveux {
+  position: absolute;
+  z-index: 1;
+  display: inline-block;
+  width: 80vh;
+  height: inherit;
+  left: 50%;
+  transform: translateX(-50%);
+}
+#robe {
+  position: absolute;
+  z-index: 2;
+  display: inline-block;
+  width: 80vh;
+  height: inherit;
+  left: 50%;
+  transform: translateX(-50%);
+}
+#AccessoiresChev {
+  position: absolute;
+  z-index: 3;
+  display: inline-block;
+  width: 80vh;
+  height: inherit;
+  left: 50%;
+  transform: translateX(-50%);
+
+  > div {
+    position: absolute;
+    width: 100%;
+    pointer-events: none;
+  }
+}
+
+
+
+
+#control {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    z-index: 100;
+
+    .close {
+      position: absolute;
+      right: 30px;
+      cursor: pointer;
+      border: none;
+    }
+    #poigneeTiroirs, .poigneeTiroirs {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      
+      button {
+        font-family: 'Parisienne', cursive;
+        font-size: 1.8em;
+        padding: 10px 15px;
+        margin-left: 1%;
+        border-top: solid 10px #b3ad96;
+        border-left: solid 10px #dad5c6;
+        border-right: solid 10px #dad5c6;
+        border-bottom: solid 10px #b3ad96;
+        background: #b3ad96;
+        border-bottom: none;
+        margin-bottom: -10px;
+        position: relative;
+        cursor: pointer;
+        min-width: 24%;
+        z-index: 0;
+
+        &:before {
+          content: '';
+          display: block;
+          width: 20px;
+          height: 20px;
+          background: #b3ad96;
+          border-radius: 50%;
+          position: absolute;
+          top: -25px;
+          left: 50%;
+          transform: translateX(-50%);
+        }
+
+        &.open {
+          padding: 20px 0;
+          border-top: solid 10px #b3ad96;
+          background: #f2f0e7;
+          z-index: 2;
+        }
+      }
+      #close {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        z-index: -1;
+      }
+    }
+
+    #controlCheveux, #controlAccessoires {
+      border-image: url("components/images/dentelle.svg") 33% / 30px round;
+      //display: flex;
+      flex-direction: row;
+      flex-wrap: wrap; 
+      overflow: hidden;
+      padding-top: 0;
+      padding-left: 30px;
+      padding-right: 30px;
+      height: 0;
+      min-height: 0;
+      -webkit-transition: all 1s ease;
+      -moz-transition: all 1s ease;
+      transition: all 1s ease;
+      position: relative;
+
+      > div.col {
+        background: #f2f0e7;
+      }
+    }
+    #accessoiresCheveux {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .couleur {
+      label {
+        float: left;
+        margin-right: 10px;
+        line-height: 1.5em;
+      }
+    }
+    .input-color-container {
+      position: relative;
+      overflow: hidden;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: solid 1px #ccc;
+      margin: auto;
+      
+      input[type="color"] {
+        position: absolute;
+        right: -8px;
+        top: -8px;
+        width: 46px;
+        height: 46px;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+      }
+    }
+    .react-multi-carousel-list{
+      max-width: 560px;
+      margin: auto;
+    }
+    .react-multi-carousel-item {
+      max-width: 140px;
+    }
+    .ImagesRadio {
+        input[type="radio"]:checked+label img {
+            border: 3px solid #1CB6C6;
+        }
+        input {
+            transform: scale(0, 0);
+            position: absolute;
+        }
+        label {
+            display: block;
+            cursor: pointer;
+            margin: 5px;
+
+            img {
+              border: solid 1px #999;
+              border-radius: 50%;
+            }
+        }
+    }
+    .ImagesCheckbox {
+
+      input[type="checkbox"]:checked+label img {
+          border: 3px solid #1CB6C6;
+          border-radius: 50%;
+      }
+      input {
+          transform: scale(0, 0);
+          position: absolute;
+      }
+      label {
+          display: block;
+          cursor: pointer;
+          margin: 5px;
+
+          img {
+            border: 3px solid transparent;
+            border-radius: 50%;
+          }
+      }
+  }
+}
+
+/* Palette de tissus */
+.color-palette {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+  background: #f2f0e7;
+}
+
+.color-swatch {
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  margin: 7px;
+  cursor: pointer;
+}
+
+.color-swatch-active {
+  border: 3px solid #1CB6C6;
+}
+
+.bgFleurs {
+  background: no-repeat center/150% url('components/images/tissuFleurs.jpg');
+}
+.bgVichy {
+  background: no-repeat center/150% url('components/images/tissuVichy.jpg');
+}
+.bgAntillais {
+  background: no-repeat center/150% url('components/images/tissuAntillais.jpg');
+}
+.bgEventail {
+  background: no-repeat center/150% url('components/images/tissuEventail.jpg');
+}
+.bgCacao {
+  background: no-repeat center/150% url('components/images/tissuCacao.jpg');
+}
+.bgRoseraie {
+  background: no-repeat center/150% url('components/images/tissuRoseraie.jpg');
+}
+
+#commode {
+  position: relative;
+  display: flex;
+}
+
+/* animations */
+.slideInUp {
+  height: auto !important;
+  padding-top: 30px !important;
+  min-height: 150px !important;
+  z-index: 2;
+}
+
+.slideOutDown {
+  height: 0 !important;
+  padding-top: 0 !important;
+  min-height: 0 !important;
+  z-index: 0;
+}
+
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 3em;
+  }
+  #control .react-multi-carousel-list{
+    max-width: 280px;
+  }
+}
