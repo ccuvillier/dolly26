@@ -1,22 +1,31 @@
 import React, { useState, useEffect } from "react";
 import Poupee from "./components/Poupee.jsx";
+import CarouselCoiffures from "./components/CarouselCoiffures";
 import ColorPicker from "./ColorPicker.jsx";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from './firebase/firebase';
 import { savePoupeeField } from "./firebase/firestoreFunctions.js";
 
+
 import './App.scss';
 
 function App() {
 
+  // Titre
   const [contentH1, setTitre] = useState("Ma meilleure amie");
 
+  // Poupée
   const [prenom, setPrenom] = useState("");
   const [peau, setPeau] = useState("#FFE4D9");
   const [yeux, setYeux] = useState("#0000FF");
   const [poupeeExiste, setPoupeeExiste] = useState(false);
   const [modalVisible, setModalVisible] = useState(true);
 
+  // coiffures
+  /*const [hairIndex, setHairIndex] = useState(0);*/
+  const [hairColor, setHairColor] = useState("#FFFFFF");
+
+  //ColorPicker
   const [pickerVisible, setPickerVisible] = useState(false);
   const [pickerX, setPickerX] = useState(0);
   const [pickerY, setPickerY] = useState(0);
@@ -59,7 +68,6 @@ function App() {
         if (data.peau) setPeau(data.peau);
         if (data.yeux) setYeux(data.yeux);
         setTitre('Mon amie ' + prenom +'');
-        //alert(`Poupée "${prenom}" chargée !`);
         setModalVisible(false);
       }
     } catch (err) {
@@ -71,15 +79,43 @@ function App() {
     setPickerX(e.clientX);
     setPickerY(e.clientY);
     setCurrentField(fieldName);
-    setTempColor(fieldName === "peau" ? peau : yeux);
+    
+    // ✅ choisir la couleur actuelle selon le champ
+    if (fieldName === "peau") setTempColor(peau);
+    else if (fieldName === "yeux") setTempColor(yeux);
+    else if (fieldName === "cheveux") setTempColor(hairColor);
+
     setPickerVisible(true);
   };
+
+
+  const handlePickColor = (e, fieldName) => {
+    console.log("App.handlePickColor", { eExists: !!e, fieldName });
+
+    const clientX = e && typeof e.clientX === "number" ? e.clientX : window.innerWidth / 2;
+    const clientY = e && typeof e.clientY === "number" ? e.clientY : window.innerHeight / 2;
+
+    setPickerX(clientX + window.scrollX);
+    setPickerY(clientY + window.scrollY);
+
+    setCurrentField(fieldName);
+
+    if (fieldName === "peau") setTempColor(peau);
+    else if (fieldName === "yeux") setTempColor(yeux);
+    else if (fieldName === "cheveux") setTempColor(hairColor);
+    else setTempColor(null);
+
+    setPickerVisible(true);
+  };
+
+
 
   const applyColor = async (colorHex) => {
     if (!currentField || !prenom) return;
 
     if (currentField === "peau") setPeau(colorHex);
     if (currentField === "yeux") setYeux(colorHex);
+    if (currentField === "cheveux") setHairColor(colorHex);
 
     await savePoupeeField(prenom, currentField, colorHex);
     setPickerVisible(false);
@@ -110,6 +146,20 @@ function App() {
         peau={currentField === "peau" ? tempColor || peau : peau}
         yeux={currentField === "yeux" ? tempColor || yeux : yeux}
         onPickColor={showColorPicker}
+      />
+
+      {/* Affichage du carousel */}
+       <CarouselCoiffures 
+        color={hairColor} 
+        onSelect={(index) => console.log("Coiffure choisie", index)}
+        handlePickColor={(e) => {
+          setPickerX(e.clientX);
+          setPickerY(e.clientY);
+
+          setCurrentField("cheveux");
+          setTempColor(hairColor);
+          setPickerVisible(true);
+        }}
       />
 
       {/* Color Picker */}

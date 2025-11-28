@@ -6,7 +6,10 @@
 }
 svg {
   margin: auto;
-  max-width: 800px;
+  max-width: 800px;  
+}
+.svg path {
+    stroke: #000;
 }
 
 h1, h2, h3, label {
@@ -101,7 +104,7 @@ label {
     .fille12{opacity:0.50;fill:#FFFFFF;}
     .fille13{stroke:#000000;}
 }
-#cheveux {
+/*#cheveux {
   position: absolute;
   z-index: 1;
   display: inline-block;
@@ -109,7 +112,7 @@ label {
   height: inherit;
   left: 50%;
   transform: translateX(-50%);
-}
+}*/
 #robe {
   position: absolute;
   z-index: 2;
