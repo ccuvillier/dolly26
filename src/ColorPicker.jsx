@@ -4,14 +4,14 @@ import { SketchPicker } from "react-color";
 const ColorPicker = ({ x, y, currentColor, onValidate, onClose, onChange }) => {
   const [tempColor, setTempColor] = useState(currentColor);
 
-  // Met à jour tempColor si currentColor change (ex : ouverture picker)
+  // Sync avec currentColor à chaque ouverture
   useEffect(() => {
     setTempColor(currentColor);
   }, [currentColor]);
 
   const handleChange = (color) => {
     setTempColor(color.hex);
-    if (onChange) onChange(color.hex); // mise à jour live dans App.jsx
+    if (onChange) onChange(color.hex);
   };
 
   return (
@@ -25,9 +25,19 @@ const ColorPicker = ({ x, y, currentColor, onValidate, onClose, onChange }) => {
         padding: "10px",
         boxShadow: "0 0 10px rgba(0,0,0,0.3)"
       }}
+      onClick={(e) => e.stopPropagation()}
     >
       <SketchPicker color={tempColor} onChange={handleChange} />
-      <button onClick={() => onValidate(tempColor)}>Enregistrer</button>
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onValidate(tempColor); // applique la couleur
+          onClose();              // ferme le picker
+        }}
+      >
+        Enregistrer
+      </button>
       <button onClick={onClose}>Fermer</button>
     </div>
   );

@@ -39,22 +39,32 @@ label {
 }
 .modal {
   position: absolute;
-  z-index: 100;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  background: rgb(255,255,255,0.75);
-  padding: 25px;
-  border: solid 1px #000;
-  border-radius: 10px;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: auto;
+  z-index: 1500;
 
-  input {
-  background: none;
-  border: none;
-  }
-  input:focus {
-    background: white;
-    border: 1px solid grey;
+  > div {
+    position: absolute;
+    z-index: 100;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: rgb(255,255,255,0.75);
+    padding: 25px;
+    border: solid 1px #000;
+    border-radius: 10px;
+
+    input {
+    background: none;
+    border: none;
+    }
+    input:focus {
+      background: white;
+      border: 1px solid grey;
+    }
   }
 }
 .displayNone {

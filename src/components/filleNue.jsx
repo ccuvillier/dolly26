@@ -2,11 +2,11 @@ import React from 'react';
 
 
 
-const FilleNue = ({ peau, yeux, onPickColor }) => {
+const FilleNue = ({ peau, yeux, openColorPicker }) => {
     return (
 <svg version="1.1"xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" height="100%" width="100%" preserveAspectRatio="xMinYMin meet">
 <g>
-	<g onClick={(e) => onPickColor(e, "peau")} style={{ cursor: "pointer" }}>
+	<g onClick={(e) => openColorPicker(e, "peau")} style={{ cursor: "pointer" }}>
 		<path fill={peau} stroke="#000" d="M536.7,445.4c-0.7-5.8-11.3-18.2-15.5-22.4c-4.3-4.2-10.9-21-14.6-30.8s-17.7-32.5-21.8-41.4
 		c-4.1-8.9-8.3-34.8-10.9-47c-2-9.3-5.4-26.1-8.3-35.4c-1.4-4.7-2.1-8.6-4.2-10.4c-7.7-6.5-17.5-3-32.8-7
 		c-11.4-3-11.2-19.1-10.4-27.2c10-3.1,26.2-10.2,41.6-19.1c7.8-4.5,12.6-14.1,15.5-24.1c1.8-2,8-9.4,9-15.4c0.8-5.3-3.2-5.7-5.2-5.6
@@ -47,7 +47,7 @@ const FilleNue = ({ peau, yeux, onPickColor }) => {
 	<path className="fille13" d="M392.9,200.1c0,0,6.8,1.7,14.3,1.4c2-0.1,2.5,1.3,5.7,1.3c2.8,0.1,4.3-1.3,5.8-1.3c9.2-0.2,13.5-1.6,13.5-1.6"/>
 	
 	
-	<g onClick={(e) => onPickColor(e, "yeux")} style={{ cursor: "pointer" }}>
+	<g onClick={(e) => openColorPicker(e, "yeux")} style={{ cursor: "pointer" }}>
 		<path className="fille6" d="M437.1,172c0,0-2.2,0.4-2.8-0.8c-0.6-1.1,7.7-19,20.2-20.2c14.9-1.4,18.2,14.9,18.2,14.9s-5.8,5.5-16.6,6.4
 			C445.1,173.3,437.1,172,437.1,172z"/>
 		
