@@ -6,7 +6,7 @@
 }
 svg {
   margin: auto;
-  max-width: 800px;  
+  max-width: 800px;
 }
 .svg path {
     stroke: #000;
@@ -67,6 +67,93 @@ label {
     }
   }
 }
+
+.formulaire {
+    position: absolute;
+    z-index: 100;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: rgb(255,255,255,0.75);
+    padding: 25px;
+    border: solid 1px #000;
+    border-radius: 10px;
+
+    button {
+      background-color: dodgerblue;
+      color: #fff;
+      font-size: 16px;
+      border: none;
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    input {
+    background: none;
+    border: none;
+    }
+    input:focus {
+      background: white;
+      border: 1px solid grey;
+    }
+  }
+
+  .close {
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    width: 25px;
+    height: 25px;
+    overflow: hidden;
+    text-indent: 50px;
+    border-radius: 50%;
+    border-color: #666;
+    cursor: pointer;;
+
+    &::before{
+      background: #666;
+      position: absolute;
+      display:block;
+      content:'';
+      width: 70%;
+      height: 6%;
+      top: 47%;
+      left: 15%;
+      transform: rotate(45deg);
+    } 
+    &::after{
+        background: #666;
+        position: absolute;
+        display:block;
+        content:'';
+        width: 6%;
+        height: 70%;
+        left: 47%;
+        top: 15%;
+        transform: rotate(45deg);
+    } 
+  }
+
+
+/*********************/
+/*        MENU       */
+/*********************/
+.menu {
+  position: absolute;
+  z-index: 1000;
+  button#coiffure {
+    cursor: pointer;
+    height: 50px;
+    padding-left: 50px;
+    border: none;
+    font-size: 18px;
+    background: no-repeat url('data:image/svg+xml,<svg id="Calque_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 13.3 13.3"><!-- Generator: Adobe Illustrator 29.3.0, SVG Export Plug-In . SVG Version: 2.1.0 Build 146) --><path d="M1.6,13.3h-.3c-.4,0-.5-.4-.5-.7,0-1.1,1.7-3.1,2.6-3.7s1.1-.5,1.6-.9.6-.6.9-.8c.7-.4,1.6-.6,2.3-.9,1.1-.6,1.9-1.6,2.5-2.7s.8-1.7,1.1-2,.6.4.6.6c.1,1.4-1.9,3.8-3,4.6s-1.5.7-2.2,1.1c-1.2.7-1.3,1.6-2,2.7s-2.1,2.2-3.1,2.6l-.6.2Z"/><path d="M10.3,0c.1,0,.2,0,.3,0,.2.1.9.8,1,1,.3.4,0,.8-.5.6-.3-.3-.8-.7-1-1s0-.5.2-.6Z"/><path d="M6.8,4.5c.1,0,.2,0,.4,0,.2.2.8.8,1,1,.3.4-.1.8-.5.6s-.9-.9-1-1c-.2-.2-.1-.5.2-.6Z"/><path d="M7.9,3.6c.1,0,.2,0,.3,0s.9.9,1,1c.2.4-.1.8-.5.5s-.9-.9-1-1c-.1-.2,0-.5.2-.6Z"/><path d="M8.9,2.5c.1,0,.2,0,.3.1.2.1.8.8,1,1,.3.4-.1.8-.5.6s-1-.9-1-1c-.2-.2,0-.6.3-.6Z"/><path d="M9.5,1.3c.1,0,.2,0,.3,0s1,.9,1.1,1.1c.2.3-.2.7-.5.5s-1-1-1.1-1.1c-.1-.2,0-.5.2-.6Z"/><path d="M5.5,4.9s0,0,.1,0l1.1,1.1c.2.4-.2.7-.5.5l-1.1-1.1c-.1-.3,0-.6.3-.6Z"/><path d="M7,1.6c0,0,.1,0,.2,0,0,0,.8.7.8.8.2.3-.2.7-.5.5s-.8-.8-.8-.8c-.1-.2,0-.5.3-.5Z"/><path d="M6.1,2.6c.1,0,.2,0,.3,0s.6.6.7.7c.2.4-.2.7-.5.5s-.6-.6-.7-.7c-.1-.2,0-.5.2-.6Z"/><path d="M5.5,3.7c0,0,.2,0,.2,0s.4.4.4.4c.2.3-.2.7-.5.5s-.4-.4-.5-.5c-.1-.2,0-.5.3-.5Z"/><path d="M8.1.8c.2,0,.8.5.8.7s-.3.4-.6.3-.5-.5-.5-.5c-.1-.2,0-.5.3-.5Z"/><path d="M9.1,0c0,0,.2,0,.2,0s.4.4.4.4c.1.3-.1.6-.4.5s-.5-.4-.5-.5c0-.2.1-.4.3-.5Z"/></svg>');
+  }
+}
+
+
+
+
 .displayNone {
   display: none;
 }
@@ -114,15 +201,10 @@ label {
     .fille12{opacity:0.50;fill:#FFFFFF;}
     .fille13{stroke:#000000;}
 }
-/*#cheveux {
-  position: absolute;
-  z-index: 1;
-  display: inline-block;
-  width: 80vh;
-  height: inherit;
-  left: 50%;
-  transform: translateX(-50%);
-}*/
+#coiffureChoisie {
+  pointer-events: none;
+}
+
 #robe {
   position: absolute;
   z-index: 2;

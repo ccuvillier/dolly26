@@ -28,7 +28,7 @@ const ColorPicker = ({ x, y, currentColor, onValidate, onClose, onChange }) => {
       onClick={(e) => e.stopPropagation()}
     >
       <SketchPicker color={tempColor} onChange={handleChange} />
-      <button
+      {/*<button
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -37,8 +37,8 @@ const ColorPicker = ({ x, y, currentColor, onValidate, onClose, onChange }) => {
         }}
       >
         Enregistrer
-      </button>
-      <button onClick={onClose}>Fermer</button>
+      </button>*/}
+      <button className="close" onClick={onClose}>Fermer</button>
     </div>
   );
 };

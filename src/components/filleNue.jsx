@@ -70,7 +70,7 @@ const FilleNue = ({ peau, yeux, openColorPicker }) => {
 			c2.5-1.5,3.8-2.8,3.8-2.8s1.3,0.1,2.4-0.3c1.1-0.5,1.4-1.1,1.4-1.1S477.3,164.5,475.6,164.6z"/>
 	</g>
 	
-	<g onClick={(e) => onPickColor(e, "yeux")} style={{ cursor: "pointer" }}>
+	<g onClick={(e) => openColorPicker(e, "yeux")} style={{ cursor: "pointer" }}>
 		<path className="fille6" d="M390.5,172c0,0,2.2,0.4,2.8-0.8c0.6-1.1-7.7-19-20.2-20.2C358.2,149.7,355,166,355,166s5.8,5.5,16.6,6.4
 			C382.4,173.3,390.5,172,390.5,172z"/>
 		

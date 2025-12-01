@@ -1,27 +1,24 @@
 import React, { useState, useEffect } from "react";
 import Poupee from "./components/Poupee.jsx";
-import CarouselCoiffures from "./components/CarouselCoiffures";
+import CarouselCoiffures, { hairs } from "./components/CarouselCoiffures";
 import ColorPicker from "./ColorPicker.jsx";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from './firebase/firebase';
 import { savePoupeeField } from "./firebase/firestoreFunctions.js";
+import Menu from "./components/Menu.jsx";
 
 import './App.scss';
 
 function App() {
-
-  // Titre
   const [contentH1, setTitre] = useState("Ma meilleure amie");
 
   // Poupée
   const [prenom, setPrenom] = useState("");
   const [peau, setPeau] = useState("#FFE4D9");
   const [yeux, setYeux] = useState("#0000FF");
+  const [hairColor, setHairColor] = useState("#FFFFFF");
   const [poupeeExiste, setPoupeeExiste] = useState(false);
   const [modalVisible, setModalVisible] = useState(true);
-
-  // coiffures
-  const [hairColor, setHairColor] = useState("#FFFFFF");
 
   // ColorPicker
   const [pickerVisible, setPickerVisible] = useState(false);
@@ -30,7 +27,11 @@ function App() {
   const [currentField, setCurrentField] = useState(null);
   const [tempColor, setTempColor] = useState(null);
 
-  // Vérifie si la poupée existe à chaque changement de prénom
+  // Carousel / coiffure
+  const [carouselVisible, setCarouselVisible] = useState(false);
+  const [selectedHairIndex, setSelectedHairIndex] = useState(null);
+
+  // Vérifie si la poupée existe
   useEffect(() => {
     if (!prenom) return setPoupeeExiste(false);
 
@@ -74,51 +75,45 @@ function App() {
     }
   };
 
+  // Ouvrir le color picker pour la coiffure choisie
   const openColorPicker = (e, fieldName) => {
     const clientX = e?.clientX ?? window.innerWidth / 2;
     const clientY = e?.clientY ?? window.innerHeight / 2;
 
     setPickerX(clientX + window.scrollX);
     setPickerY(clientY + window.scrollY);
-
     setCurrentField(fieldName);
 
-    // => on initialise tempColor avec la vraie couleur actuelle
-    if (fieldName === "peau") setTempColor(peau);
-    else if (fieldName === "yeux") setTempColor(yeux);
-    else if (fieldName === "cheveux") setTempColor(hairColor);
-    else setTempColor("#ffffff");
+    // Initialise tempColor avec la couleur actuelle
+      if (fieldName === "peau") setTempColor(peau);
+      else if (fieldName === "yeux") setTempColor(yeux);
+      else if (fieldName === "cheveux") setTempColor(hairColor);
 
     setPickerVisible(true);
   };
 
+  // Applique la couleur en temps réel
   const applyColor = async (colorHex) => {
-    console.log("APPLY COLOR TRIGGERED:", colorHex);
     if (!currentField || !prenom) return;
 
-    if (currentField === "peau") setPeau(colorHex);
-    if (currentField === "yeux") setYeux(colorHex);
     if (currentField === "cheveux") setHairColor(colorHex);
 
+    // Sauvegarde immédiate
     await savePoupeeField(prenom, currentField, colorHex);
-
-    setPickerVisible(false);
-    //setTempColor(null);
   };
 
-  // Fonction pour fournir la couleur réelle de chaque champ
-  const getRealColor = () => {
-    if (currentField === "peau") return tempColor ?? peau;
-    if (currentField === "yeux") return tempColor ?? yeux;
-    if (currentField === "cheveux") return tempColor ?? hairColor;
-    return "#ffffff";
+  // Gestion du carousel
+  const showCarousel = () => setCarouselVisible(true);
+  const handleSelectHair = (index) => {
+    setSelectedHairIndex(index);
+    setCarouselVisible(false);
   };
 
   return (
     <div className="App">
       <h1>{contentH1}</h1>
 
-      {/* Saisie du prénom et boutons */}
+      {/* Saisie prénom */}
       <div className={`modal ${!modalVisible ? "displayNone" : ""}`}>
         <div>
           <input
@@ -135,23 +130,36 @@ function App() {
         </div>
       </div>
 
-      {/* Affichage de la poupée */}
+      {/* Menu coiffure */}
+      <Menu onShowCarousel={showCarousel} poupeeExiste={poupeeExiste} />
+
+      {/* Affichage poupée */}
       <Poupee
-        peau={currentField === "peau" ? (tempColor ?? peau) : peau}
-        yeux={currentField === "yeux" ? (tempColor ?? yeux) : yeux}
+        peau={peau}
+        yeux={yeux}
         openColorPicker={openColorPicker}
       />
 
-      {/* Affichage du carousel */}
-      <CarouselCoiffures 
-        color={currentField === "cheveux" ? (tempColor ?? hairColor) : hairColor} 
-        onSelect={(index) => console.log("Coiffure choisie", index)}
-        openColorPicker={openColorPicker}
-      />
+      {/* Affichage coiffure ou carousel */}
+      {carouselVisible ? (
+        <CarouselCoiffures 
+          color={hairColor}
+          onSelect={handleSelectHair} 
+        />
+      ) : selectedHairIndex !== null ? (
+        <div id="coiffureChoisie" style={{ position: "relative" }}>
+          {React.createElement(hairs[selectedHairIndex], {
+            color: hairColor,
+            width: 350,
+            height: 290,
+            onPickColor: (e) => openColorPicker(e, "cheveux")
+          })}
+        </div>
+      ) : null}
 
-      {/* Color Picker */}
+      {/* Color Picker pour toutes les zones */}
       {pickerVisible && (
-       <ColorPicker
+        <ColorPicker
           x={pickerX}
           y={pickerY}
           currentColor={
@@ -163,12 +171,16 @@ function App() {
               ? hairColor
               : "#ffffff"
           }
-          onValidate={applyColor}
-          onClose={() => {
-            setPickerVisible(false);
-            //setTempColor(null); // uniquement ici
+          onChange={(color) => {
+            // mise à jour temps réel selon la zone
+            if (currentField === "peau") setPeau(color);
+            else if (currentField === "yeux") setYeux(color);
+            else if (currentField === "cheveux") setHairColor(color);
+
+            // sauvegarde immédiate
+            if (prenom && currentField) savePoupeeField(prenom, currentField, color);
           }}
-          onChange={(color) => setTempColor(color)}
+          onClose={() => setPickerVisible(false)}
         />
       )}
     </div>

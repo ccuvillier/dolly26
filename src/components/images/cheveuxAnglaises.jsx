@@ -4,12 +4,11 @@ const CheveuxAnglaises = ({ color, width = 350, height = 290, onPickColor }) => 
     return (
         <svg version="1.1" xmlns="http://www.w3.org/2000/svg"  
            width={width} height={height} viewBox="-10 -30 350 290" className="svg"
-           onClick={(e) => onPickColor && onPickColor(e, "cheveux")}
            style={{ cursor: "pointer" }}
         >
 
 
-            <g fill={color}>
+            <g fill={color} onClick={(e) => onPickColor && onPickColor(e, "cheveux")} style={{ pointerEvents: "all" }}>
                 <path d="M291.4,78.1c-5.2,2.7-6.6-3.4-6.6-3.4s8.5-4.8,5.5-13.3c-2.9-8.5-7-3.4-3.7-6.1s1.5-8.5,1.5-8.5
                     s-1.5,0.7-4.4,4.1c-2.9,3.4-9.9-1.4-9.9-1.4s0.7-5.4-4.8-8.9s-12.5,0.3-11.4-5.1c1.1-5.4-4-9.2-4-9.2s-0.5,6.7-4.9,8.1
                     c-4,1.2-7.8-1-13.4-5.9c-5.6-4.9-24-13-39.5-14.8c-17.5-2-23,1.7-23,1.7s-5.1-3.8-26.6,0.6c-8.1,1.7-21.8,11.1-26,14.4
