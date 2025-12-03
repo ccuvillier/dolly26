@@ -25,3 +25,12 @@ Git:
 git add .
 git commit -m "le texte"
 git push
+
+Ajoute le dépôt GitHub comme remote
+git remote add origin https://github.com/ccuvillier/dolly26.git
+
+Assure-toi que ta branche principale s’appelle main
+git branch -M main
+
+Pousse tes commits locaux sur GitHub
+git push -u origin main
