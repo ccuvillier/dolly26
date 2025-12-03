@@ -7,7 +7,13 @@ import CheveuxChignon from "./images/cheveuxChignon";
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 
-export const hairs = [CheveuxAnglaises, CheveuxChignon];
+//export const hairs = [CheveuxAnglaises, CheveuxChignon];
+export const hairs = [
+  { name: "CheveuxAnglaises", component: CheveuxAnglaises },
+  { name: "CheveuxChignon", component: CheveuxChignon }
+];
+
+
 
 export default function CarouselCoiffures({ color, openColorPicker, onSelect }) {
   const [selectedIndex, setSelectedIndex] = useState(null);
@@ -30,12 +36,7 @@ export default function CarouselCoiffures({ color, openColorPicker, onSelect }) 
     return (
       <div style={{ position: "relative" }}>
         <SelectedHair color={color} width={350} height={290} onPickColor={openColorPicker} />
-        <button
-          onClick={showCarousel}
-          style={{ position: "absolute", top: 10, left: 10, zIndex: 10 }}
-        >
-          Changer de coiffure
-        </button>
+
       </div>
     );
   }
@@ -54,11 +55,10 @@ export default function CarouselCoiffures({ color, openColorPicker, onSelect }) 
       <Slider ref={sliderRef} {...settings}>
         {hairs.map((HairComponent, index) => (
           <div key={index} style={{ cursor: "pointer" }}>
-            <HairComponent
+            <HairComponent.component
               color={color}
               width={350}
               height={290}
-              //onPickColor={openColorPicker}
             />
           </div>
         ))}

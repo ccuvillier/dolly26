@@ -57,23 +57,35 @@ function App() {
     setModalVisible(false);
   };
 
+
   const voirPoupee = async () => {
     if (!prenom) return;
+
     try {
       const docRef = doc(db, "poupees", prenom);
       const docSnap = await getDoc(docRef);
+
       if (docSnap.exists()) {
         const data = docSnap.data();
+
         if (data.peau) setPeau(data.peau);
         if (data.yeux) setYeux(data.yeux);
         if (data.cheveux) setHairColor(data.cheveux);
-        setTitre('Mon amie ' + prenom);
+
+        // 👉 Réafficher la coiffure au chargement
+        if (data.nomCoiffure) {
+          const index = hairs.findIndex(h => h.name === data.nomCoiffure);
+          if (index !== -1) setSelectedHairIndex(index);
+        }
+
+        setTitre("Mon amie " + prenom);
         setModalVisible(false);
       }
     } catch (err) {
       console.error(err);
     }
   };
+
 
   // Ouvrir le color picker pour la coiffure choisie
   const openColorPicker = (e, fieldName) => {
@@ -96,6 +108,8 @@ function App() {
   const applyColor = async (colorHex) => {
     if (!currentField || !prenom) return;
 
+    if (currentField === "peau") setPeau(colorHex);
+    if (currentField === "yeux") setYeux(colorHex);
     if (currentField === "cheveux") setHairColor(colorHex);
 
     // Sauvegarde immédiate
@@ -104,10 +118,23 @@ function App() {
 
   // Gestion du carousel
   const showCarousel = () => setCarouselVisible(true);
-  const handleSelectHair = (index) => {
+
+  const handleSelectHair = async (index) => {
     setSelectedHairIndex(index);
     setCarouselVisible(false);
+
+    const hairName = hairs[index].name;
+
+    // Sauvegarde du nom dans Firebase
+    await savePoupeeField(prenom, "nomCoiffure", hairName);
+
+    console.log("Coiffure enregistrée :", hairName);
   };
+
+  /*const handleSelectHair = (index) => {
+    setSelectedHairIndex(index);
+    setCarouselVisible(false);
+  };*/
 
   return (
     <div className="App">
@@ -148,7 +175,7 @@ function App() {
         />
       ) : selectedHairIndex !== null ? (
         <div id="coiffureChoisie" style={{ position: "relative" }}>
-          {React.createElement(hairs[selectedHairIndex], {
+          {React.createElement(hairs[selectedHairIndex].component, {
             color: hairColor,
             width: 350,
             height: 290,
