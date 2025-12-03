@@ -7,7 +7,6 @@ import CheveuxChignon from "./images/cheveuxChignon";
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 
-//export const hairs = [CheveuxAnglaises, CheveuxChignon];
 export const hairs = [
   { name: "CheveuxAnglaises", component: CheveuxAnglaises },
   { name: "CheveuxChignon", component: CheveuxChignon }

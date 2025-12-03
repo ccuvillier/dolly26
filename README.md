@@ -20,3 +20,8 @@ http://localhost:5173/
 
 Dépendances : 
 https://www.npmjs.com/package/react-multi-carousel
+
+Git:
+git add .
+git commit -m "le texte"
+git push
