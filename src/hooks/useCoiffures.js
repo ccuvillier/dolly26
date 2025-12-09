@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { hairs } from "../components/CarouselCoiffures";
+import { hairs } from "../components/CarouselCoiffuresData";
 import { savePoupeeField } from "../firebase/firestoreFunctions";
 
 export default function useCoiffures(prenom) {

@@ -60,7 +60,6 @@ export default function usePoupee() {
 
     setData(prev => ({ ...prev, ...snap.data() }));
     setPoupeeExiste(true);
-    console.log(snap.data(), loadedData.nomCoiffure);
   };
 
   /**

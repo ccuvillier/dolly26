@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Poupee from "./components/Poupee";
-import CarouselCoiffures, { hairs } from "./components/CarouselCoiffures";
+import CarouselCoiffures from "./components/CarouselCoiffures";
+import { hairs } from "./components/CarouselCoiffuresData";
 import ColorPicker from "./ColorPicker.jsx";
 import Menu from "./components/Menu";
 import ModalPrenom from "./components/ModalPrenom";
@@ -87,7 +88,7 @@ export default function App() {
           color={cheveux} 
           onSelect={selectHair} 
           openColorPicker={(e) => openColorPicker(e, "cheveux")}
-          initialIndex={hairs.findIndex(h => h.name === nomCoiffure)}
+          initialHairName={nomCoiffure}
         />
       ) : (coiffureAAfficher) ? (
         <div id="coiffureChoisie" style={{ position: "relative" }}>

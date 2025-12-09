@@ -1,35 +1,38 @@
-import React, { useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { hairs } from "./CarouselCoiffuresData";
 import Slider from "react-slick";
-
-import CheveuxAnglaises from "./images/CheveuxAnglaises.jsx";
-import CheveuxChignon from "./images/cheveuxChignon";;
-import CheveuxFrises from "./images/cheveuxFrises";
-
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
-
-export const hairs = [
-  { name: "CheveuxAnglaises", component: CheveuxAnglaises },
-  { name: "CheveuxChignon", component: CheveuxChignon },
-  { name: "CheveuxFrises", component: CheveuxFrises }
-];
 
 
 
 export default function CarouselCoiffures({ color, openColorPicker, onSelect, initialHairName }) {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [carouselVisible, setCarouselVisible] = useState(true);
-  //const [activeIndex, setActiveIndex] = useState(0);
 
   const sliderRef = useRef(null);
-
-  // Définit l'index actif selon le nom de la coiffure initiale
+  
+   // Détermine l'index initial si le nom est connu
   const initialIndex = initialHairName
     ? hairs.findIndex(h => h.name === initialHairName)
     : 0;
-  
-    
+
   const [activeIndex, setActiveIndex] = useState(initialIndex);
+  const [carouselReady, setCarouselReady] = useState(false); // pour contrôler le rendu du slider
+
+  // Quand initialHairName est chargé ou changé, on met à jour l'index actif
+  useEffect(() => {
+    if (initialHairName) {
+      const index = hairs.findIndex(h => h.name === initialHairName);
+      if (index >= 0) {
+        setActiveIndex(index);
+        // Slider pas encore rendu → sliderRef.current est null
+        setCarouselReady(true); 
+      }
+    } else {
+      setCarouselReady(true); // pas de hairName → slider prêt
+    }
+  }, [initialHairName]);
 
 
   const handleSelect = () => {
@@ -58,9 +61,11 @@ export default function CarouselCoiffures({ color, openColorPicker, onSelect, in
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
+    initialSlide: activeIndex, // utilisé seulement si sliderReady
     afterChange: (current) => setActiveIndex(current), // met à jour l'index actif
     //beforeChange: (_, next) => setActiveIndex(next) // on mémorise directement l’index futur
   };
+
 
   // Force le slider sur l'index actif à chaque rendu
   if (sliderRef.current) {
