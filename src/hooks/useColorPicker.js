@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { savePoupeeField } from "../firebase/firestoreFunctions";
 
-export default function useColorPicker(peau, setPeau, yeux, setYeux, hairColor, setHairColor, prenom) {
+export default function useColorPicker(peau, setPeau, yeux, setYeux, cheveux, setCheveux, prenom) {
   const [pickerVisible, setPickerVisible] = useState(false);
   const [pickerX, setPickerX] = useState(0);
   const [pickerY, setPickerY] = useState(0);
@@ -20,7 +20,7 @@ export default function useColorPicker(peau, setPeau, yeux, setYeux, hairColor, 
   const applyColor = async (newColor) => {
     if (currentField === "peau") setPeau(newColor);
     if (currentField === "yeux") setYeux(newColor);
-    if (currentField === "cheveux") setHairColor(newColor);
+    if (currentField === "cheveux") setCheveux(newColor);
 
     if (prenom) await savePoupeeField(prenom, currentField, newColor);
   };

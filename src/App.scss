@@ -11,6 +11,9 @@ svg {
 .svg path {
     stroke: #000;
 }
+.svg path:not([fill]) {
+    //fill: none;
+}
 
 h1, h2, h3, label {
   font-family: 'Parisienne', cursive;

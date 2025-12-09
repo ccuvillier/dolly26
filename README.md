@@ -33,4 +33,6 @@ Assure-toi que ta branche principale s’appelle main
 git branch -M main
 
 Pousse tes commits locaux sur GitHub
+git push --set-upstream origin main // première connexion
+
 git push -u origin main

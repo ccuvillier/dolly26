@@ -56,8 +56,11 @@ export default function usePoupee() {
 
     if (!snap.exists()) return;
 
+     const loadedData = snap.data();
+
     setData(prev => ({ ...prev, ...snap.data() }));
     setPoupeeExiste(true);
+    console.log(snap.data(), loadedData.nomCoiffure);
   };
 
   /**
@@ -87,7 +90,7 @@ export default function usePoupee() {
     // ✅ Ajouter les setters
     setPeau: updatePeau,
     setYeux: updateYeux,
-    setHairColor: updateCheveux,
+    setCheveux: updateCheveux,
     setNomCoiffure: updateNomCoiffure,
 
     creerPoupee,

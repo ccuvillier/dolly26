@@ -11,7 +11,7 @@ import useCoiffures from "./hooks/useCoiffures";
 
 import './App.scss';
 
-function App() {
+export default function App() {
   const [modalVisible, setModalVisible] = useState(true);
 
   // Hooks personnalisés
@@ -19,27 +19,43 @@ function App() {
     prenom, setPrenom,
     peau, setPeau,
     yeux, setYeux,
-    cheveux, setHairColor,
+    cheveux, setCheveux,
     nomCoiffure, setNomCoiffure,
     poupeeExiste,
     creerPoupee,
-    chargerPoupee
+    chargerPoupee,
+    updateNomCoiffure
   } = usePoupee();
 
   const {
     pickerVisible, pickerX, pickerY,
     currentField, openColorPicker,
     applyColor, setPickerVisible
-  } = useColorPicker(peau, setPeau, yeux, setYeux, cheveux, setHairColor, prenom);
+  } = useColorPicker(peau, setPeau, yeux, setYeux, cheveux, setCheveux, prenom);
 
   const {
-    carouselVisible,
     selectedHairIndex,
-    showCarousel,
-    selectHair
-  } = useCoiffures(prenom, setNomCoiffure);
+  } = useCoiffures(prenom);//, setNomCoiffure
 
-  const coiffure = hairs.find(h => h.name === nomCoiffure);
+
+  const [carouselVisible, setCarouselVisible] = useState(false);
+
+  const selectHair = (hairName) => {
+    updateNomCoiffure(hairName); 
+    setCarouselVisible(false);   // ✅ maintenant défini ici
+  };
+
+  const showCarousel = () => setCarouselVisible(true);
+
+
+
+
+  // Détermine la coiffure à afficher
+  const coiffureAAfficher = nomCoiffure 
+    ? hairs.find(h => h.name === nomCoiffure) 
+    : selectedHairIndex !== null 
+      ? hairs[selectedHairIndex] 
+      : null;
 
   return (
     <div className="App">
@@ -67,10 +83,15 @@ function App() {
 
       {/* Carousel ou coiffure choisie */}
       {carouselVisible ? (
-        <CarouselCoiffures color={cheveux} onSelect={selectHair} />
-      ) : coiffure?.component ? (
+        <CarouselCoiffures 
+          color={cheveux} 
+          onSelect={selectHair} 
+          openColorPicker={(e) => openColorPicker(e, "cheveux")}
+          initialIndex={hairs.findIndex(h => h.name === nomCoiffure)}
+        />
+      ) : (coiffureAAfficher) ? (
         <div id="coiffureChoisie" style={{ position: "relative" }}>
-          {React.createElement(coiffure.component, {
+          {React.createElement(coiffureAAfficher.component, {
             color: cheveux,
             width: 350,
             height: 290,
@@ -92,11 +113,7 @@ function App() {
           onChange={applyColor}
           onClose={() => setPickerVisible(false)}
         />
-
-
       )}
     </div>
   );
 }
-
-export default App;
