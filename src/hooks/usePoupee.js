@@ -2,22 +2,24 @@ import { useState, useEffect } from "react";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 
+// Valeurs par défaut de la poupée
+const DEFAULT_POUPEE = {
+  peau: "#FFE4D9",
+  yeux: "#0000FF",
+  levres: "#FF7A84",
+  cheveux: "#FFFFFF",
+  nomCoiffure: ""
+};
+
+
+
+
 export default function usePoupee() {
   const [prenom, setPrenom] = useState("");
-
-  // État complet de la poupée
-  const [data, setData] = useState({
-    peau: "#FFE4D9",
-    yeux: "#0000FF",
-    cheveux: "#FFFFFF",
-    nomCoiffure: ""
-  });
-
+  const [data, setData] = useState(DEFAULT_POUPEE);
   const [poupeeExiste, setPoupeeExiste] = useState(false);
 
-  /**
-   * 🔍 Vérifie en BDD si la poupée existe quand le prénom change
-   */
+  // 🔍 Vérifie si la poupée existe quand le prénom change
   useEffect(() => {
     if (!prenom) {
       setPoupeeExiste(false);
@@ -33,71 +35,75 @@ export default function usePoupee() {
     check();
   }, [prenom]);
 
-  /**
-   * 🟢 Crée une poupée avec les valeurs actuelles
-   */
+  // 🟢 Créer une nouvelle poupée avec les valeurs actuelles
   const creerPoupee = async () => {
     const ref = doc(db, "poupees", prenom);
+
     await setDoc(ref, {
-      peau: data.peau,
-      yeux: data.yeux,
-      cheveux: data.cheveux,
-      nomCoiffure: data.nomCoiffure
+      ...DEFAULT_POUPEE, // sécurité
+      ...data            // valeurs actuelles
     });
+
     setPoupeeExiste(true);
   };
 
-  /**
-   * 📥 Charge une poupée depuis Firebase et met à jour le state
-   */
+  // 📥 Charger une poupée depuis Firebase + compléter les champs manquants
   const chargerPoupee = async () => {
     const ref = doc(db, "poupees", prenom);
     const snap = await getDoc(ref);
 
     if (!snap.exists()) return;
 
-     const loadedData = snap.data();
+    const loaded = snap.data();
 
-    setData(prev => ({ ...prev, ...snap.data() }));
+    // Vérifier les champs absents
+    const missing = {};
+    for (const key in DEFAULT_POUPEE) {
+      if (!(key in loaded)) {
+        missing[key] = DEFAULT_POUPEE[key];
+      }
+    }
+
+    // Ajouter les champs manquants dans Firebase
+    if (Object.keys(missing).length > 0) {
+      await updateDoc(ref, missing);
+    }
+
+    // Mettre à jour le state avec les valeurs complètes
+    setData({ ...DEFAULT_POUPEE, ...loaded });
+
     setPoupeeExiste(true);
   };
 
-  /**
-   * 🟣 Met à jour UN SEUL champ dans Firebase et dans React
-   */
+  // 🟣 Mettre à jour UN SEUL champ (peau, yeux, cheveux, etc.)
   const updateField = async (field, value) => {
     const ref = doc(db, "poupees", prenom);
-    await updateDoc(ref, { [field]: value });
 
+    await updateDoc(ref, { [field]: value });
     setData(prev => ({ ...prev, [field]: value }));
   };
 
-  /**
-   * 🧼 Expose des fonctions claires
-   */
-  const updatePeau = (value) => updateField("peau", value);
-  const updateYeux = (value) => updateField("yeux", value);
-  const updateCheveux = (value) => updateField("cheveux", value);
+  // 🟣 Mettre à jour le nom de la coiffure
   const updateNomCoiffure = (value) => updateField("nomCoiffure", value);
 
   return {
-    prenom, setPrenom,
+    // état général
+    prenom,
+    setPrenom,
     poupeeExiste,
 
-    ...data, // peau, yeux, cheveux, nomCoiffure
+    ...data, // peau, yeux, levres, cheveux, nomCoiffure
 
-    // ✅ Ajouter les setters
-    setPeau: updatePeau,
-    setYeux: updateYeux,
-    setCheveux: updateCheveux,
-    setNomCoiffure: updateNomCoiffure,
+    // setters simples
+    setPeau: (v) => updateField("peau", v),
+    setYeux: (v) => updateField("yeux", v),
+    setLevres: (v) => updateField("levres", v),
+    setCheveux: (v) => updateField("cheveux", v),
+    setNomCoiffure: (v) => updateField("nomCoiffure", v),
 
+    // actions
     creerPoupee,
     chargerPoupee,
-
-    updatePeau,
-    updateYeux,
-    updateCheveux,
     updateNomCoiffure
   };
 }

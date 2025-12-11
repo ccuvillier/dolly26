@@ -45,15 +45,15 @@ export default function CarouselCoiffures({ color, openColorPicker, onSelect, in
   const showCarousel = () => setCarouselVisible(true);
 
   // Si une coiffure est choisie et que le carousel est masqué
-  if (!carouselVisible && selectedIndex !== null) {
-    const SelectedHair = hairs[selectedIndex];
+  if (!carouselVisible && activeIndex !== null) {
+    const SelectedHair = hairs[activeIndex];
     return (
       <div style={{ position: "relative" }}>
         <SelectedHair color={color} width={350} height={290} onPickColor={openColorPicker} />
-
       </div>
     );
   }
+
 
   const settings = {
     dots: false,

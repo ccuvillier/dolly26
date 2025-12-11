@@ -154,9 +154,40 @@ label {
   }
 }
 
+/*********************/
+/*      carousel     */
+/*********************/
+.slick-prev, .slick-next {
+    z-index: 50;
+}
+.slick-prev {
+    left: 50%;
+    transform: translateX(-225px);
+}
+.slick-prev::before {
+    content: '<';
+    color: black;
+    font-size: 70px;
+    transform: scaleX(0.4);
+    display: block;
+    line-height: 0;
+}
+
+.slick-next {
+    right: 50%;
+    transform: translateX(225px);
+}
+.slick-next::before {
+    content: '>';
+    color: black;
+    font-size: 70px;
+    transform: scaleX(0.4);
+    display: block;
+    line-height: 0;
+}
 
 
-
+/*
 .displayNone {
   display: none;
 }
@@ -180,7 +211,7 @@ label {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-}
+}*/
 #poupee {
     position: absolute;
     z-index: 0;
@@ -191,8 +222,7 @@ label {
 
     .fille0{fill:#FFE4D9;stroke:#1D1D1B;}
     .fille1{fill:#FFE4D9;stroke:#1D1D1B;}
-    .fille2{fill:#FFFFFF;stroke:#000000;}    
-    .fille3{fill:none;stroke:#000000;}
+    .fille2{fill:#FFFFFF;stroke:#000000;} 
     .fille4{fill:#FF7A84;stroke:#1D1D1B;}
     .fille5{fill:#FFE4D9;}
     .fille6{fill:#FFFFFF;}
@@ -202,12 +232,14 @@ label {
     .fille10{fill:url(#SVGID_1_);}
     .fille11{fill:url(#SVGID_2_);}
     .fille12{opacity:0.50;fill:#FFFFFF;}
-    .fille13{stroke:#000000;}
+    .fille13{stroke:#000000;}   
+    .fille3{stroke:#000000;}
 }
 #coiffureChoisie {
   pointer-events: none;
 }
 
+/*
 #robe {
   position: absolute;
   z-index: 2;
@@ -401,10 +433,10 @@ label {
           }
       }
   }
-}
+}*/
 
 /* Palette de tissus */
-.color-palette {
+/*.color-palette {
   display: flex;
   justify-content: center;
   margin-bottom: 1rem;
@@ -446,9 +478,9 @@ label {
 #commode {
   position: relative;
   display: flex;
-}
+}*/
 
-/* animations */
+/* animations 
 .slideInUp {
   height: auto !important;
   padding-top: 30px !important;
@@ -461,14 +493,14 @@ label {
   padding-top: 0 !important;
   min-height: 0 !important;
   z-index: 0;
-}
+}*/
 
 
 @media (max-width: 480px) {
   h1 {
     font-size: 3em;
   }
-  #control .react-multi-carousel-list{
+  /*#control .react-multi-carousel-list{
     max-width: 280px;
-  }
+  }*/
 }

@@ -20,6 +20,7 @@ export default function App() {
     prenom, setPrenom,
     peau, setPeau,
     yeux, setYeux,
+    levres, setLevres,
     cheveux, setCheveux,
     nomCoiffure, setNomCoiffure,
     poupeeExiste,
@@ -32,7 +33,7 @@ export default function App() {
     pickerVisible, pickerX, pickerY,
     currentField, openColorPicker,
     applyColor, setPickerVisible
-  } = useColorPicker(peau, setPeau, yeux, setYeux, cheveux, setCheveux, prenom);
+  } = useColorPicker(peau, setPeau, yeux, setYeux, levres, setLevres, cheveux, setCheveux, prenom);
 
   const {
     selectedHairIndex,
@@ -79,6 +80,7 @@ export default function App() {
       <Poupee
         peau={peau}
         yeux={yeux}
+        levres={levres}
         openColorPicker={openColorPicker}
       />
 
@@ -109,6 +111,7 @@ export default function App() {
           currentColor={
             currentField === "peau" ? peau :
             currentField === "yeux" ? yeux :
+            currentField === "levres" ? levres :
             cheveux
           }
           onChange={applyColor}
