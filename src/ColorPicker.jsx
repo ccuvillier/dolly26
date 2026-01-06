@@ -10,6 +10,7 @@ const ColorPicker = ({ x, y, currentColor, onValidate, onClose, onChange }) => {
   }, [currentColor]);
 
   const handleChange = (color) => {
+    if (!color?.hex) return; // ignore les valeurs invalides venant du picker
     setTempColor(color.hex);
     if (onChange) onChange(color.hex);
   };
@@ -28,16 +29,7 @@ const ColorPicker = ({ x, y, currentColor, onValidate, onClose, onChange }) => {
       onClick={(e) => e.stopPropagation()}
     >
       <SketchPicker color={tempColor} onChange={handleChange} />
-      {/*<button
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          onValidate(tempColor); // applique la couleur
-          onClose();              // ferme le picker
-        }}
-      >
-        Enregistrer
-      </button>*/}
+
       <button className="close" onClick={onClose}>Fermer</button>
     </div>
   );

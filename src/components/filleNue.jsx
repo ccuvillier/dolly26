@@ -1,12 +1,13 @@
 import React from 'react';
 
 
+export default function FilleNue({ peau, yeux, levres, preview = false, openColorPicker }) {
 
-const FilleNue = ({ peau, yeux, levres, openColorPicker }) => {
+//const FilleNue = ({ peau, yeux, levres, openColorPicker }) => {
     return (
 <svg version="1.1"xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" height="100%" width="100%" preserveAspectRatio="xMinYMin meet">
 <g>
-	<g onClick={(e) => openColorPicker(e, "peau")} style={{ cursor: "pointer" }}>
+	<g onClick={!preview ? (e) => openColorPicker(e, "peau") : undefined} style={{ cursor: "pointer" }}>
 		<path fill={peau} stroke="#000" d="M536.7,445.4c-0.7-5.8-11.3-18.2-15.5-22.4c-4.3-4.2-10.9-21-14.6-30.8s-17.7-32.5-21.8-41.4
 		c-4.1-8.9-8.3-34.8-10.9-47c-2-9.3-5.4-26.1-8.3-35.4c-1.4-4.7-2.1-8.6-4.2-10.4c-7.7-6.5-17.5-3-32.8-7
 		c-11.4-3-11.2-19.1-10.4-27.2c10-3.1,26.2-10.2,41.6-19.1c7.8-4.5,12.6-14.1,15.5-24.1c1.8-2,8-9.4,9-15.4c0.8-5.3-3.2-5.7-5.2-5.6
@@ -32,13 +33,13 @@ const FilleNue = ({ peau, yeux, levres, openColorPicker }) => {
 	</g>
 
 
-	<path fill={levres} stroke="#000" onClick={(e) => openColorPicker(e, "levres")} style={{ cursor: "pointer" }} d="M432.6,199.8c-8.8,0.2-13.5-4.3-15.7-4.4c-2.2-0.1-3.9,3.1-3.9,3.1s-1.8-3.1-4.2-3.1c-2.4,0-6.1,4.3-16.3,4.6
+	<path fill={levres} stroke="#000" onClick={!preview ? (e) => openColorPicker(e, "levres") : undefined} style={{ cursor: "pointer" }} d="M432.6,199.8c-8.8,0.2-13.5-4.3-15.7-4.4c-2.2-0.1-3.9,3.1-3.9,3.1s-1.8-3.1-4.2-3.1c-2.4,0-6.1,4.3-16.3,4.6
 	c0,0,2.1,0.5,5.2,1c1.4,1.7,7,7.6,14.8,7.6c9.2,0,15.5-7.8,15.5-7.8L432.6,199.8z"/>
 	<path className="fille12" d="M407.4,201.5c0,0-2.8,3.2,1.2,4c4.1,0.8,6.7,0.4,9-0.5s0.8-3.8,0-3.4C414.5,203.2,407.9,202.8,407.4,201.5z"/>
 	<path className="fille13" d="M392.9,200.1c0,0,6.8,1.7,14.3,1.4c2-0.1,2.5,1.3,5.7,1.3c2.8,0.1,4.3-1.3,5.8-1.3c9.2-0.2,13.5-1.6,13.5-1.6"/>
 	
 	
-	<g onClick={(e) => openColorPicker(e, "yeux")} style={{ cursor: "pointer" }}>
+	<g onClick={!preview ? (e) => openColorPicker(e, "yeux") : undefined} style={{ cursor: "pointer" }}>
 		<path className="fille6" d="M437.1,172c0,0-2.2,0.4-2.8-0.8c-0.6-1.1,7.7-19,20.2-20.2c14.9-1.4,18.2,14.9,18.2,14.9s-5.8,5.5-16.6,6.4
 			C445.1,173.3,437.1,172,437.1,172z"/>
 		
@@ -61,7 +62,7 @@ const FilleNue = ({ peau, yeux, levres, openColorPicker }) => {
 			c2.5-1.5,3.8-2.8,3.8-2.8s1.3,0.1,2.4-0.3c1.1-0.5,1.4-1.1,1.4-1.1S477.3,164.5,475.6,164.6z"/>
 	</g>
 	
-	<g onClick={(e) => openColorPicker(e, "yeux")} style={{ cursor: "pointer" }}>
+	<g onClick={!preview ? (e) => openColorPicker(e, "yeux") : undefined} style={{ cursor: "pointer" }}>
 		<path className="fille6" d="M390.5,172c0,0,2.2,0.4,2.8-0.8c0.6-1.1-7.7-19-20.2-20.2C358.2,149.7,355,166,355,166s5.8,5.5,16.6,6.4
 			C382.4,173.3,390.5,172,390.5,172z"/>
 		
@@ -126,4 +127,3 @@ const FilleNue = ({ peau, yeux, levres, openColorPicker }) => {
 </svg>
     )
 }
-export default FilleNue;

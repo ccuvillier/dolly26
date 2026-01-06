@@ -2,8 +2,8 @@ import { db } from "./firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 
 // Enregistrer une valeur d'un champ
-export async function savePoupeeField(prenom, fieldName, value) {
-  const docRef = doc(db, "poupees", prenom);
+export async function savePoupeeField(pseudo, idPoupee, fieldName, value) {
+  const docRef = doc(db, "users", pseudo, "poupees", idPoupee)
 
   await setDoc(
     docRef,
@@ -12,9 +12,23 @@ export async function savePoupeeField(prenom, fieldName, value) {
   );
 }
 
+export async function creerUtilisateurSiAbsent(pseudo) {
+  if (!pseudo) return;
+
+  const userRef = doc(db, "users", pseudo);
+  const snap = await getDoc(userRef);
+  if (!snap.exists()) {
+    await setDoc(userRef, { createdAt: new Date() });
+    //console.log("Utilisateur créé :", pseudo);
+  } else {
+    //console.log("Utilisateur déjà existant :", pseudo);
+  }
+}
+
+
 // Charger une poupée
-export async function loadPoupee(prenom) {
-  const docRef = doc(db, "poupees", prenom);
+export async function loadPoupee(idPoupee) {
+  const docRef = doc(db, "poupees", idPoupee);
   const snap = await getDoc(docRef);
 
   return snap.exists() ? snap.data() : null;
