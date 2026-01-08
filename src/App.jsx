@@ -33,7 +33,8 @@ export default function App() {
     poupeeExiste, setPoupeeExiste,
     creerPoupee,
     chargerPoupee,
-    updateNomCoiffure
+    updateNomCoiffure,
+    supprimerPoupee
   } = usePoupee(pseudo);
 
   // Revenir à la grille de poupées
@@ -98,7 +99,7 @@ const handleCreer = async () => {
   
 
   return (
-    <div className="App">
+    <div className="App zoomIn">
       {/* Modal pseudo si non rempli */}
       {!hasPseudo && (
         <ModalPseudo
@@ -122,6 +123,7 @@ const handleCreer = async () => {
               creerPoupee={creerPoupee}
               chargerPoupee={chargerPoupee}
               onAddPoupee={handleAddPoupee}
+              supprimerPoupee={supprimerPoupee}
             />
           )}
 

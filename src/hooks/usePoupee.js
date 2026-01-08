@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { collection, doc, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase";
-import { savePoupeeField } from "../firebase/firestoreFunctions";
+import { savePoupeeField, supprimerPoupeeFirestore } from "../firebase/firestoreFunctions";
 
 // Valeurs par défaut d'une poupée
 const DEFAULT_POUPEE = {
@@ -56,6 +56,19 @@ export default function usePoupee(pseudo) {
     setPoupeeExiste(true);
 
     return prenom;
+  };
+
+  // Supprimer une poupée
+  const supprimerPoupee = async (id) => {
+    await supprimerPoupeeFirestore(pseudo, id);
+
+    setPoupees(prev => prev.filter(p => p.id !== id));
+
+    if (id === idPoupee) {
+      setIdPoupee("");
+      setPoupeeExiste(false);
+      setData(DEFAULT_POUPEE);
+    }
   };
 
 
@@ -142,6 +155,7 @@ export default function usePoupee(pseudo) {
     setNomCoiffure: updateNomCoiffure,
     creerPoupee,
     chargerPoupee,
-    updateNomCoiffure
+    updateNomCoiffure,
+    supprimerPoupee
   };
 }

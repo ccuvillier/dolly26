@@ -1,5 +1,5 @@
 import { db } from "./firebase";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 
 // Enregistrer une valeur d'un champ
 export async function savePoupeeField(pseudo, idPoupee, fieldName, value) {
@@ -32,4 +32,12 @@ export async function loadPoupee(idPoupee) {
   const snap = await getDoc(docRef);
 
   return snap.exists() ? snap.data() : null;
+}
+
+// Supprimer une poupée
+export async function supprimerPoupeeFirestore(pseudo, idPoupee) {
+  if (!pseudo || !idPoupee) return;
+
+  const ref = doc(db, "users", pseudo, "poupees", idPoupee);
+  await deleteDoc(ref);
 }

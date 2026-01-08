@@ -4,6 +4,40 @@
   position: relative;
   height: 99vh;
 }
+
+.zoomIn {
+  -webkit-animation-name: zoomIn;
+  animation-name: zoomIn;
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  }
+@-webkit-keyframes zoomIn {
+  0% {
+    opacity: 0;
+    -webkit-transform: scale3d(.3, .3, .3);
+    transform: scale3d(.3, .3, .3);
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes zoomIn {
+  0% {
+    opacity: 0;
+    -webkit-transform: scale3d(.3, .3, .3);
+    transform: scale3d(.3, .3, .3);
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+
+
+
+
 svg {
   margin: auto;
   max-width: 800px;
@@ -94,8 +128,8 @@ label {
     position: absolute;
     z-index: 100;
     left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    bottom: -50%;
+    transform: translate(-50%);
     background: rgb(255,255,255,0.75);
     padding: 25px;
     border: solid 1px #000;
@@ -183,6 +217,116 @@ label {
 }
 
 /*********************/
+/* MENU POUPEE GRID  */
+/*********************/
+.menuPoupee {
+    position: absolute;
+    top: 0;
+    right: 30px;
+    z-index: 100;
+
+    > button {
+      overflow: hidden;
+      width: 30px;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      color: transparent;
+      background: none;
+
+      span {
+        background-color: #000;
+        height: 8px;
+        width: 8px;
+        display: block;
+        border-radius: 50%;
+        margin: 2px auto;
+
+        &:nth-child(2) {
+          background: gray;
+        }
+        &:nth-child(3) {
+          background: lightgray;
+        }
+      }
+    }
+    /*> button::before {
+      content: "";
+      background-color: gray;
+      overflow: hidden;
+      height: 8px;
+      width: 8px;
+      border-radius: 50%;
+      display: block;
+      padding: 0;
+      margin-top: 10px;
+      position: absolute;
+    }
+    > button::after {
+      content: "";
+      background-color: lightgray;
+      overflow: hidden;
+      height: 8px;
+      width: 8px;
+      border-radius: 50%;
+      display: block;
+      padding: 0;
+      margin-top: 5px;
+      position: absolute;
+    }*/
+}
+[popover] {
+    margin: 0;
+    width: 110px;
+    border: solid 1px gray;
+    overflow: visible;
+    transition: transform .2s ease-out, opacity .2s ease-out,
+    display .2s ease-out;
+    transition-behavior: allow-discrete;
+
+    /*POPOVER EN ETAT FERMÉ*/
+    opacity: 0;
+    transform: translateX(-50px);
+
+    > button {
+        position: absolute;
+        top: -20px;
+        right: -20px;
+        overflow: visible;
+        border-radius: 50%;
+        height: 40px;
+        width: 40px;
+        border: solid 1px gray;
+        cursor: pointer;
+      }
+
+    ul {
+      list-style: none;
+      padding: 0; margin: 0;
+
+      button {
+        border: none;
+        width: 100%;
+        background: none;
+        padding: 10px 0;
+        cursor: pointer;
+      }
+    }
+  }
+  [popover]:popover-open {
+    @starting-style {/*POPOVER AVANT L'ENTREE DANS LE CHAMP*/
+      opacity: 0;
+      transform: translateX(-50px);
+      overflow: visible;
+    }
+
+    /*POPOVER EN ETAT OUVERT*/
+    opacity: 1;
+    transform: translateX(0px);
+  }
+
+
+/*********************/
 /*      carousel     */
 /*********************/
 .slick-prev, .slick-next {
@@ -253,17 +397,25 @@ label {
   margin-top: 50px;
 }
 .poupee-card {
-  position: relative;
+  /*position: relative;
   min-width: 310px;
-  border: inset 20px #e3e3e3;
+  border: inset 1px #e3e3e3;
   margin: 30px;
   padding-top: 12px;
-  border-radius: 10px;
-  box-shadow: 0px 0px 20px #d4d4d4;
+  border-radius: 50% 50%;
+  box-shadow: 0px 0px 20px #d4d4d4;*/
+    position: relative;
+    min-width: 310px;
+    border: solid 1px gray;
+    margin: 30px;
+    padding-top: 12px;
+    border-radius: 50% 50%;
+    box-shadow: 0px 0px 20px #d4d4d4;
+    cursor: pointer;
 }
 
 .poupee-card::before {
-    content: "";
+    /*content: "";
     display: block;
     width: 50px;
     height: 1px;
@@ -273,10 +425,29 @@ label {
     z-index: 50;
     transform: rotate(-45deg) translateX(-120%);
     transform-origin: top left;
-    left: 50%;
+    left: 50%;*/
+
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: -1px;
+    left: 5px;
+    z-index: 50;
+    //border: solid 1px darkgray;
+    border-radius: 50%;
+    //transform: rotate(-11deg);
+    
+    background-image: url(./components/images/fleurs-encadrement.svg);
+    background-repeat: no-repeat;
+    background-position: 18% 82%;
+    background-origin: border-box;
+    padding: 40px;
+    background-size: 80%;
   }
 .poupee-card::after {
-    content: "";
+    /*content: "";
     display: block;
     width: 50px;
     height: 1px;
@@ -286,7 +457,19 @@ label {
     z-index: 50;
     transform: rotate(45deg) translateX(120%);
     transform-origin: top left;
-    right: 50%;
+    right: 50%;*/
+
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    transform: rotate(-8deg);
+    right: 0;
+    border: solid 1px gray;
+    border-radius: 50%;
+    z-index: 0;
   }
 
 .add-card {
@@ -306,8 +489,12 @@ label {
       height: 50px;
       border-radius: 50%;
       margin: auto;
+      z-index: 0;
     }
   }
+}
+.add-card::before {
+  background: none;
 }
 
 .cheveuxPreview {

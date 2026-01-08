@@ -1,6 +1,6 @@
 // PoupeeView.jsx
 import React, { useState } from "react";
-import FilleNue from "./FilleNue.jsx";
+import FilleNue from "./FilleNue";
 import { hairs } from "./CarouselCoiffuresData";
 import CarouselCoiffures from "./CarouselCoiffures.jsx";
 import Menu from "./Menu.jsx";
@@ -34,7 +34,7 @@ const handleSelect = (hairName) => {
 
   return (
     
-    <div id="poupeeView">
+    <div id="poupeeView" className="zoomIn">
         {/* Menu */}
       <Menu 
         onShowCarousel={showCarousel} 
