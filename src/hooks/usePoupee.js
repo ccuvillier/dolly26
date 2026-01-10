@@ -1,17 +1,9 @@
 import { useState, useEffect } from "react";
 import { collection, doc, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase";
-import { savePoupeeField, supprimerPoupeeFirestore } from "../firebase/firestoreFunctions";
+import { savePoupeeField, supprimerPoupeeFirestore, renommerPoupeeFirestore } from "../firebase/firestoreFunctions";
+import { DEFAULT_POUPEE } from "../constants/defaultPoupee";
 
-// Valeurs par défaut d'une poupée
-const DEFAULT_POUPEE = {
-  peau: "#FFE4D9",
-  yeux: "#0000FF",
-  levres: "#FF7A84",
-  cheveux: "#FFFFFF",
-  nomCoiffure: "",
-  prenom: ""
-};
 
 export default function usePoupee(pseudo) {
   const [poupees, setPoupees] = useState([]);      // liste des poupées { id, data }
@@ -70,6 +62,30 @@ export default function usePoupee(pseudo) {
       setData(DEFAULT_POUPEE);
     }
   };
+
+const renommerPoupee = async (oldId, newId) => {
+  const exists = poupees.some(p => p.id === newId);
+  if (exists) {
+    alert("Une poupée avec ce prénom existe déjà.");
+    return;
+  }
+
+  await renommerPoupeeFirestore(pseudo, oldId, newId);
+
+  setPoupees(prev =>
+    prev.map(p =>
+      p.id === oldId
+        ? { ...p, id: newId, data: { ...p.data, prenom: newId } }
+        : p
+    )
+  );
+
+  if (idPoupee === oldId) {
+    setIdPoupee(newId);
+    setData(prev => ({ ...prev, prenom: newId }));
+  }
+};
+
 
 
 
@@ -156,6 +172,7 @@ export default function usePoupee(pseudo) {
     creerPoupee,
     chargerPoupee,
     updateNomCoiffure,
-    supprimerPoupee
+    supprimerPoupee,
+    renommerPoupee
   };
 }

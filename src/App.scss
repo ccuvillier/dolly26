@@ -59,6 +59,9 @@ h1 {
   line-height: 0.9em;
   margin: 0;
 }
+h2 {
+  font-size: 1.8em;
+}
 h3, label {
   font-size: 2em;
   line-height: 1em;
@@ -120,8 +123,12 @@ label {
       font-size: 18px;
       padding: 5px 10px;
       border-radius: 5px;
+      margin: 0 0 0 5px;
     }
   }
+}
+.btnAnnuler {
+  background: lightcoral !important;
 }
 
 .formulaire {
@@ -250,43 +257,19 @@ label {
         }
       }
     }
-    /*> button::before {
-      content: "";
-      background-color: gray;
-      overflow: hidden;
-      height: 8px;
-      width: 8px;
-      border-radius: 50%;
-      display: block;
-      padding: 0;
-      margin-top: 10px;
-      position: absolute;
-    }
-    > button::after {
-      content: "";
-      background-color: lightgray;
-      overflow: hidden;
-      height: 8px;
-      width: 8px;
-      border-radius: 50%;
-      display: block;
-      padding: 0;
-      margin-top: 5px;
-      position: absolute;
-    }*/
 }
-[popover] {
+.menuPoupee nav {
+    position:absolute;
+    top: 0;
+    right: 0;
     margin: 0;
     width: 110px;
     border: solid 1px gray;
+    background: white;
     overflow: visible;
     transition: transform .2s ease-out, opacity .2s ease-out,
     display .2s ease-out;
     transition-behavior: allow-discrete;
-
-    /*POPOVER EN ETAT FERMÉ*/
-    opacity: 0;
-    transform: translateX(-50px);
 
     > button {
         position: absolute;
@@ -308,21 +291,23 @@ label {
         border: none;
         width: 100%;
         background: none;
-        padding: 10px 0;
+        padding: 15px 0;
         cursor: pointer;
+        border-bottom: solid 1px gray;
+        font-size: 15px;
       }
     }
   }
-  [popover]:popover-open {
+  .menuPoupee nav.open {
     @starting-style {/*POPOVER AVANT L'ENTREE DANS LE CHAMP*/
       opacity: 0;
       transform: translateX(-50px);
       overflow: visible;
     }
 
-    /*POPOVER EN ETAT OUVERT*/
+    /* EN ETAT OUVERT
     opacity: 1;
-    transform: translateX(0px);
+    transform: translateX(0px);*/
   }
 
 
@@ -397,13 +382,6 @@ label {
   margin-top: 50px;
 }
 .poupee-card {
-  /*position: relative;
-  min-width: 310px;
-  border: inset 1px #e3e3e3;
-  margin: 30px;
-  padding-top: 12px;
-  border-radius: 50% 50%;
-  box-shadow: 0px 0px 20px #d4d4d4;*/
     position: relative;
     min-width: 310px;
     border: solid 1px gray;
@@ -412,21 +390,37 @@ label {
     border-radius: 50% 50%;
     box-shadow: 0px 0px 20px #d4d4d4;
     cursor: pointer;
+
+    h2 {
+      margin-top:0;
+      position: relative;
+      z-index: 50;
+      cursor: text;
+
+      &:hover:before {
+        content: "";
+        height: 20px;
+        width: 20px;
+        display: inline-block;
+        margin: 0 5px;
+      }
+      &:hover:after {
+        content: "";
+        background: url("./components/images/pencil-solid-full.svg") no-repeat;
+        height: 20px;
+        width: 20px;
+        display: inline-block;
+        margin: 0 5px;
+      }
+    }
+    input {
+      text-align: center;
+      font-size: 1.5em;
+      font-family: "Parisienne", cursive;
+    }
 }
 
 .poupee-card::before {
-    /*content: "";
-    display: block;
-    width: 50px;
-    height: 1px;
-    background-color: #000;
-    position: absolute;
-    top: -60px;
-    z-index: 50;
-    transform: rotate(-45deg) translateX(-120%);
-    transform-origin: top left;
-    left: 50%;*/
-
     content: "";
     display: block;
     width: 100%;
@@ -435,9 +429,7 @@ label {
     top: -1px;
     left: 5px;
     z-index: 50;
-    //border: solid 1px darkgray;
     border-radius: 50%;
-    //transform: rotate(-11deg);
     
     background-image: url(./components/images/fleurs-encadrement.svg);
     background-repeat: no-repeat;
@@ -447,18 +439,6 @@ label {
     background-size: 80%;
   }
 .poupee-card::after {
-    /*content: "";
-    display: block;
-    width: 50px;
-    height: 1px;
-    background-color: #000;
-    position: absolute;
-    top: -95px;
-    z-index: 50;
-    transform: rotate(45deg) translateX(120%);
-    transform-origin: top left;
-    right: 50%;*/
-
     content: "";
     display: block;
     width: 100%;

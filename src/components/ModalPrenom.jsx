@@ -1,4 +1,4 @@
-export default function ModalPrenom({ visible, prenom, setPrenom, exists, creer, charger }) {
+export default function ModalPrenom({ visible, prenom, setPrenom, exists, creer, charger, onAnnuler }) {
   if (!visible) return null;
 
   return (
@@ -16,6 +16,7 @@ export default function ModalPrenom({ visible, prenom, setPrenom, exists, creer,
         ) : (
           <button onClick={creer}>Créer</button>
         )}
+        <button className={"btnAnnuler"} onClick={onAnnuler}>Annuler</button>
       </div>
     </div>
   );

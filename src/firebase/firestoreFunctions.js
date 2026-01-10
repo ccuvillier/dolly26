@@ -41,3 +41,31 @@ export async function supprimerPoupeeFirestore(pseudo, idPoupee) {
   const ref = doc(db, "users", pseudo, "poupees", idPoupee);
   await deleteDoc(ref);
 }
+
+
+export async function renommerPoupeeFirestore(pseudo, oldId, newId) {
+  if (!pseudo || !oldId || !newId) return;
+
+  const oldRef = doc(db, "users", pseudo, "poupees", oldId);
+  const snap = await getDoc(oldRef);
+  if (!snap.exists()) return;
+
+  const data = snap.data();
+
+  const newRef = doc(db, "users", pseudo, "poupees", newId);
+  const newSnap = await getDoc(newRef);
+
+  if (newSnap.exists()) {
+    console.warn("La poupée existe déjà :", newId);
+    return;
+  }
+
+  await setDoc(newRef, { ...data, prenom: newId });
+
+  await deleteDoc(oldRef);
+
+  return true;
+}
+
+
+

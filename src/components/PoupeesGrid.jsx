@@ -2,38 +2,34 @@
 import React, { useState } from "react";
 import PoupeePreview from "./PoupeePreview";
 
-const openMenu = (id, button) => {
-
-  // Fermer tous les menus
-  const menus = document.querySelectorAll(".menuPoupee nav[popover]");
-  menus.forEach(menu => {
-    if (menu.showPopover && menu.hidePopover) {
-      menu.hidePopover(); // méthode native popover si disponible
-    } else {
-      menu.style.display = "none"; // fallback si tu gères manuellement
-    }
-  });
 
 
 
-  const menu = document.getElementById(id);
-  if (!menu) return;
-  const rect = button.getBoundingClientRect();
+export default function PoupeesGrid({ poupees, creerPoupee, chargerPoupee, onAddPoupee, supprimerPoupee, renommerPoupee }) {
+  const [activeMenu, setActiveMenu] = useState(null);
 
-  menu.style.top = `${rect.top}px`;
-  menu.style.left = `${rect.right - 110}px`;
+  const openMenu = (id, button) => {
+    if (!button) return;
 
-  //menu.showPopover();
+    setActiveMenu(prev => (prev === id ? null : id));
 
-  if (menu.showPopover) {
-    menu.showPopover();
-  } else {
-    menu.style.display = "block"; // fallback
-  }
-};
+    // Fermer tous les menus
+    document.querySelectorAll(".menuPoupee nav").forEach(menu => {
+      menu.style.display = "none";
+    });
+
+    const menu = document.getElementById(id);
+    if (!menu) return;
+
+    const rect = button.getBoundingClientRect();
+
+    menu.style.top = `${rect.bottom + 6}px`;
+    menu.style.left = `${rect.right - 110}px`;
+    menu.style.display = "block";
+
+  };
 
 
-export default function PoupeesGrid({ poupees, creerPoupee, chargerPoupee, onAddPoupee, supprimerPoupee }) {
 
   return (
     <div className="zoomIn">
@@ -57,24 +53,44 @@ export default function PoupeesGrid({ poupees, creerPoupee, chargerPoupee, onAdd
                 key={p.id}
                 onClick={() => chargerPoupee(p.id)}
             >
-                <div className="menuPoupee" onClick={(e) => e.stopPropagation()}>
+                <div className="menuPoupee" onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation()
+                  }
+                }>
                   <button 
-                    onClick={(e) =>
-                      openMenu(`menu-${p.id}`, e.currentTarget)
-                    } 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openMenu(`menu-${p.id}`, e.currentTarget);
+
+                    }} 
                     ><span></span><span></span><span></span>Show</button>
 
-                  <nav popover="manual" id={`menu-${p.id}`} style={{ position: "fixed" }}>
-                    <button popovertargetaction="hide" popovertarget={`menu-${p.id}`}>X</button>
+                  {activeMenu === `menu-${p.id}` && (
 
-                    <ul>
-                      <li><button onClick={() => supprimerPoupee(p.id)}>Supprimer</button></li>
-                      <li><button onClick={() => renommerPoupee(p.id)}>Renommer</button></li>
-                    </ul>
-                  </nav>
+                    <nav id={`menu-${p.id}`}>
+                      <button onClick={() => setActiveMenu(null)}>X</button>
+
+                      <ul>
+                        <li><button onClick={() => supprimerPoupee(p.id)}>Supprimer</button></li>
+                        {/*<li>
+                          <button
+                            onClick={() => {
+                              const nouveauPrenom = prompt("Nouveau prénom ?");
+                              if (nouveauPrenom) {
+                                renommerPoupee(p.id, nouveauPrenom);
+                              }
+                            }}
+                          >
+                            Renommer
+                          </button>
+                        </li>*/}
+                      </ul>
+                    </nav>
+                  )}
                 </div>
 
-                <PoupeePreview data={p.data} id={p.id} 
+                <PoupeePreview data={p.data} id={p.id} renommerPoupee={renommerPoupee}
                  />
             </div>
         ))}

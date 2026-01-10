@@ -1,110 +1,134 @@
 import React, { useState } from "react";
 import ModalPseudo from "./components/ModalPseudo";
 import ModalPrenom from "./components/ModalPrenom";
+import { createDefaultPoupee, DEFAULT_POUPEE } from "./constants/defaultPoupee";
 import PoupeesGrid from "./components/PoupeesGrid";
 import PoupeeView from "./components/PoupeeView";
 import ColorPicker from "./ColorPicker.jsx";
 
 import usePoupee from "./hooks/usePoupee";
 import useColorPicker from "./hooks/useColorPicker";
-
+import { savePoupeeField } from "./firebase/firestoreFunctions";
 import { creerUtilisateurSiAbsent } from "./firebase/firestoreFunctions";
 
 import './App.scss';
 
 export default function App() {
+  // ------------------- USER -------------------
   const [pseudo, setPseudo] = useState("");
   const hasPseudo = pseudo.trim() !== "";
-
-  const [modalVisible, setModalVisible] = useState(true); //Pour le pseudo
+  const [modalVisible, setModalVisible] = useState(true);
   const [carouselVisible, setCarouselVisible] = useState(false);
-  const [isCreating, setIsCreating] = useState(false);
 
-  // Hook des poupées
+  // ------------------- CREATION -------------------
+  const [isCreating, setIsCreating] = useState(false);
+  const [creationData, setCreationData] = useState(createDefaultPoupee());
+  const [showModalPrenom, setShowModalPrenom] = useState(false);
+  const [nouveauPrenom, setNouveauPrenom] = useState("");
+
+
+  // ------------------- HOOK POUPEE -------------------
   const {
     poupees,
-    idPoupee, setIdPoupee,
-    prenom, setPrenom,
+    idPoupee,
+    setIdPoupee,
+    prenom,
     peau, setPeau,
     yeux, setYeux,
     levres, setLevres,
     cheveux, setCheveux,
     nomCoiffure, setNomCoiffure,
-    poupeeExiste, setPoupeeExiste,
+    poupeeExiste,
+    setPoupeeExiste,
     creerPoupee,
     chargerPoupee,
-    updateNomCoiffure,
-    supprimerPoupee
+    supprimerPoupee,
+    renommerPoupee,
+    updateNomCoiffure
   } = usePoupee(pseudo);
 
-  // Revenir à la grille de poupées
-  const revoirGrille = () => {
+  // ------------------- COLOR PICKER -------------------
+  const {
+    pickerVisible,
+    pickerX,
+    pickerY,
+    currentField,
+    openColorPicker,
+    applyColor,
+    setPickerVisible
+  } = useColorPicker(
+    pseudo,
+    idPoupee,
+    peau, setPeau,
+    yeux, setYeux,
+    levres, setLevres,
+    cheveux, setCheveux
+  );
+
+  // ------------------- GESTION MODALE POUPEE -------------------
+  const handleAddPoupee = () => {
+    setCreationData(createDefaultPoupee());
+    setIsCreating(true);
+    setShowModalPrenom(true);
+    setNouveauPrenom("");
+  };
+
+  const handleCancelPoupee = () => {
+    setIsCreating(false);
+    setShowModalPrenom(false);
+    setNouveauPrenom("");
     setPoupeeExiste(false);
     setIdPoupee("");
+  };
+
+  const handleCreer = async () => {
+    if (!nouveauPrenom) return;
+
+    // Création dans Firebase
+    const id = await creerPoupee(nouveauPrenom);
+
+    // Charger la poupée dans les states locaux
+    await chargerPoupee(id);
+
+    // Afficher la poupée
+    setIdPoupee(id);
+    setPoupeeExiste(true);
+
+    // Fermer la modal
+    setShowModalPrenom(false);
+    setNouveauPrenom("");
     setIsCreating(false);
   };
 
-
-
-//Ajouter une poupée
-const [showModalPrenom, setShowModalPrenom] = useState(false);
-const [nouveauPrenom, setNouveauPrenom] = useState("");
-//const [nouveauNom, setNouveauNom] = useState("");
-
-const handleAddPoupee = () => {
-  setIsCreating(true);
-  setShowModalPrenom(true);
-};
-
-const handleCreer = async () => {
-  if (!nouveauPrenom) return;
-
-  // 1) Création en base → récupère ID
-  const id = await creerPoupee(nouveauPrenom);
-
-  // 2) Charger la poupée dans les states locaux
-  await chargerPoupee(id);
-
-  // 3) Afficher la poupée
-  setIdPoupee(id);
-  setPoupeeExiste(true);
-
-  // 4) Fermer la modale
-  setShowModalPrenom(false);
-  setNouveauPrenom("");
-  //setNouveauNom("");
-};
-
-
-
-
-
-  // Hook ColorPicker
-  const {
-    pickerVisible, pickerX, pickerY,
-    currentField, openColorPicker,
-    applyColor, setPickerVisible
-  } = useColorPicker(pseudo, idPoupee, peau, setPeau, yeux, setYeux, levres, setLevres, cheveux, setCheveux);
-
-
-  // Sélection d'une coiffure depuis le carousel
-  const selectHair = (hairName) => {
-    updateNomCoiffure(hairName);
-    setCarouselVisible(false);
+  // ------------------- CARROUSEL -------------------
+  const selectHair = async (hairName) => {
+    if (isCreating) {
+      setCreationData(prev => ({ ...prev, nomCoiffure: hairName }));
+    } else {
+      updateNomCoiffure(hairName);
+      await savePoupeeField(prenom, "nomCoiffure", hairName);
+    }
   };
 
-  // Affichage du prénom ou texte par défaut
-  const titrePoupée = idPoupee ? `Mon amie ${idPoupee}` : "Ma meilleure amie";
+  // ------------------- POUPEE AFFICHEE -------------------
+  const poupeeAffichee = isCreating
+    ? creationData
+    : { peau, yeux, levres, cheveux, nomCoiffure, prenom };
 
-  
+  const titrePoupée = isCreating
+    ? "Ma nouvelle amie"
+    : idPoupee
+      ? `Mon amie ${idPoupee}`
+      : "Ma meilleure amie";
 
+  // ------------------- RENDER -------------------
   return (
     <div className="App zoomIn">
-      {/* Modal pseudo si non rempli */}
+
+      {/* MODAL PSEUDO */}
       {!hasPseudo && (
         <ModalPseudo
           visible={!hasPseudo}
-
           onSubmit={async (validatePseudo) => {
             setPseudo(validatePseudo);
             await creerUtilisateurSiAbsent(validatePseudo);
@@ -113,10 +137,10 @@ const handleCreer = async () => {
         />
       )}
 
-      {/* Après saisie du pseudo */}
+      {/* APRÈS PSEUDO */}
       {hasPseudo && (
         <>
-          {/* Affichage grille de poupées */}
+          {/* GRILLE DE POUPEES */}
           {!poupeeExiste && !showModalPrenom && !isCreating && (
             <PoupeesGrid
               poupees={poupees}
@@ -124,18 +148,19 @@ const handleCreer = async () => {
               chargerPoupee={chargerPoupee}
               onAddPoupee={handleAddPoupee}
               supprimerPoupee={supprimerPoupee}
+              renommerPoupee={renommerPoupee}
             />
           )}
 
-          {/* Modal pour nom + prénom */}
+          {/* MODAL PRENOM */}
           {showModalPrenom && (
-          
             <ModalPrenom
               visible={showModalPrenom}
               prenom={nouveauPrenom}
               setPrenom={setNouveauPrenom}
               exists={false}
               creer={handleCreer}
+              onAnnuler={handleCancelPoupee}
             >
               <input
                 type="text"
@@ -147,25 +172,28 @@ const handleCreer = async () => {
             </ModalPrenom>
           )}
 
-          {/* Affichage poupée sélectionnée ou en cours de création */}
+          {/* POUPEE VIEW */}
           {(isCreating || poupeeExiste) && (
             <>
               <h1>{titrePoupée}</h1>
 
               <PoupeeView
-                peau={peau}
-                yeux={yeux}
-                levres={levres}
-                cheveux={cheveux}
-                nomCoiffure={nomCoiffure}
-                setNomCoiffure={setNomCoiffure}
+                {...poupeeAffichee}
+                setNomCoiffure={isCreating
+                  ? (value) => setCreationData(prev => ({ ...prev, nomCoiffure: value }))
+                  : setNomCoiffure
+                }
                 openColorPicker={openColorPicker}
                 carouselVisible={carouselVisible}
                 onSelectHair={selectHair}
-                revoirGrille={revoirGrille}
+                revoirGrille={() => {
+                  setPoupeeExiste(false);
+                  setIdPoupee("");
+                  setIsCreating(false);
+                }}
               />
 
-              {/* Color Picker */}
+              {/* COLOR PICKER */}
               {pickerVisible && (
                 <ColorPicker
                   x={pickerX}
@@ -178,7 +206,7 @@ const handleCreer = async () => {
                     "#FFFFFF"
                   }
                   onChange={(color) => {
-                    if (!currentField) return;  // sécurisation anti-bug
+                    if (!currentField) return;
                     applyColor(color);
                   }}
                   onClose={() => setPickerVisible(false)}

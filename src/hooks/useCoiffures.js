@@ -8,7 +8,7 @@ export default function useCoiffures(prenom) {
 
   const showCarousel = () => setCarouselVisible(true);
 
-  const selectHair = async (index) => {
+  const selectHairFirestore = async (index) => {
     setSelectedHairIndex(index);
     setCarouselVisible(false);
 
