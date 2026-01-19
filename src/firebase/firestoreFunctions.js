@@ -12,17 +12,27 @@ export async function savePoupeeField(pseudo, idPoupee, fieldName, value) {
   );
 }
 
-export async function creerUtilisateurSiAbsent(pseudo) {
-  if (!pseudo) return;
+
+export async function pseudoExiste(pseudo) {
+  if (!pseudo) return false;
 
   const userRef = doc(db, "users", pseudo);
   const snap = await getDoc(userRef);
+
+  return snap.exists();
+}
+
+export async function creerUtilisateurSiAbsent(pseudo) {
+  if (!pseudo) return false;
+
+  const userRef = doc(db, "users", pseudo);
+  const snap = await getDoc(userRef);
+
   if (!snap.exists()) {
     await setDoc(userRef, { createdAt: new Date() });
-    //console.log("Utilisateur créé :", pseudo);
-  } else {
-    //console.log("Utilisateur déjà existant :", pseudo);
-  }
+    return false;
+  } 
+  return true; // le pseudo existait déjà
 }
 
 

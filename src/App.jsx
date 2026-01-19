@@ -6,25 +6,20 @@ import PoupeesGrid from "./components/PoupeesGrid";
 import PoupeeView from "./components/PoupeeView";
 import ColorPicker from "./ColorPicker.jsx";
 
+import useCreationPoupee from "./hooks/useCreationPoupee";
 import usePoupee from "./hooks/usePoupee";
 import useColorPicker from "./hooks/useColorPicker";
 import { savePoupeeField } from "./firebase/firestoreFunctions";
-import { creerUtilisateurSiAbsent } from "./firebase/firestoreFunctions";
+import { pseudoExiste, creerUtilisateurSiAbsent } from "./firebase/firestoreFunctions";
 
 import './App.scss';
 
 export default function App() {
   // ------------------- USER -------------------
   const [pseudo, setPseudo] = useState("");
+  const [pseudoError, setPseudoError] = useState("");
   const hasPseudo = pseudo.trim() !== "";
-  const [modalVisible, setModalVisible] = useState(true);
   const [carouselVisible, setCarouselVisible] = useState(false);
-
-  // ------------------- CREATION -------------------
-  const [isCreating, setIsCreating] = useState(false);
-  const [creationData, setCreationData] = useState(createDefaultPoupee());
-  const [showModalPrenom, setShowModalPrenom] = useState(false);
-  const [nouveauPrenom, setNouveauPrenom] = useState("");
 
 
   // ------------------- HOOK POUPEE -------------------
@@ -47,6 +42,18 @@ export default function App() {
     updateNomCoiffure
   } = usePoupee(pseudo);
 
+  //------------- HOOK CREATION POUPEE -------------
+  const {
+    isCreating,
+    creationData,
+    setCreationData,
+    showModalPrenom,
+    nouveauPrenom,
+    setNouveauPrenom,
+    startCreation,
+    cancelCreation
+  } = useCreationPoupee();
+
   // ------------------- COLOR PICKER -------------------
   const {
     pickerVisible,
@@ -65,21 +72,39 @@ export default function App() {
     cheveux, setCheveux
   );
 
-  // ------------------- GESTION MODALE POUPEE -------------------
-  const handleAddPoupee = () => {
-    setCreationData(createDefaultPoupee());
-    setIsCreating(true);
-    setShowModalPrenom(true);
-    setNouveauPrenom("");
+  // ------------------- GESTION MODALE PSEUDO -------------------
+  const handlePseudoSubmit = async (pseudo, mode) => {
+    // Vérifier si l'utilisateur existe
+    const existed = await pseudoExiste(pseudo);
+
+    if (mode === "create" && existed) {
+      setPseudoError("Ce pseudo est déjà utilisé.");
+      return;
+    }
+
+    if (mode === "login" && !existed) {
+      setPseudoError("Cet utilisateur n'existe pas.");
+      return;
+    }
+
+    if (mode === "create") {
+      await creerUtilisateurSiAbsent(pseudo);
+    }
+
+    setPseudo(pseudo);
   };
 
+
+
+  // ------------------- GESTION MODALE POUPEE -------------------
+  const handleAddPoupee = startCreation;
+
   const handleCancelPoupee = () => {
-    setIsCreating(false);
-    setShowModalPrenom(false);
-    setNouveauPrenom("");
+    cancelCreation();
     setPoupeeExiste(false);
     setIdPoupee("");
   };
+
 
   const handleCreer = async () => {
     if (!nouveauPrenom) return;
@@ -95,10 +120,16 @@ export default function App() {
     setPoupeeExiste(true);
 
     // Fermer la modal
-    setShowModalPrenom(false);
-    setNouveauPrenom("");
+    cancelCreation();
+  };
+
+  //--------------REVENIR A LA LISTE DES POUPEES ---------
+  const revenirGrille = () => {
+    setPoupeeExiste(false);
+    setIdPoupee("");
     setIsCreating(false);
   };
+
 
   // ------------------- CARROUSEL -------------------
   const selectHair = async (hairName) => {
@@ -121,6 +152,7 @@ export default function App() {
       ? `Mon amie ${idPoupee}`
       : "Ma meilleure amie";
 
+
   // ------------------- RENDER -------------------
   return (
     <div className="App zoomIn">
@@ -129,11 +161,9 @@ export default function App() {
       {!hasPseudo && (
         <ModalPseudo
           visible={!hasPseudo}
-          onSubmit={async (validatePseudo) => {
-            setPseudo(validatePseudo);
-            await creerUtilisateurSiAbsent(validatePseudo);
-            setModalVisible(false);
-          }}
+          onSubmit={handlePseudoSubmit} 
+          error={pseudoError}
+          setError={setPseudoError}
         />
       )}
 
@@ -144,9 +174,9 @@ export default function App() {
           {!poupeeExiste && !showModalPrenom && !isCreating && (
             <PoupeesGrid
               poupees={poupees}
-              creerPoupee={creerPoupee}
+              onAddPoupee={startCreation}
               chargerPoupee={chargerPoupee}
-              onAddPoupee={handleAddPoupee}
+              //onAddPoupee={handleAddPoupee}
               supprimerPoupee={supprimerPoupee}
               renommerPoupee={renommerPoupee}
             />
@@ -155,7 +185,7 @@ export default function App() {
           {/* MODAL PRENOM */}
           {showModalPrenom && (
             <ModalPrenom
-              visible={showModalPrenom}
+              visible={true}
               prenom={nouveauPrenom}
               setPrenom={setNouveauPrenom}
               exists={false}
@@ -173,7 +203,7 @@ export default function App() {
           )}
 
           {/* POUPEE VIEW */}
-          {(isCreating || poupeeExiste) && (
+          {!showModalPrenom && (isCreating || poupeeExiste) && (
             <>
               <h1>{titrePoupée}</h1>
 
@@ -186,11 +216,7 @@ export default function App() {
                 openColorPicker={openColorPicker}
                 carouselVisible={carouselVisible}
                 onSelectHair={selectHair}
-                revoirGrille={() => {
-                  setPoupeeExiste(false);
-                  setIdPoupee("");
-                  setIsCreating(false);
-                }}
+                revoirGrille={revenirGrille}
               />
 
               {/* COLOR PICKER */}

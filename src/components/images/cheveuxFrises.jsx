@@ -7,7 +7,7 @@ const CheveuxFrises = ({ color, width = 350, height = 290, onPickColor }) => {
            style={{ cursor: "pointer" }}
         >
 
-            <path  fill={color} onClick={(e) => onPickColor && onPickColor(e, "cheveux")} style={{ pointerEvents: "all" }}
+            <path fill={color} onClick={(e) => onPickColor && onPickColor(e, "cheveux")} style={{ pointerEvents: "all" }}
                 d="M114.3,266.5c3.4-10.2,5.4-14.6,10.6-15c5.1-0.3,22.5-0.7,31.7-5.8c9.2-5.1,5.8-26.8,5.8-26.8
                 s-27.3-12-35.4-16.5c-10.9-6.1-17.1-15.4-19.8-25.6s0.7-11.7,1.7-17.5c1-5.8-2.7-8.2,2-10.6c4.8-2.4,7.1-11.2,7.1-17
                 s5.5-10.4,14-11.8s3.2-13.7,4.2-17.1c1-3.4,8.7,2,13.8-0.4c5.1-2.4,1.2-13.6,1.9-16c0.7-2.4,10.3-1.3,13-3.7c2.7-2.4-0.1-9.9,4-14.3
