@@ -36,8 +36,6 @@
 
 
 
-
-
 svg {
   margin: auto;
   max-width: 800px;
@@ -54,6 +52,9 @@ svg {
     fill-opacity: 20%;
     stroke: none;
 }
+
+
+
 
 h1, h2, h3, label {
   font-family: 'Parisienne', cursive;
@@ -152,7 +153,6 @@ label {
     position: absolute;
     z-index: 100;
     left: 50%;
-    bottom: -50%;
     transform: translate(-50%);
     background: rgb(255,255,255,0.75);
     padding: 25px;
@@ -363,6 +363,10 @@ label {
     position: relative;
     top: -65px;
 }
+#CarouselBas, #basChoisi {
+    position: relative;
+    top: -120px;
+}
 
 #poupee {
     position: absolute;
@@ -519,6 +523,14 @@ label {
   transform: scale(0.41) translateX(-50%);
   transform-origin: top left;
   top: 100px;
+  left: 50%;
+}
+.basPreview {
+  position: absolute;
+  z-index: 10;
+  transform: scale(0.41) translateX(-50%);
+  transform-origin: top left;
+  top: 157px;
   left: 50%;
 }
 

@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import FilleNue from "./filleNue";
-import { hairs } from "./CarouselCoiffuresData";
-import { hauts } from "./CarouselHautsData";
+import { hairs } from "./carousels/data/CarouselCoiffuresData";
+import { hauts } from "./carousels/data/CarouselHautsData";
+import { bass } from "./carousels/data/CarouselBasData";
 
 export default function PoupeePreview({ id, data, renommerPoupee }) {
-const { peau, yeux, levres, cheveux, nomCoiffure, nomHaut } = data;
+const { peau, yeux, levres, cheveux, nomCoiffure, nomHaut, nomBas } = data;
 const coiffure = hairs.find(h => h.name === nomCoiffure);
 const HairComponent = coiffure ? coiffure.component : null;
 const haut = hauts.find(h => h.name === nomHaut);
 const HautComponent = haut ? haut.component : null;
+const bas = bass.find(h => h.name === nomBas);
+const BasComponent = bas ? bas.component : null;
 const [editing, setEditing] = useState(false);
 const [nouveauPrenom, setNouveauPrenom] = useState(data.prenom); 
 
@@ -16,10 +19,10 @@ const handleRename = async () => {
     if (!nouveauPrenom) return;
     await renommerPoupee(data.prenom, nouveauPrenom);  // utilise la fonction passée en prop
     setEditing(false);
-  };
+};
 
 
-  return (
+return (
     <div>
        
       {/* Corps */}
@@ -52,10 +55,18 @@ const handleRename = async () => {
       )}
       
 
-       {/* Coiffure */}
+       {/* Haut */}
       {HautComponent && (
         <div className="hautPreview">
           <HautComponent color={haut} />
+        </div>
+      )}
+      
+
+       {/* Bas */}
+      {BasComponent && (
+        <div className="basPreview">
+          <BasComponent color={haut} />
         </div>
       )}
     </div>

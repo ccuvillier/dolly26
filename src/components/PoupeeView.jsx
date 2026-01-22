@@ -1,10 +1,12 @@
 // PoupeeView.jsx
 import React, { useState } from "react";
 import FilleNue from "./FilleNue";
-import { hairs } from "./CarouselCoiffuresData";
-import CarouselCoiffures from "./CarouselCoiffures.jsx";
-import { hauts } from "./CarouselHautsData.jsx";
-import CarouselHauts from "./CarouselHauts.jsx";
+import { hairs } from "./carousels/data/CarouselCoiffuresData";
+import CarouselCoiffures from "./carousels/CarouselCoiffures.jsx";
+import { hauts } from "./carousels/data/CarouselHautsData.jsx";
+import CarouselHauts from "./carousels/CarouselHauts.jsx";
+import { bass } from "./carousels/data/CarouselBasData.jsx";
+import CarouselBas from "./carousels/CarouselBas.jsx";
 import Menu from "./Menu.jsx";
 
 export default function PoupeeView({
@@ -17,12 +19,15 @@ export default function PoupeeView({
   colorHaut,
   nomHaut,
   setNomHaut,
+  colorBas,
+  nomBas,
+  setNomBas,
   openColorPicker,
   revoirGrille
 }) {
 
-   const [carouselVisible, setCarouselVisible] = useState(false); 
-   const [carouselHautsVisible, setCarouselHautsVisible] = useState(false);
+  const [activeCarousel, setActiveCarousel] = useState(null);
+  // valeurs possibles : "coiffure" | "haut" | "bas" | null
 
 
   // Détermine la coiffure à afficher si carousel non visible
@@ -32,7 +37,7 @@ export default function PoupeeView({
 
   const handleSelect = (hairName) => {
     setNomCoiffure(hairName);    // met à jour le nom dans App.jsx
-    setCarouselVisible(false);    // ferme le carousel
+    setActiveCarousel(null);    // ferme le carousel
   };
 
   // Détermine le haut à afficher si carousel non visible
@@ -42,13 +47,24 @@ export default function PoupeeView({
 
   const handleSelectHaut = (hautName) => {
     setNomHaut(hautName);
-    setCarouselHautsVisible(false);
+    setActiveCarousel(null);
+  }
+
+  // Détermine le bas à afficher si carousel non visible
+  const basAAfficher = nomBas
+    ? bass.find(h =>h.name === nomBas)
+    : null;
+  
+  const handleSelectBas = (basName) => {
+    setNomBas(basName);
+    setActiveCarousel(null);
   }
 
 
   // Fonction pour passer à Menu
-  const showCarousel = () => setCarouselVisible(true);
-  const showHaut = () => setCarouselHautsVisible(true);
+  const showCarousel = () => setActiveCarousel("coiffure");
+  const showHaut = () => setActiveCarousel("haut");
+  const showBas = () => setActiveCarousel("bas");
 
   return (
     
@@ -57,6 +73,7 @@ export default function PoupeeView({
       <Menu  
         onShowCarousel={showCarousel} 
         onShowCarouselHauts={showHaut}
+        onShowCarouselBas={showBas}
         onRevoirGrille={revoirGrille}
       />
 
@@ -71,7 +88,7 @@ export default function PoupeeView({
       </div>
 
       {/* Affichage carousel ou coiffure choisie */}
-      {carouselVisible && !carouselHautsVisible ? (
+      {activeCarousel === "coiffure" ? (
         <CarouselCoiffures
           color={cheveux}
           initialHairName={nomCoiffure}
@@ -81,15 +98,13 @@ export default function PoupeeView({
         <div id="coiffureChoisie" style={{ position: "relative" }}>
           {React.createElement(coiffureAAfficher.component, {
             color: cheveux,
-            width: 350,
-            height: 290,
             onPickColor: (e) => openColorPicker(e, "cheveux"),
           })}
         </div>
       ) : null}
 
       {/* Affichage carousel ou haut choisi */}
-      {carouselHautsVisible && !carouselVisible ? (
+      {activeCarousel === "haut" ? (
         <CarouselHauts
           color={colorHaut}
           initialHautName={nomHaut}
@@ -99,9 +114,23 @@ export default function PoupeeView({
         <div id="hautChoisi" style={{ position: "relative" }}>
           {React.createElement(hautAAfficher.component, {
             color: colorHaut,
-            width: 220,
-            height: 195,
             onPickColor: (e) => openColorPicker(e, "colorHaut"),
+          })}
+        </div>
+      ) : null}
+
+      {/* Affichage carousel ou bas choisi */}
+      {activeCarousel === "bas" ? (
+        <CarouselBas
+          color={colorBas}
+          initialBasName={nomBas}
+          onSelect={handleSelectBas}
+        />
+      ) : basAAfficher ? (
+        <div id="basChoisi" style={{ position: "relative" }}>
+          {React.createElement(basAAfficher.component, {
+            color: colorBas,
+            onPickColor: (e) => openColorPicker(e, "colorBas"),
           })}
         </div>
       ) : null}

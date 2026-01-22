@@ -34,6 +34,7 @@ export default function App() {
     cheveux, setCheveux,
     nomCoiffure, setNomCoiffure,
     nomHaut, setNomHaut,
+    nomBas, setNomBas,
     poupeeExiste,
     setPoupeeExiste,
     creerPoupee,
@@ -145,7 +146,7 @@ export default function App() {
   // ------------------- POUPEE AFFICHEE -------------------
   const poupeeAffichee = isCreating
     ? creationData
-    : { peau, yeux, levres, cheveux, nomCoiffure, nomHaut, prenom };
+    : { peau, yeux, levres, cheveux, nomCoiffure, nomHaut, nomBas, prenom };
 
   const titrePoupée = isCreating
     ? "Ma nouvelle amie"
@@ -217,6 +218,10 @@ export default function App() {
                 setNomHaut={isCreating
                   ? (value) => setCreationData(prev => ({ ...prev, nomHaut: value }))
                   : setNomHaut
+                }
+                setNomBas={isCreating
+                  ? (value) => setCreationData(prev => ({ ...prev, nomBas: value }))
+                  : setNomBas
                 }
 
 
