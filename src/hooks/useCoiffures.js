@@ -7,19 +7,23 @@ export default function useCoiffures(prenom) {
   const [selectedHairIndex, setSelectedHairIndex] = useState(null);
 
   const showCarousel = () => setCarouselVisible(true);
+  const hideCarousel = () => setCarouselVisible(false);
 
   const selectHairFirestore = async (index) => {
     setSelectedHairIndex(index);
-    setCarouselVisible(false);
+    hideCarousel();
 
     const hairName = hairs[index].name;
-    await savePoupeeField(prenom, "nomCoiffure", hairName);
+    if(prenom) {
+      await savePoupeeField(prenom, "nomCoiffure", hairName);
+    }
   };
 
   return {
     carouselVisible,
     selectedHairIndex,
     showCarousel,
-    selectHair
+    hideCarousel,
+    selectHairFirestore
   };
 }

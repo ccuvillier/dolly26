@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import FilleNue from "./filleNue";
 import { hairs } from "./CarouselCoiffuresData";
+import { hauts } from "./CarouselHautsData";
 
 export default function PoupeePreview({ id, data, renommerPoupee }) {
-const { peau, yeux, levres, cheveux, nomCoiffure } = data;
+const { peau, yeux, levres, cheveux, nomCoiffure, nomHaut } = data;
 const coiffure = hairs.find(h => h.name === nomCoiffure);
 const HairComponent = coiffure ? coiffure.component : null;
+const haut = hauts.find(h => h.name === nomHaut);
+const HautComponent = haut ? haut.component : null;
 const [editing, setEditing] = useState(false);
 const [nouveauPrenom, setNouveauPrenom] = useState(data.prenom); 
 
@@ -45,6 +48,14 @@ const handleRename = async () => {
       {HairComponent && (
         <div className="cheveuxPreview">
           <HairComponent color={cheveux} />
+        </div>
+      )}
+      
+
+       {/* Coiffure */}
+      {HautComponent && (
+        <div className="hautPreview">
+          <HautComponent color={haut} />
         </div>
       )}
     </div>

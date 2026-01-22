@@ -33,6 +33,7 @@ export default function App() {
     levres, setLevres,
     cheveux, setCheveux,
     nomCoiffure, setNomCoiffure,
+    nomHaut, setNomHaut,
     poupeeExiste,
     setPoupeeExiste,
     creerPoupee,
@@ -127,7 +128,7 @@ export default function App() {
   const revenirGrille = () => {
     setPoupeeExiste(false);
     setIdPoupee("");
-    setIsCreating(false);
+    cancelCreation();
   };
 
 
@@ -144,7 +145,7 @@ export default function App() {
   // ------------------- POUPEE AFFICHEE -------------------
   const poupeeAffichee = isCreating
     ? creationData
-    : { peau, yeux, levres, cheveux, nomCoiffure, prenom };
+    : { peau, yeux, levres, cheveux, nomCoiffure, nomHaut, prenom };
 
   const titrePoupée = isCreating
     ? "Ma nouvelle amie"
@@ -213,6 +214,12 @@ export default function App() {
                   ? (value) => setCreationData(prev => ({ ...prev, nomCoiffure: value }))
                   : setNomCoiffure
                 }
+                setNomHaut={isCreating
+                  ? (value) => setCreationData(prev => ({ ...prev, nomHaut: value }))
+                  : setNomHaut
+                }
+
+
                 openColorPicker={openColorPicker}
                 carouselVisible={carouselVisible}
                 onSelectHair={selectHair}

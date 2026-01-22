@@ -150,6 +150,7 @@ const renommerPoupee = async (oldId, newId) => {
   };
 
   const updateNomCoiffure = (value) => updateField("nomCoiffure", value);
+  const updateNomHaut = (value) => updateField("nomHaut", value);
   const setPeau = (v) => updateField("peau", v);
   const setYeux = (v) => updateField("yeux", v);
   const setLevres = (v) => updateField("levres", v);
@@ -169,6 +170,7 @@ const renommerPoupee = async (oldId, newId) => {
     setCheveux,
     setPrenom,
     setNomCoiffure: updateNomCoiffure,
+    setNomHaut: updateNomHaut,
     creerPoupee,
     chargerPoupee,
     updateNomCoiffure,

@@ -2,7 +2,7 @@ export default function ModalPrenom({ visible, prenom, setPrenom, exists, creer,
   if (!visible) return null;
 
   return (
-    <div className="modal">
+    <div className="modal modalPrenom">
       <div>
         <input
           type="text"
