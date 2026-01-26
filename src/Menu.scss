@@ -1,0 +1,96 @@
+/*********************/
+/*        MENU       */
+/*********************/
+.menu {
+  position: absolute;
+  z-index: 1000;
+
+  button {
+    display:  block;
+    cursor: pointer;
+    height: 50px;
+    margin: 0 0 0 10px;
+    font-size: 18px;
+    border-radius: 30px;
+    border: none;
+    position: relative;
+    width: 200px;
+    margin-bottom: 10px;
+    background: transparent;      
+    padding-left: 60px;
+    text-align: left;
+    box-shadow: 3px 3px 10px lightgray;
+
+    &:not(#mesPoupees):before {
+      content: "";
+      display: block;
+      width: 40px;
+      height: 40px;
+      border: solid 1px #fff;
+      border-radius: 50%;
+      position: absolute;
+      top: 5px;
+      left: 5px;
+
+    }
+  }
+  button#mesPoupees {
+    border: solid 1px grey;
+
+    &::before {
+      content: "";
+      background: url('components/images/fleur.svg') no-repeat;
+      display: block;
+      width: 50px;
+      height: 50px;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    &::after {
+      content: "";
+      transform: rotate(2deg);
+      border: solid 1px grey;
+      z-index: 500;
+      position: absolute;
+      transform-origin: center;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 20px;
+    }
+  }
+  button#coiffure {
+    color: #fff;
+    background: #e0a855;
+    background: linear-gradient(33deg, rgba(224, 168, 85, 1) 9%, rgba(196, 79, 55, 1) 87%);
+    &:before {
+      background: no-repeat url('components/images/picto-brosse.svg');
+      background-size: 90%;
+      background-position: center;
+    }
+    
+  }
+  button#hauts {
+    color: #fff;
+    background: #eb73c1;
+    background: linear-gradient(33deg, rgba(235, 115, 193, 1) 10%, rgba(250, 213, 92, 1) 93%);
+    &:before {
+      background: no-repeat url('components/images/picto-cintre-haut.svg');
+      background-size: 85%;
+      background-position: center;
+    }
+  }
+  button#bas {
+    color: #fff;
+    background: #3f99d9;
+    background: linear-gradient(33deg, rgba(63, 153, 217, 1) 10%, rgba(250, 213, 92, 1) 93%);
+    
+    &:before {
+      background: no-repeat url('components/images/picto-cintre-bas.svg');
+      background-size: 85%;
+      background-position: center;
+    }
+  }
+}

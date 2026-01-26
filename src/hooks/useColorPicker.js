@@ -11,7 +11,9 @@ export default function useColorPicker(pseudo, idPoupee, peau, setPeau, yeux, se
     const x = e?.clientX ?? window.innerWidth / 2;
     const y = e?.clientY ?? window.innerHeight / 2;
 
-    setPickerX(x);
+    console.log(x);
+
+    setPickerX(x + 50);
     setPickerY(y);
     setCurrentField(field);
     setPickerVisible(true);

@@ -1,11 +1,11 @@
 import React from 'react';
 
-const HautManchesBouffantes = ({ color, width = 220, height = 195, onPickColor }) => {
+const HautManchesBouffantes = ({ color, width = 250, height = 210, onPickColor }) => {
     return (
-        <svg version="1.1" xmlns="http://www.w3.org/2000/svg"  
-           width={width} height={height} viewBox="-10 0 220 195" className="svg"
+      <svg version="1.1" xmlns="http://www.w3.org/2000/svg"  
+           width={width} height={height} viewBox="-23 0 250 210" className="svg"
            style={{ cursor: "pointer" }}
-        >
+      >
         <path fill="#fff" d="M111.4,41.2c18.8,0,20.9-17.2,20.9-17.2l15.5,1.7s-2.3,4.2-2.5,14.3,4.5,18.6,4.5,18.6c0,0-3.7,35.2-4.2,49.2s0,36.6,0,36.6c0,0-22.3.2-34.2.2s-34.2-.2-34.2-.2c0,0,.6-22.5,0-36.6s-4.2-49.2-4.2-49.2c0,0,4.8-8.4,4.5-18.6-.3-10.1-2.5-14.3-2.5-14.3l15.5-1.7s2.1,17.2,20.9,17.2"/>
         <g fill="#fff">
             <path d="M75,25.7s-11.6-4.6-20.4,1.6c-16.5,11.6-2.3,29.9-2.3,29.9l-6.8,3.9,2.8,2.8,1.4-2,2.8,3.1-1.7,1.1,5.1,2.8.3-2,3.7,1.1-.6,1.7,4.5,1.1-.3-2.8h5.2l-.8,2.8,5.6-1.1-2.2-6.6s6-4.9,7.7-12.2-4-25.2-4-25.2Z"/>

@@ -1,9 +1,9 @@
 import React from 'react';
 
-const BasJupeAmpleAvecVolant = ({ color, width = 400, height = 290, onPickColor }) => {
+const BasJupeAmpleAvecVolant = ({ color, width = 400, height = 400, onPickColor }) => {
     return (
         <svg version="1.1" xmlns="http://www.w3.org/2000/svg"  
-           width={width} height={height} viewBox="52 0 350 290" className="svg"
+           width={width} height={height} viewBox="27 0 400 400" className="svg"
            style={{ cursor: "pointer" }}
         >
         <g fill="#fff">

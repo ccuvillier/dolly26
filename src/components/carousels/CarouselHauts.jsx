@@ -8,8 +8,6 @@ export default function CarouselHauts({ color, onSelect, initialHautName }) {
       color={color}
       initialName={initialHautName}
       onSelect={onSelect}
-      width={220}
-      height={195}
       label="Choisir ce haut"
       Id="CarouselHauts"
     />

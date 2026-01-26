@@ -1,0 +1,40 @@
+
+/*********************/
+/*      carousel     */
+/*********************/
+.slick-prev, .slick-next {
+    z-index: 50;
+}
+.slick-prev {
+    left: 50%;
+    transform: translateX(-225px);
+}
+.slick-prev::before {
+    content: '<';
+    color: black;
+    font-size: 70px;
+    transform: scaleX(0.4);
+    display: block;
+    line-height: 0;
+}
+
+.slick-next {
+    right: 50%;
+    transform: translateX(225px);
+}
+.slick-next::before {
+    content: '>';
+    color: black;
+    font-size: 70px;
+    transform: scaleX(0.4);
+    display: block;
+    line-height: 0;
+}
+#CarouselHauts, #hautChoisi {
+    position: relative;
+    top: -65px;
+}
+#CarouselBas, #basChoisi {
+    position: relative;
+    top: -135px;
+}
