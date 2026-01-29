@@ -1,8 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Parisienne&family=Ruge+Boogie&display=swap');
-@import url('Menu.scss');
-@import url('Modal.scss');
-@import url('poupeesGrid.scss');
-@import url('Carousels.scss');
+@import url('styles/Menu.scss');
+@import url('styles/Modal.scss');
+@import url('styles/poupeesGrid.scss');
+@import url('styles/Carousels.scss');
+@import url('styles/PaletteTissus.scss');
 .App {
   text-align: center;
   position: relative;
@@ -44,6 +45,8 @@ svg {
   margin: auto;
   max-width: 800px;
 }
+.svg {
+}
 .svg * {
     stroke: #000;
 }
@@ -52,7 +55,7 @@ svg {
     fill: none;
     stroke: #000;
 }
-.svg > path.relief,
+.svg path.relief,
 .svg > g.relief path {
     fill: black;
     fill-opacity: 20%;
@@ -90,34 +93,6 @@ label {
   margin: 0 auto;
   display: inline-block;
 
-}
-
-#poupee {
-    position: absolute;
-    z-index: 0;
-    display: inline-block;
-    width: 80vw;
-    left: 50%;
-    transform: translateX(-50%);
-}
-#poupee, .poupees-grid {
-    .fille0{fill:#FFE4D9;stroke:#1D1D1B;}
-    .fille1{fill:#FFE4D9;stroke:#1D1D1B;}
-    .fille2{fill:#FFFFFF;stroke:#000000;} 
-    .fille4{fill:#FF7A84;stroke:#1D1D1B;}
-    .fille5{fill:#FFE4D9;}
-    .fille6{fill:#FFFFFF;}
-    .fille7{fill:#1CB6C6;stroke:#000000;}
-    .fille8{fill:#1D1D1B;}
-    .fille9{fill:#FF7A84;stroke:#1D1D1B;}
-    .fille10{fill:url(#SVGID_1_);}
-    .fille11{fill:url(#SVGID_2_);}
-    .fille12{opacity:0.50;fill:#FFFFFF;}
-    .fille13{stroke:#000000;}   
-    .fille3{stroke:#000000;}
-}
-#coiffureChoisie {
-  pointer-events: none;
 }
 
 

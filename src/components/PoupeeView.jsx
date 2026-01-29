@@ -22,7 +22,9 @@ export default function PoupeeView({
   colorBas,
   nomBas,
   setNomBas,
-  openColorPicker,
+  tissuBas,
+  setTissuBas,
+  openPicker,
   revoirGrille
 }) {
 
@@ -83,7 +85,7 @@ export default function PoupeeView({
           peau={peau}
           yeux={yeux}
           levres={levres}
-          openColorPicker={openColorPicker}
+          openPicker={openPicker}
         />
       </div>
 
@@ -98,7 +100,11 @@ export default function PoupeeView({
         <div id="coiffureChoisie" style={{ position: "relative" }}>
           {React.createElement(coiffureAAfficher.component, {
             color: cheveux,
-            onPickColor: (e) => openColorPicker(e, "cheveux"),
+            onPickColor: (e) => openPicker(e, {
+              type: "color",
+              target: "cheveux",
+              value: cheveux
+            }),
           })}
         </div>
       ) : null}
@@ -113,8 +119,12 @@ export default function PoupeeView({
       ) : hautAAfficher ? (
         <div id="hautChoisi" style={{ position: "relative" }}>
           {React.createElement(hautAAfficher.component, {
-            color: colorHaut,
-            onPickColor: (e) => openColorPicker(e, "colorHaut"),
+            tissu: { name: nomHaut, color: colorHaut, isUni: true },
+            onPickColor: (e) => openPicker(e, {
+              type: "tissu",
+              target: "Haut",
+              value: tissuHaut
+            })
           })}
         </div>
       ) : null}
@@ -129,8 +139,12 @@ export default function PoupeeView({
       ) : basAAfficher ? (
         <div id="basChoisi" style={{ position: "relative" }}>
           {React.createElement(basAAfficher.component, {
-            color: colorBas,
-            onPickColor: (e) => openColorPicker(e, "colorBas"),
+            tissuBas: tissuBas,
+            onPickColor: (e) => openPicker(e, {
+              type: "tissu",
+              target: "bas",
+              value: tissuBas
+            })
           })}
         </div>
       ) : null}

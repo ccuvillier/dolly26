@@ -13,19 +13,22 @@ export const tissus = [
     name: "antillais",
     label: "Antillais",
     isUni: false,
-    preview: tissuAntillais
+    preview: tissuAntillais,
+    size: 270
   },
   {
     name: "cacao",
     label: "Cacao",
     isUni: false,
-    preview: tissuCacao
+    preview: tissuCacao,
+    size: 270
   },
   {
     name: "eventail",
     label: "Eventail",
     isUni: false,
-    preview: tissuEventail
+    preview: tissuEventail,
+    size: 270
   }
 ];
 

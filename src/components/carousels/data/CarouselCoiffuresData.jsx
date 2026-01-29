@@ -4,8 +4,9 @@ import CheveuxFrises from "../../images/cheveuxFrises.jsx";
 import CheveuxCouettes from "../../images/cheveuxCouettes.jsx";
 import CheveuxRaides from "../../images/cheveuxRaides.jsx";
 import CheveuxCarre from "../../images/cheveuxCarre.jsx";
-import CheveuxCouetteCote from "../../images/cheveuxCouetteCote.jsx";;
+import CheveuxCouetteCote from "../../images/cheveuxCouetteCote.jsx";
 import CheveuxLongs from "../../images/cheveuxLongs.jsx";
+import CheveuxCourts from "../../images/cheveuxCourts.jsx";
 
 export const hairs = [
   { name: "CheveuxAnglaises", component: CheveuxAnglaises },
@@ -15,6 +16,7 @@ export const hairs = [
   { name: "CheveuxRaides", component: CheveuxRaides },
   { name: "CheveuxCarre", component: CheveuxCarre },
   { name: "CheveuxCouetteCote", component: CheveuxCouetteCote },
-  { name: "CheveuxLongs", component: CheveuxLongs }
+  { name: "CheveuxLongs", component: CheveuxLongs },
+  { name: "CheveuxCourts", component: CheveuxCourts }
 ];
 

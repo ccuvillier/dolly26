@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ModalPseudo from "./components/ModalPseudo";
 import ModalPrenom from "./components/ModalPrenom";
 import { createDefaultPoupee, DEFAULT_POUPEE } from "./constants/defaultPoupee";
@@ -8,9 +8,13 @@ import ColorPicker from "./ColorPicker.jsx";
 
 import useCreationPoupee from "./hooks/useCreationPoupee";
 import usePoupee from "./hooks/usePoupee";
-import useColorPicker from "./hooks/useColorPicker";
 import { savePoupeeField } from "./firebase/firestoreFunctions";
 import { pseudoExiste, creerUtilisateurSiAbsent } from "./firebase/firestoreFunctions";
+
+import { DEFAULT_TISSU } from "./constants/defaultTissu";
+import PaletteTissus from "./components/paletteTissus/PaletteTissus";
+import useStylePicker from "./hooks/useStylePicker";
+
 
 import './App.scss';
 
@@ -56,23 +60,71 @@ export default function App() {
     cancelCreation
   } = useCreationPoupee();
 
-  // ------------------- COLOR PICKER -------------------
+
+  //-------------- PICKERS COLOR & TISSUS ----------------
   const {
-    pickerVisible,
-    pickerX,
-    pickerY,
-    currentField,
-    openColorPicker,
-    applyColor,
-    setPickerVisible
-  } = useColorPicker(
-    pseudo,
-    idPoupee,
-    peau, setPeau,
-    yeux, setYeux,
-    levres, setLevres,
-    cheveux, setCheveux
-  );
+    picker,
+    openPicker,
+    closePicker
+  } = useStylePicker();
+
+const applyColor = (target, color) => {
+  switch (target) {
+    case "peau": setPeau(color); break;
+    case "yeux": setYeux(color); break;
+    case "levres": setLevres(color); break;
+    case "cheveux": setCheveux(color); break;
+    case "haut": setNomHaut(prev => ({ ...prev, color })); break;
+    case "bas": setNomBas(prev => ({ ...prev, color })); break;
+    default: break;
+  }
+};
+
+
+const [tissuBas, setTissuBas, tissuHaut, setTissuHaut] = useState(DEFAULT_TISSU);
+const tissuSetters = {
+  bas: {
+    setTissu: setTissuBas
+  },
+  haut: {
+    setTissu: setTissuHaut
+  }
+};
+
+const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+
+const applyTissu = async (target, newTissuOrUpdater) => {
+  const handlers = tissuSetters[target];
+  if (!handlers) return;
+
+  handlers.setTissu(prev => {
+    const resolvedTissu =
+      typeof newTissuOrUpdater === "function"
+        ? newTissuOrUpdater(prev)
+        : newTissuOrUpdater;
+
+    // 🔥 Firebase reçoit TOUJOURS un objet
+    if (!isCreating && idPoupee) {
+      savePoupeeField(
+        pseudo,
+        idPoupee,
+        `tissu${capitalize(target)}`,
+        resolvedTissu
+      );
+    }
+
+    return resolvedTissu;
+  });
+};
+
+
+useEffect(() => {
+  console.log("nomTissuBas =", tissuBas);
+}, [tissuBas]);
+
+
+
+
 
   // ------------------- GESTION MODALE PSEUDO -------------------
   const handlePseudoSubmit = async (pseudo, mode) => {
@@ -225,31 +277,40 @@ export default function App() {
                 }
 
 
-                openColorPicker={openColorPicker}
+                openPicker={openPicker}
                 carouselVisible={carouselVisible}
                 onSelectHair={selectHair}
                 revoirGrille={revenirGrille}
+                tissuBas={tissuBas}
+                setTissuBas={setTissuBas}
               />
 
               {/* COLOR PICKER */}
-              {pickerVisible && (
+              {picker.visible && picker.type === "color" && (
                 <ColorPicker
-                  x={pickerX}
-                  y={pickerY}
-                  currentColor={
-                    currentField === "peau" ? peau :
-                    currentField === "yeux" ? yeux :
-                    currentField === "levres" ? levres :
-                    currentField === "cheveux" ? cheveux :
-                    "#FFFFFF"
-                  }
-                  onChange={(color) => {
-                    if (!currentField) return;
-                    applyColor(color);
-                  }}
-                  onClose={() => setPickerVisible(false)}
+                  x={picker.x}
+                  y={picker.y}
+                  currentColor={picker.value}
+                  target={picker.target}
+                  onChange={applyColor}
+                  onClose={closePicker}
                 />
               )}
+
+              {picker.visible && picker.type === "tissu" && (
+                <PaletteTissus
+                  x={picker.x}
+                  y={picker.y}
+                  target={picker.target}
+                  tissu={picker.value}
+                  onChange={(newTissu) => {
+                    applyTissu("bas", newTissu);
+                  }}
+                  onClose={closePicker}
+                />
+              )}
+
+
             </>
           )}
         </>

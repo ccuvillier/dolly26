@@ -1,18 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { SketchPicker } from "react-color";
 
-const ColorPicker = ({ x, y, currentColor, onValidate, onClose, onChange }) => {
-  const [tempColor, setTempColor] = useState(currentColor);
+const ColorPicker = ({ x, y, currentColor, target, onChange, onClose }) => {
+  const [tempColor, setTempColor] = useState(currentColor || "#ffffff");
 
-  // Sync avec currentColor à chaque ouverture
   useEffect(() => {
-    setTempColor(currentColor);
+    setTempColor(currentColor || "#ffffff");
   }, [currentColor]);
 
   const handleChange = (color) => {
-    if (!color?.hex) return; // ignore les valeurs invalides venant du picker
+    if (!color?.hex) return;
     setTempColor(color.hex);
-    if (onChange) onChange(color.hex);
+    if (onChange) onChange(target, color.hex); // <-- important : target + color
   };
 
   return (
@@ -26,11 +25,10 @@ const ColorPicker = ({ x, y, currentColor, onValidate, onClose, onChange }) => {
         padding: "10px",
         boxShadow: "0 0 10px rgba(0,0,0,0.3)"
       }}
-      onClick={(e) => e.stopPropagation()}
+      onClick={e => e.stopPropagation()}
     >
       <SketchPicker color={tempColor} onChange={handleChange} />
-
-      <button className="close" onClick={onClose}>Fermer</button>
+      <button onClick={onClose} className="close">Fermer</button>
     </div>
   );
 };

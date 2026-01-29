@@ -66,7 +66,7 @@ return (
        {/* Bas */}
       {BasComponent && (
         <div className="basPreview">
-          <BasComponent color={haut} />
+          <BasComponent color={bas} />
         </div>
       )}
     </div>
