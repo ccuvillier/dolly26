@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from "react";
 import ModalPseudo from "./components/ModalPseudo";
 import ModalPrenom from "./components/ModalPrenom";
+import { createDefaultPoupee, DEFAULT_POUPEE } from "./constants/defaultPoupee";
 import PoupeesGrid from "./components/PoupeesGrid";
 import PoupeeView from "./components/PoupeeView";
 import ColorPicker from "./ColorPicker.jsx";
-import PaletteTissus from "./components/paletteTissus/PaletteTissus";
-import usePoupee from "./hooks/usePoupee";
+
 import useCreationPoupee from "./hooks/useCreationPoupee";
-import useStylePicker from "./hooks/useStylePicker";
-import { DEFAULT_TISSU } from "./constants/defaultTissu";
+import usePoupee from "./hooks/usePoupee";
+import { savePoupeeField } from "./firebase/firestoreFunctions";
 import { pseudoExiste, creerUtilisateurSiAbsent } from "./firebase/firestoreFunctions";
+
+import { DEFAULT_TISSU } from "./constants/defaultTissu";
+import PaletteTissus from "./components/paletteTissus/PaletteTissus";
+import useStylePicker from "./hooks/useStylePicker";
+
 
 import './App.scss';
 
@@ -19,6 +24,7 @@ export default function App() {
   const [pseudoError, setPseudoError] = useState("");
   const hasPseudo = pseudo.trim() !== "";
   const [carouselVisible, setCarouselVisible] = useState(false);
+
 
   // ------------------- HOOK POUPEE -------------------
   const {
@@ -40,15 +46,11 @@ export default function App() {
     supprimerPoupee,
     renommerPoupee,
     updateNomCoiffure,
-    tissuHaut,
-    setTissuHaut,
-    updateTissuHaut,
-    tissuBas,
-    setTissuBas,
-    updateTissuBas
+    tissuHaut, updateTissuHaut,
+    tissuBas, updateTissuBas,
   } = usePoupee(pseudo);
 
-  // ------------------- HOOK CREATION -------------------
+  //------------- HOOK CREATION POUPEE -------------
   const {
     isCreating,
     creationData,
@@ -60,62 +62,99 @@ export default function App() {
     cancelCreation
   } = useCreationPoupee();
 
-  // ------------------- PICKERS -------------------
-  const { picker, openPicker, closePicker } = useStylePicker();
 
-  // Appliquer une couleur à un élément
-  const applyColor = (target, color) => {
-    switch (target) {
-      case "peau": setPeau(color); break;
-      case "yeux": setYeux(color); break;
-      case "levres": setLevres(color); break;
-      case "cheveux": setCheveux(color); break;
-      case "haut": setNomHaut(prev => ({ ...prev, color })); break;
-      case "bas": setNomBas(prev => ({ ...prev, color })); break;
-      default: break;
-    }
-  };
+  //-------------- PICKERS COLOR & TISSUS ----------------
+  const {
+    picker,
+    openPicker,
+    closePicker
+  } = useStylePicker();
 
-  // ------------------- MODALES PSEUDO -------------------
+const applyColor = (target, color) => {
+  switch (target) {
+    case "peau": setPeau(color); break;
+    case "yeux": setYeux(color); break;
+    case "levres": setLevres(color); break;
+    case "cheveux": setCheveux(color); break;
+    case "haut": setNomHaut(prev => ({ ...prev, color })); break;
+    case "bas": setNomBas(prev => ({ ...prev, color })); break;
+    default: break;
+  }
+};
+
+
+
+
+
+  // ------------------- GESTION MODALE PSEUDO -------------------
   const handlePseudoSubmit = async (pseudo, mode) => {
+    // Vérifier si l'utilisateur existe
     const existed = await pseudoExiste(pseudo);
-    if (mode === "create" && existed) return setPseudoError("Ce pseudo est déjà utilisé.");
-    if (mode === "login" && !existed) return setPseudoError("Cet utilisateur n'existe pas.");
-    if (mode === "create") await creerUtilisateurSiAbsent(pseudo);
+
+    if (mode === "create" && existed) {
+      setPseudoError("Ce pseudo est déjà utilisé.");
+      return;
+    }
+
+    if (mode === "login" && !existed) {
+      setPseudoError("Cet utilisateur n'existe pas.");
+      return;
+    }
+
+    if (mode === "create") {
+      await creerUtilisateurSiAbsent(pseudo);
+    }
+
     setPseudo(pseudo);
   };
 
-  // ------------------- MODALES POUPEE -------------------
+
+
+  // ------------------- GESTION MODALE POUPEE -------------------
+  const handleAddPoupee = startCreation;
+
   const handleCancelPoupee = () => {
     cancelCreation();
     setPoupeeExiste(false);
     setIdPoupee("");
   };
 
+
   const handleCreer = async () => {
     if (!nouveauPrenom) return;
 
+    // Création dans Firebase
     const id = await creerPoupee(nouveauPrenom);
+
+    // Charger la poupée dans les states locaux
     await chargerPoupee(id);
+
+    // Afficher la poupée
     setIdPoupee(id);
     setPoupeeExiste(true);
+
+    // Fermer la modal
     cancelCreation();
   };
 
+  //--------------REVENIR A LA LISTE DES POUPEES ---------
   const revenirGrille = () => {
     setPoupeeExiste(false);
     setIdPoupee("");
     cancelCreation();
   };
 
+
   // ------------------- CARROUSEL -------------------
   const selectHair = async (hairName) => {
-    if (isCreating) setCreationData(prev => ({ ...prev, nomCoiffure: hairName }));
-    else {
+    if (isCreating) {
+      setCreationData(prev => ({ ...prev, nomCoiffure: hairName }));
+    } else {
       updateNomCoiffure(hairName);
       await savePoupeeField(prenom, "nomCoiffure", hairName);
     }
   };
+
 
   // ------------------- POUPEE AFFICHEE -------------------
   const poupeeAffichee = isCreating
@@ -124,43 +163,75 @@ export default function App() {
 
   const titrePoupée = isCreating
     ? "Ma nouvelle amie"
-    : idPoupee ? `Mon amie ${idPoupee}` : "Ma meilleure amie";
+    : idPoupee
+      ? `Mon amie ${idPoupee}`
+      : "Ma meilleure amie";
 
-  // ------------------- CHARGEMENT DES TISSUS DEPUIS FIREBASE -------------------
-  useEffect(() => {
-    if (!poupeeExiste || !idPoupee) return;
+  
+/*------------GESTION DES TISSUS ------------- 
+const [tissuHaut, setTissuHaut] = useState(poupeeAffichee?.tissuHaut ?? DEFAULT_TISSU);
+const [tissuBas, setTissuBas] = useState(poupeeAffichee?.tissuBas ?? DEFAULT_TISSU);*/
 
-    const p = poupees.find(p => p.data.prenom === prenom || p.id === idPoupee);
-    if (!p) return;
+useEffect(() => {
+  if (!poupeeExiste || !idPoupee) return;
 
-    const loadedTissuHaut = { ...DEFAULT_TISSU, ...p.data.tissuHaut };
-    const loadedTissuBas = { ...DEFAULT_TISSU, ...p.data.tissuBas };
+  // Cherche la poupée chargée dans ton tableau poupees
+  const p = poupees.find(p => p.prenom === prenom || p.id === idPoupee);
+  if (!p) return;
 
-    setTissuHaut(loadedTissuHaut);
-    setTissuBas(loadedTissuBas);
-  }, [poupeeExiste, idPoupee, poupees, prenom]);
+  setTissuHaut(prev =>
+    JSON.stringify(prev) === JSON.stringify(p.tissuHaut)
+      ? prev
+      : { ...DEFAULT_TISSU, ...p.tissuHaut }
+  );
 
-  // ------------------- GESTION PALETTE TISSUS -------------------
-  const applyTissu = (target, patch) => {
-    const cleanPatch = { ...patch, name: patch.name.replace(/^tissu-/, "") };
+  setTissuBas(prev =>
+    JSON.stringify(prev) === JSON.stringify(p.tissuBas)
+      ? prev
+      : { ...DEFAULT_TISSU, ...p.tissuBas }
+  );
 
-    if (target === "haut") {
-    updateTissuHaut(cleanPatch);
+}, [poupeeExiste, idPoupee, poupees]);
+
+
+
+// Fonction merge safe pour PaletteTissus
+const applyTissu = (target, patch) => {
+  if (target === "haut") {
+    setTissuHaut(prev => {
+      const merged = { ...prev, ...patch };
+      if (!isCreating && idPoupee) {
+        savePoupeeField(pseudo, idPoupee, "tissuHaut", merged);
+      }
+      return merged;
+    });
   } else if (target === "bas") {
-    updateTissuBas(cleanPatch);
+    setTissuBas(prev => {
+      const merged = { ...prev, ...patch };
+      if (!isCreating && idPoupee) {
+        savePoupeeField(pseudo, idPoupee, "tissuBas", merged);
+      }
+      return merged;
+    });
   }
-  };
+};
 
-  const handleChangeTissu = (newTissu) => applyTissu(picker.target, newTissu);
+// Handler pour PaletteTissus
+const handleChangeTissu = (newTissu) => {
+  applyTissu(picker.target, newTissu);
+};
+
+
 
   // ------------------- RENDER -------------------
   return (
     <div className="App zoomIn">
-      {/* MODALE PSEUDO */}
+
+      {/* MODAL PSEUDO */}
       {!hasPseudo && (
         <ModalPseudo
           visible={!hasPseudo}
-          onSubmit={handlePseudoSubmit}
+          onSubmit={handlePseudoSubmit} 
           error={pseudoError}
           setError={setPseudoError}
         />
@@ -180,7 +251,7 @@ export default function App() {
             />
           )}
 
-          {/* MODALE PRENOM */}
+          {/* MODAL PRENOM */}
           {showModalPrenom && (
             <ModalPrenom
               visible={true}
@@ -201,9 +272,16 @@ export default function App() {
           )}
 
           {/* POUPEE VIEW */}
+          {console.log("APP → POUPEE VIEW PROPS :", {
+  isCreating,
+  poupeeAffichee,
+  tissuHaut,
+  tissuBas
+})}
           {!showModalPrenom && (isCreating || poupeeExiste) && (
             <>
               <h1>{titrePoupée}</h1>
+
               <PoupeeView
                 {...poupeeAffichee}
                 setNomCoiffure={isCreating
@@ -218,7 +296,11 @@ export default function App() {
                   ? (value) => setCreationData(prev => ({ ...prev, nomBas: value }))
                   : setNomBas
                 }
+
+
                 openPicker={openPicker}
+                carouselVisible={carouselVisible}
+                onSelectHair={selectHair}
                 revoirGrille={revenirGrille}
                 tissuBas={tissuBas}
                 setTissuBas={updateTissuBas}
@@ -238,7 +320,6 @@ export default function App() {
                 />
               )}
 
-              {/* PALETTE TISSUS */}
               {picker.visible && picker.type === "tissu" && (
                 <PaletteTissus
                   x={picker.x}
@@ -249,6 +330,8 @@ export default function App() {
                   onClose={closePicker}
                 />
               )}
+
+
             </>
           )}
         </>

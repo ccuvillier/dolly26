@@ -50,6 +50,8 @@ export default function CarouselGeneric({
     onSelect(items[activeIndex].name);
   };
 
+  console.log(color);
+
   return (
     <div className="CarouselGeneric" id={Id}>
       <Slider ref={sliderRef} {...settings}>

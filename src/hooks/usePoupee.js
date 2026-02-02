@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { collection, doc, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase";
-import { savePoupeeField, supprimerPoupeeFirestore, renommerPoupeeFirestore } from "../firebase/firestoreFunctions";
 import { DEFAULT_POUPEE } from "../constants/defaultPoupee";
+import { DEFAULT_TISSU } from "../constants/defaultTissu";
+import { savePoupeeField, supprimerPoupeeFirestore, renommerPoupeeFirestore } from "../firebase/firestoreFunctions";
 
 
 export default function usePoupee(pseudo) {
@@ -10,6 +11,9 @@ export default function usePoupee(pseudo) {
   const [idPoupee, setIdPoupee] = useState("");    // ID de la poupée active
   const [data, setData] = useState(DEFAULT_POUPEE); // données de la poupée active
   const [poupeeExiste, setPoupeeExiste] = useState(false);
+
+  const [tissuHaut, setTissuHaut] = useState(DEFAULT_TISSU);
+  const [tissuBas, setTissuBas] = useState(DEFAULT_TISSU);
 
   // Charger toutes les poupées de l'utilisateur
   useEffect(() => {
@@ -39,7 +43,13 @@ export default function usePoupee(pseudo) {
     if (!pseudo) return null;
 
     const ref = doc(db, "users", pseudo, "poupees", prenom);
-    const newData = { ...DEFAULT_POUPEE, prenom };
+    const newData = { 
+      ...DEFAULT_POUPEE, 
+      prenom,
+      tissuBas: DEFAULT_TISSU,
+      tissuHaut: DEFAULT_TISSU
+    };
+
     await setDoc(ref, newData);
 
     setPoupees(prev => [...prev, { id: prenom, data: newData }]);
@@ -49,6 +59,7 @@ export default function usePoupee(pseudo) {
 
     return prenom;
   };
+
 
   // Supprimer une poupée
   const supprimerPoupee = async (id) => {
@@ -63,6 +74,8 @@ export default function usePoupee(pseudo) {
     }
   };
 
+
+// Renommer une poupée
 const renommerPoupee = async (oldId, newId) => {
   const exists = poupees.some(p => p.id === newId);
   if (exists) {
@@ -100,7 +113,10 @@ const renommerPoupee = async (oldId, newId) => {
 
     const loaded = snap.data();
 
-    // Vérifier les champs manquants
+    setTissuHaut(data.tissuHaut ?? DEFAULT_TISSU);
+setTissuBas(data.tissuBas ?? DEFAULT_TISSU);
+
+    // Ajouter les champs manquants
     const missing = {};
     for (const key in DEFAULT_POUPEE) {
       if (!(key in loaded)) missing[key] = DEFAULT_POUPEE[key];
@@ -122,7 +138,6 @@ const renommerPoupee = async (oldId, newId) => {
 
   // Mettre à jour un champ individuel
   const updateField = async (field, value) => {
-    //console.log("updateField appelée :", field, value, "pseudo:", pseudo, "idPoupee:", idPoupee);
 
     if (!pseudo || !idPoupee) {
       console.warn("updateField STOP : pseudo ou idPoupee manquant", { field, value, pseudo, idPoupee });
@@ -157,6 +172,11 @@ const renommerPoupee = async (oldId, newId) => {
   const setLevres = (v) => updateField("levres", v);
   const setCheveux = (v) => updateField("cheveux", v);
   const setPrenom = (v) => updateField("prenom", v);
+  const updateTissuBas = (patch) => updateField("tissuBas", {...data.tissuBas, ...patch});
+  const updateTissuHaut = (patch) => updateField("tissuHaut", {...data.tissuHaut, ...patch});
+
+  
+console.log("POUPEE CHARGÉE :", data);
 
   return {
     poupees,        // liste des poupées [{id, data}]
@@ -177,6 +197,13 @@ const renommerPoupee = async (oldId, newId) => {
     chargerPoupee,
     updateNomCoiffure,
     supprimerPoupee,
-    renommerPoupee
+    renommerPoupee,
+    tissuHaut,
+    setTissuHaut,
+    updateTissuHaut,
+    tissuBas,
+    setTissuBas,
+    updateTissuBas
   };
 }
+

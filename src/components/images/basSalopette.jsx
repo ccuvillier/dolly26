@@ -1,13 +1,17 @@
 import React from 'react';
+import EnteteSvg from "../enteteSvg";
 
-const BasSalopette = ({ color, width = 400, height = 400, onPickColor }) => {
+const BasSalopette = ({ tissuBas = { name: "uni", color: "#fff" }, color, width = 400, height = 400, onPickColor }) => {
     return (
         <svg version="1.1" xmlns="http://www.w3.org/2000/svg"  
            width={width} height={height} viewBox="27 0 400 400" className="svg"
            style={{ cursor: "pointer" }}
         >
-        <path fill="#fff" d="M236.3,108.9s1.1,62.9,2.2,118.4,0,126.5,0,126.5l1.6,13.5h27.4s1.6-11.5,1.6-11.5c0,0,3-6.5,7.4-23,6.2-23.3,13.1-132,18.3-192.7,8.4-99.1-21-132.4-21-132.4h-71.4c0,.1-25.4,21-25.4,130.2s17.5,177.3,19.7,194.2c2.2,16.9,8.7,23.7,8.7,23.7l1.6,11.5h26.4l1.6-13.5s-2.1-71-1-126.5c1.1-55.5,2.2-118.4,2.2-118.4Z"/>
-        <path fill="#fff" d="M203.4.6h69.2s1.2,7.1,1.2,7.1c0,0-17.4,1.3-38.6,1.3s-32.8-1.2-32.8-1.2l1-7.3Z"/>
+        <EnteteSvg tissu={tissuBas} />
+        <path fill={tissuBas.isUni ? tissuBas.color : `url(#${tissuBas.name})`} onClick={(e) => onPickColor && onPickColor(e, { type: "tissu", target: "bas", value: tissuBas })}
+            d="M236.3,108.9s1.1,62.9,2.2,118.4,0,126.5,0,126.5l1.6,13.5h27.4s1.6-11.5,1.6-11.5c0,0,3-6.5,7.4-23,6.2-23.3,13.1-132,18.3-192.7,8.4-99.1-21-132.4-21-132.4h-71.4c0,.1-25.4,21-25.4,130.2s17.5,177.3,19.7,194.2c2.2,16.9,8.7,23.7,8.7,23.7l1.6,11.5h26.4l1.6-13.5s-2.1-71-1-126.5c1.1-55.5,2.2-118.4,2.2-118.4Z"/>
+        <path fill={tissuBas.isUni ? tissuBas.color : `url(#${tissuBas.name})`} onClick={(e) => onPickColor && onPickColor(e, { type: "tissu", target: "bas", value: tissuBas })}
+            d="M203.4.6h69.2s1.2,7.1,1.2,7.1c0,0-17.4,1.3-38.6,1.3s-32.8-1.2-32.8-1.2l1-7.3Z"/>
         
         <g className='relief'>
             <path d="M209.7,367s0-5.4-.7-9.2-2-6.1-1.9-12.5c0,0-.6,2.3-.5,4.3s1.7,6.6,1.8,8.5,1.3,9,1.3,9Z"/>

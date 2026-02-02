@@ -5,7 +5,18 @@ import { hauts } from "./carousels/data/CarouselHautsData";
 import { bass } from "./carousels/data/CarouselBasData";
 
 export default function PoupeePreview({ id, data, renommerPoupee }) {
-const { peau, yeux, levres, cheveux, nomCoiffure, nomHaut, nomBas } = data;
+const { 
+  peau, 
+  yeux, 
+  levres, 
+  cheveux, 
+  nomCoiffure, 
+  nomHaut, 
+  nomBas,
+  tissuHaut,
+  tissuBas 
+} = data;
+
 const coiffure = hairs.find(h => h.name === nomCoiffure);
 const HairComponent = coiffure ? coiffure.component : null;
 const haut = hauts.find(h => h.name === nomHaut);
@@ -20,6 +31,7 @@ const handleRename = async () => {
     await renommerPoupee(data.prenom, nouveauPrenom);  // utilise la fonction passée en prop
     setEditing(false);
 };
+console.log("Preview tissuHaut :", tissuHaut);
 
 
 return (
@@ -58,7 +70,7 @@ return (
        {/* Haut */}
       {HautComponent && (
         <div className="hautPreview">
-          <HautComponent color={haut} />
+          <HautComponent color={haut} tissuHaut={tissuHaut} />
         </div>
       )}
       
@@ -66,7 +78,7 @@ return (
        {/* Bas */}
       {BasComponent && (
         <div className="basPreview">
-          <BasComponent color={bas} />
+          <BasComponent color={bas} tissuBas={tissuBas} />
         </div>
       )}
     </div>

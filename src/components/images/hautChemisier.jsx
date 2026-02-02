@@ -1,39 +1,50 @@
 import React from 'react';
+import EnteteSvg from "../EnteteSvg";
+import { DEFAULT_TISSU } from "../../constants/defaultTissu";
 
-const HautChemisier = ({ color, width = 250, height = 210, onPickColor }) => {
+const HautChemisier = ({ tissuHaut, width = 250, height = 210, onPickColor }) => {
+
+    // Merge avec DEFAULT_TISSU pour sécurité
+  const mergedTissu = { ...DEFAULT_TISSU, ...tissuHaut };
+
     return (
         <svg version="1.1" xmlns="http://www.w3.org/2000/svg"  
            width={width} height={height} viewBox="-23 0 250 210" className="svg"
            style={{ cursor: "pointer" }}
         >
-         <g fill='#fff'>
+        <EnteteSvg tissu={tissuHaut} />
+
+         <g
+        fill={mergedTissu.isUni ? mergedTissu.color : `url(#tissu-${mergedTissu.name})`}
+        onClick={(e) => onPickColor && onPickColor(e, { type: "tissu", target: "haut", value: mergedTissu })}
+      >
             <polygon points="113.4 34.1 99.6 13.8 87.6 18.9 99.6 48.7 113.4 34.1"/>
             <path d="M88.4,21.5l-21.8,6.6s4.2,12.3,4,28.6-3.5,29.5-3.5,29.5c0,0,.5,10.6,2.9,19.2s8.9,39.6,8.9,39.6l69.9-.2s7-33.7,8.4-40.9,4-17.7,3.2-23.5-4.2-20.9-2.9-30.3c1.3-9.4,4.2-22,4.2-22l-22.6-8-11.7,28.3-14.1-14.3-13.5,13.7-11.4-26.3Z"/>
             <polygon points="113.4 34.1 128.8 12.9 139.9 18.3 127.4 48.4 113.4 34.1"/>
             <polygon points="113.4 34.1 108.9 38.7 108.9 145 118.2 145 118.2 39 113.4 34.1"/>
             
             <g className='notfill'>
-            <ellipse cx="113.4" cy="46.8" rx="2.1" ry="2.3"/>
-            <ellipse cx="113.4" cy="67.6" rx="2.1" ry="2.3"/>
-            <ellipse cx="113.4" cy="88.4" rx="2.1" ry="2.3"/>
-            <ellipse cx="113.4" cy="109.1" rx="2.1" ry="2.3"/>
-            <ellipse cx="113.4" cy="129.9" rx="2.1" ry="2.3"/>
+                <ellipse cx="113.4" cy="46.8" rx="2.1" ry="2.3"/>
+                <ellipse cx="113.4" cy="67.6" rx="2.1" ry="2.3"/>
+                <ellipse cx="113.4" cy="88.4" rx="2.1" ry="2.3"/>
+                <ellipse cx="113.4" cy="109.1" rx="2.1" ry="2.3"/>
+                <ellipse cx="113.4" cy="129.9" rx="2.1" ry="2.3"/>
             </g>
             <path d="M68.3,28s-5.8-2.3-11.9,13.9c-6.1,16.2-11.7,41-20.6,63.1-8.9,22.1-29.8,50.2-30,61.4-.2,11.1,2.4,11.1,2.4,11.1,0,0-.3-4,7.9,0,8.2,4,11.5,8.1,11.5,8.1,0,0,6.1.2,16.5-25.3,5.3-13,11.8-34.4,16.9-49.9s16.5-53.8,7.3-82.4Z"/>
             <g>
-            <path d="M8.8,175.9s5.3-.5,10.3,2.6c5,3.1,8.4,7.2,8.4,7.2l-15.2,21s-3.5-4.2-7.1-5.5-6.6-1.3-6.6-1.3l10.1-23.9Z"/>
-            <line x1=".7" y1="199.8" x2="10.5" y2="176.1"/>
-            <ellipse cx="12.5" cy="180.2" rx="1.2" ry="1.3" transform="translate(-157.1 118.2) rotate(-66)"/>
-            <ellipse cx="8.5" cy="188.3" rx="1.2" ry="1.3" transform="translate(-166.9 119.3) rotate(-66)"/>
-            <ellipse cx="4.7" cy="197.3" rx="1.2" ry="1.3" transform="translate(-177.4 121.2) rotate(-66)"/>
+                <path d="M8.8,175.9s5.3-.5,10.3,2.6c5,3.1,8.4,7.2,8.4,7.2l-15.2,21s-3.5-4.2-7.1-5.5-6.6-1.3-6.6-1.3l10.1-23.9Z"/>
+                <line x1=".7" y1="199.8" x2="10.5" y2="176.1"/>
+                <ellipse cx="12.5" cy="180.2" rx="1.2" ry="1.3" transform="translate(-157.1 118.2) rotate(-66)"/>
+                <ellipse cx="8.5" cy="188.3" rx="1.2" ry="1.3" transform="translate(-166.9 119.3) rotate(-66)"/>
+                <ellipse cx="4.7" cy="197.3" rx="1.2" ry="1.3" transform="translate(-177.4 121.2) rotate(-66)"/>
             </g>
             <path d="M157.7,28s5.8-2.3,11.9,13.9,11.7,41,20.6,63.1c8.9,22.1,29.8,50.2,30,61.4s-2.4,11.1-2.4,11.1c0,0,.3-4-7.9,0-8.2,4-11.5,8.1-11.5,8.1,0,0-6.1.2-16.5-25.3-5.3-13-11.8-34.4-16.9-49.9s-16.5-53.8-7.3-82.4Z"/>
             <g>
-            <path d="M217.2,175.9s-5.3-.5-10.3,2.6c-5,3.1-8.4,7.2-8.4,7.2l15.2,21s3.5-4.2,7.1-5.5c3.6-1.3,6.6-1.3,6.6-1.3l-10.1-23.9Z"/>
-            <line x1="225.3" y1="199.8" x2="215.5" y2="176.1"/>
-            <ellipse cx="213.5" cy="180.2" rx="1.3" ry="1.2" transform="translate(-54.9 102.6) rotate(-24)"/>
-            <ellipse cx="217.5" cy="188.3" rx="1.3" ry="1.2" transform="translate(-57.8 104.9) rotate(-24)"/>
-            <ellipse cx="221.3" cy="197.3" rx="1.3" ry="1.2" transform="translate(-61.2 107.2) rotate(-24)"/>
+                <path d="M217.2,175.9s-5.3-.5-10.3,2.6c-5,3.1-8.4,7.2-8.4,7.2l15.2,21s3.5-4.2,7.1-5.5c3.6-1.3,6.6-1.3,6.6-1.3l-10.1-23.9Z"/>
+                <line x1="225.3" y1="199.8" x2="215.5" y2="176.1"/>
+                <ellipse cx="213.5" cy="180.2" rx="1.3" ry="1.2" transform="translate(-54.9 102.6) rotate(-24)"/>
+                <ellipse cx="217.5" cy="188.3" rx="1.3" ry="1.2" transform="translate(-57.8 104.9) rotate(-24)"/>
+                <ellipse cx="221.3" cy="197.3" rx="1.3" ry="1.2" transform="translate(-61.2 107.2) rotate(-24)"/>
             </g>
         </g>
       </svg>

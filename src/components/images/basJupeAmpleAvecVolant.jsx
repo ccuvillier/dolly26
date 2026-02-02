@@ -1,7 +1,12 @@
 import React from 'react';
 import EnteteSvg from "../enteteSvg";
+import { DEFAULT_TISSU } from "../../constants/defaultTissu";
 
 const BasJupeAmpleAvecVolant = ({ tissuBas = { name: "uni", color: "#fff" }, width = 400, height = 400, onPickColor }) => {
+
+    // Merge avec DEFAULT_TISSU pour sécurité
+      const mergedTissu = { ...DEFAULT_TISSU, ...tissuBas };
+
     return (
         <svg version="1.1" xmlns="http://www.w3.org/2000/svg"  
            width={width} height={height} viewBox="27 0 400 400" className="svg"
@@ -9,7 +14,8 @@ const BasJupeAmpleAvecVolant = ({ tissuBas = { name: "uni", color: "#fff" }, wid
         >
          <EnteteSvg tissu={tissuBas} />
 
-        <g fill={tissuBas.isUni ? tissuBas.color : `url(#${tissuBas.name})`} onClick={(e) => onPickColor && onPickColor(e, { type: "tissu", target: "bas", value: tissuBas })}
+        <g fill={mergedTissu.isUni ? mergedTissu.color : `url(#tissu-${mergedTissu.name})`} 
+        onClick={(e) => onPickColor && onPickColor(e, { type: "tissu", target: "bas", value: tissuBas })}
         style={{ pointerEvents: "all" }}>
             <path d="M202.3,8.4L204.3,0s15.5.4,32.1.4,36.3.1,36.3.1l1.7,7.7h-72.1Z"/>
             <path d="M109.2,151.3s-23.6,49.8-29.5,57.4-11.8,11-11.8,11c0,0,7.6,13.5,30.4,16s21.9-5.1,38,0c16,5.1,27,16.9,27,16.9,0,0,29.5,16.9,86.1,6.8s65.8-16,65.8-16c0,0,21.1.8,43.9-7.6,22.8-8.4,24.5-12.7,24.5-12.7l-3.4-7.6s14.3-1.7,22.8-7.6l8.4-5.9s-21.1-43-42.2-75.1-38-48.9-38-48.9l-182.2,4.2-39.7,69.2h0Z"/>

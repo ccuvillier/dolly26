@@ -1,5 +1,4 @@
-// PoupeeView.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FilleNue from "./FilleNue";
 import { hairs } from "./carousels/data/CarouselCoiffuresData";
 import CarouselCoiffures from "./carousels/CarouselCoiffures.jsx";
@@ -16,10 +15,10 @@ export default function PoupeeView({
   cheveux,
   nomCoiffure,
   setNomCoiffure,
-  colorHaut,
   nomHaut,
   setNomHaut,
-  colorBas,
+  tissuHaut,
+  setTissuHaut,
   nomBas,
   setNomBas,
   tissuBas,
@@ -28,50 +27,31 @@ export default function PoupeeView({
   revoirGrille
 }) {
 
-  const [activeCarousel, setActiveCarousel] = useState(null);
+  const [activeCarousel, setActiveCarousel] = useState(null); 
   // valeurs possibles : "coiffure" | "haut" | "bas" | null
 
+  // 🔹 Debug tissus reçus
+  useEffect(() => {
+    console.log("🔹 tissuHaut props", tissuHaut);
+    console.log("🔹 tissuBas props", tissuBas);
+  }, [tissuHaut, tissuBas]);
 
-  // Détermine la coiffure à afficher si carousel non visible
-  const coiffureAAfficher = nomCoiffure
-    ? hairs.find(h => h.name === nomCoiffure)
-    : null;
+  // ----------------- AFFICHAGE DES ÉLÉMENTS -----------------
+  const coiffureAAfficher = nomCoiffure ? hairs.find(h => h.name === nomCoiffure) : null;
+  const hautAAfficher = nomHaut ? hauts.find(h => h.name === nomHaut) : null;
+  const basAAfficher = nomBas ? bass.find(h => h.name === nomBas) : null;
 
-  const handleSelect = (hairName) => {
-    setNomCoiffure(hairName);    // met à jour le nom dans App.jsx
-    setActiveCarousel(null);    // ferme le carousel
-  };
+  const handleSelectHair = (name) => { setNomCoiffure(name); setActiveCarousel(null); };
+  const handleSelectHaut = (name) => { setNomHaut(name); setActiveCarousel(null); };
+  const handleSelectBas = (name) => { setNomBas(name); setActiveCarousel(null); };
 
-  // Détermine le haut à afficher si carousel non visible
-  const hautAAfficher = nomHaut
-    ? hauts.find(h =>h.name === nomHaut)
-    : null;
-
-  const handleSelectHaut = (hautName) => {
-    setNomHaut(hautName);
-    setActiveCarousel(null);
-  }
-
-  // Détermine le bas à afficher si carousel non visible
-  const basAAfficher = nomBas
-    ? bass.find(h =>h.name === nomBas)
-    : null;
-  
-  const handleSelectBas = (basName) => {
-    setNomBas(basName);
-    setActiveCarousel(null);
-  }
-
-
-  // Fonction pour passer à Menu
   const showCarousel = () => setActiveCarousel("coiffure");
   const showHaut = () => setActiveCarousel("haut");
   const showBas = () => setActiveCarousel("bas");
 
   return (
-    
     <div id="poupeeView" className="zoomIn">
-        {/* Menu */}
+      {/* Menu */}
       <Menu  
         onShowCarousel={showCarousel} 
         onShowCarouselHauts={showHaut}
@@ -89,12 +69,12 @@ export default function PoupeeView({
         />
       </div>
 
-      {/* Affichage carousel ou coiffure choisie */}
+      {/* ------------------- COIFFURE ------------------- */}
       {activeCarousel === "coiffure" ? (
         <CarouselCoiffures
           color={cheveux}
           initialHairName={nomCoiffure}
-          onSelect={handleSelect}
+          onSelect={handleSelectHair}
         />
       ) : coiffureAAfficher ? (
         <div id="coiffureChoisie" style={{ position: "relative" }}>
@@ -109,45 +89,46 @@ export default function PoupeeView({
         </div>
       ) : null}
 
-      {/* Affichage carousel ou haut choisi */}
+      {/* ------------------- HAUT ------------------- */}
       {activeCarousel === "haut" ? (
         <CarouselHauts
-          color={colorHaut}
+          color={tissuHaut.color}   // couleur principale du tissu
           initialHautName={nomHaut}
           onSelect={handleSelectHaut}
         />
       ) : hautAAfficher ? (
         <div id="hautChoisi" style={{ position: "relative" }}>
           {React.createElement(hautAAfficher.component, {
-            tissu: { name: nomHaut, color: colorHaut, isUni: true },
+            tissuHaut,   // passe tout l'objet tissuHaut
             onPickColor: (e) => openPicker(e, {
               type: "tissu",
-              target: "Haut",
+              target: "haut",
               value: tissuHaut
-            })
+            }),
           })}
         </div>
       ) : null}
 
-      {/* Affichage carousel ou bas choisi */}
+      {/* ------------------- BAS ------------------- */}
       {activeCarousel === "bas" ? (
         <CarouselBas
-          color={colorBas}
+          color={tissuBas.color}
           initialBasName={nomBas}
           onSelect={handleSelectBas}
         />
       ) : basAAfficher ? (
         <div id="basChoisi" style={{ position: "relative" }}>
           {React.createElement(basAAfficher.component, {
-            tissuBas: tissuBas,
+            tissuBas,
             onPickColor: (e) => openPicker(e, {
               type: "tissu",
               target: "bas",
               value: tissuBas
-            })
+            }),
           })}
         </div>
       ) : null}
+
     </div>
   );
 }
