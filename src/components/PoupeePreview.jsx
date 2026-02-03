@@ -25,13 +25,16 @@ const bas = bass.find(h => h.name === nomBas);
 const BasComponent = bas ? bas.component : null;
 const [editing, setEditing] = useState(false);
 const [nouveauPrenom, setNouveauPrenom] = useState(data.prenom); 
+  // ⚡ Ajouter instanceId pour chaque tissu
+  const tissuHautWithId = { ...tissuHaut, instanceId: `${id}-haut` };
+  const tissuBasWithId  = { ...tissuBas, instanceId: `${id}-bas` };
 
 const handleRename = async () => {
     if (!nouveauPrenom) return;
     await renommerPoupee(data.prenom, nouveauPrenom);  // utilise la fonction passée en prop
     setEditing(false);
 };
-console.log("Preview tissuHaut :", tissuHaut);
+
 
 
 return (
@@ -70,7 +73,7 @@ return (
        {/* Haut */}
       {HautComponent && (
         <div className="hautPreview">
-          <HautComponent color={haut} tissuHaut={tissuHaut} />
+          <HautComponent color={haut} tissuHaut={tissuHautWithId} />
         </div>
       )}
       
@@ -78,7 +81,7 @@ return (
        {/* Bas */}
       {BasComponent && (
         <div className="basPreview">
-          <BasComponent color={bas} tissuBas={tissuBas} />
+          <BasComponent color={bas} tissuBas={tissuBasWithId} />
         </div>
       )}
     </div>

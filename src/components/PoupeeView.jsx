@@ -9,6 +9,7 @@ import CarouselBas from "./carousels/CarouselBas.jsx";
 import Menu from "./Menu.jsx";
 
 export default function PoupeeView({
+  id,
   peau,
   yeux,
   levres,
@@ -99,7 +100,7 @@ export default function PoupeeView({
       ) : hautAAfficher ? (
         <div id="hautChoisi" style={{ position: "relative" }}>
           {React.createElement(hautAAfficher.component, {
-            tissuHaut,   // passe tout l'objet tissuHaut
+            tissuHaut: { ...tissuHaut, instanceId: `${id}-haut` },
             onPickColor: (e) => openPicker(e, {
               type: "tissu",
               target: "haut",
@@ -119,7 +120,7 @@ export default function PoupeeView({
       ) : basAAfficher ? (
         <div id="basChoisi" style={{ position: "relative" }}>
           {React.createElement(basAAfficher.component, {
-            tissuBas,
+            tissuBas: { ...tissuBas, instanceId: `${id}-bas` },
             onPickColor: (e) => openPicker(e, {
               type: "tissu",
               target: "bas",

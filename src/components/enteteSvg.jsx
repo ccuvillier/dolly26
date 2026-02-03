@@ -14,20 +14,23 @@ const EnteteSvg = ({ tissu }) => {
   // Cherche la référence dans le tableau tissus
   const tissuRef = tissus.find(t => t.name === mergedTissu.name);
 
+// Génère un ID unique stable pour ce tissu
+const patternId = `tissu-${mergedTissu.instanceId || mergedTissu.name}`;
+
+
   if (!tissuRef || !tissuRef.preview) {
     console.warn("Tissu non trouvé ou pas de preview :", mergedTissu.name);
-    // fallback simple : carré gris
+    // fallback simple : carré blanc
     return (
       <defs>
         <pattern id={`fallback-${mergedTissu.name}`} width={mergedTissu.size} height={mergedTissu.size} patternUnits="userSpaceOnUse">
-          <rect width={mergedTissu.size} height={mergedTissu.size} fill="#ccc" />
+          <rect width={mergedTissu.size} height={mergedTissu.size} fill="#fff" />
         </pattern>
       </defs>
     );
   }
 
-  // Id unique pour éviter conflits
-  const patternId = `tissu-${mergedTissu.name}`;
+
 
   return (
     <defs>

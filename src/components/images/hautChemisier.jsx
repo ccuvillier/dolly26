@@ -4,7 +4,6 @@ import { DEFAULT_TISSU } from "../../constants/defaultTissu";
 
 const HautChemisier = ({ tissuHaut, width = 250, height = 210, onPickColor }) => {
 
-    // Merge avec DEFAULT_TISSU pour sécurité
   const mergedTissu = { ...DEFAULT_TISSU, ...tissuHaut };
 
     return (
@@ -14,10 +13,10 @@ const HautChemisier = ({ tissuHaut, width = 250, height = 210, onPickColor }) =>
         >
         <EnteteSvg tissu={tissuHaut} />
 
-         <g
-        fill={mergedTissu.isUni ? mergedTissu.color : `url(#tissu-${mergedTissu.name})`}
-        onClick={(e) => onPickColor && onPickColor(e, { type: "tissu", target: "haut", value: mergedTissu })}
-      >
+        <g
+            fill={mergedTissu.isUni ? mergedTissu.color : `url(#tissu-${mergedTissu.instanceId})`}
+            onClick={(e) => onPickColor && onPickColor(e, { type: "tissu", target: "haut", value: mergedTissu })}
+        >
             <polygon points="113.4 34.1 99.6 13.8 87.6 18.9 99.6 48.7 113.4 34.1"/>
             <path d="M88.4,21.5l-21.8,6.6s4.2,12.3,4,28.6-3.5,29.5-3.5,29.5c0,0,.5,10.6,2.9,19.2s8.9,39.6,8.9,39.6l69.9-.2s7-33.7,8.4-40.9,4-17.7,3.2-23.5-4.2-20.9-2.9-30.3c1.3-9.4,4.2-22,4.2-22l-22.6-8-11.7,28.3-14.1-14.3-13.5,13.7-11.4-26.3Z"/>
             <polygon points="113.4 34.1 128.8 12.9 139.9 18.3 127.4 48.4 113.4 34.1"/>

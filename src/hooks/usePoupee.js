@@ -114,7 +114,7 @@ const renommerPoupee = async (oldId, newId) => {
     const loaded = snap.data();
 
     setTissuHaut(data.tissuHaut ?? DEFAULT_TISSU);
-setTissuBas(data.tissuBas ?? DEFAULT_TISSU);
+    setTissuBas(data.tissuBas ?? DEFAULT_TISSU);
 
     // Ajouter les champs manquants
     const missing = {};
@@ -176,7 +176,7 @@ setTissuBas(data.tissuBas ?? DEFAULT_TISSU);
   const updateTissuHaut = (patch) => updateField("tissuHaut", {...data.tissuHaut, ...patch});
 
   
-console.log("POUPEE CHARGÉE :", data);
+  //console.log("POUPEE CHARGÉE :", data);
 
   return {
     poupees,        // liste des poupées [{id, data}]

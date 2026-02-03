@@ -142,13 +142,16 @@ export default function App() {
 
   // ------------------- GESTION PALETTE TISSUS -------------------
   const applyTissu = (target, patch) => {
-    const cleanPatch = { ...patch, name: patch.name.replace(/^tissu-/, "") };
+    const cleanPatch = {
+      ...patch,
+      ref: patch.ref ?? patch.name.replace(/^tissu-/, "")
+    };
 
     if (target === "haut") {
-    updateTissuHaut(cleanPatch);
-  } else if (target === "bas") {
-    updateTissuBas(cleanPatch);
-  }
+      updateTissuHaut(cleanPatch);
+    } else if (target === "bas") {
+      updateTissuBas(cleanPatch);
+    }
   };
 
   const handleChangeTissu = (newTissu) => applyTissu(picker.target, newTissu);
@@ -205,6 +208,7 @@ export default function App() {
             <>
               <h1>{titrePoupée}</h1>
               <PoupeeView
+                id={idPoupee}
                 {...poupeeAffichee}
                 setNomCoiffure={isCreating
                   ? (value) => setCreationData(prev => ({ ...prev, nomCoiffure: value }))
@@ -220,7 +224,7 @@ export default function App() {
                 }
                 openPicker={openPicker}
                 revoirGrille={revenirGrille}
-                tissuBas={tissuBas}
+                tissuBas={{ ...tissuBas, instanceId: idPoupee }}
                 setTissuBas={updateTissuBas}
                 tissuHaut={tissuHaut}
                 setTissuHaut={updateTissuHaut}
