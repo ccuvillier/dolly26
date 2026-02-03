@@ -39,6 +39,10 @@ const patternId = `tissu-${mergedTissu.instanceId || mergedTissu.name}`;
         patternUnits="userSpaceOnUse"
         width={mergedTissu.size}
         height={mergedTissu.size}
+        style={{
+            transofrmOrigin: "center",
+            transform: `rotate(${mergedTissu.rotation}deg)`
+        }}
       >
         <image
           href={tissuRef.preview}

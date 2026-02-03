@@ -5,5 +5,6 @@ export const DEFAULT_TISSU = {
   size: 270,
   hue: 0,
   saturation: 100,
-  brightness: 100
+  brightness: 100,
+  rotate: 0
 };

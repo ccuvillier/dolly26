@@ -251,6 +251,7 @@ export default function App() {
                   tissu={picker.value}
                   onChange={handleChangeTissu}
                   onClose={closePicker}
+                  openPicker={openPicker}
                 />
               )}
             </>
