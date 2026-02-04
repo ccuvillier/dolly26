@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { tissus } from "./data/tissusData";
 import { DEFAULT_TISSU } from "../../constants/defaultTissu";
+import { useDraggable } from "../../hooks/useDraggable";
 
 export default function PaletteTissus({ x, y, tissu, onChange, onClose, openPicker }) {
 
@@ -50,79 +51,21 @@ export default function PaletteTissus({ x, y, tissu, onChange, onClose, openPick
 
 
   /* PALETTE TISSU DRAGGABLE */ 
-  const [position, setPosition] = useState({ x, y });
-  const [dragging, setDragging] = useState(false);
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
-
-  // début du drag
-  const handleMouseDown = (e) => {
-    e.preventDefault();
-    setDragging(true);
-    setOffset({
-      x: e.clientX - position.x,
-      y: e.clientY - position.y,
-    });
-  };
-  const handleTouchStart = (e) => {
-    const touch = e.touches[0];
-    setDragging(true);
-    setOffset({
-      x: touch.clientX - position.x,
-      y: touch.clientY - position.y,
-    });
-  };
-
-  // le déplacement
-  const handleMove = (e) => {
-    if (!dragging) return;
-
-    let clientX = e.clientX;
-    let clientY = e.clientY;
-
-    if (e.type.startsWith("touch")) {
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-    }
-
-    setPosition({
-      x: clientX - offset.x,
-      y: clientY - offset.y,
-    });
-  };
-
-  // arrêt du drag
-  const handleEnd = () => setDragging(false);
-
-  // écouteurs du drag
-  useEffect(() => {
-    window.addEventListener("mousemove", handleMove);
-    window.addEventListener("mouseup", handleEnd);
-    window.addEventListener("touchmove", handleMove, { passive: false });
-    window.addEventListener("touchend", handleEnd);
-    window.addEventListener("touchcancel", handleEnd);
-    return () => {
-      window.removeEventListener("mousemove", handleMove);
-      window.removeEventListener("mouseup", handleEnd);
-      window.removeEventListener("touchmove", handleMove);
-      window.removeEventListener("touchend", handleEnd);
-      window.removeEventListener("touchcancel", handleEnd);
-    };
-  }, [dragging, offset]);
-
-
+  const { position, dragging, bindHeader } = useDraggable({ x, y });
 
   return (
     <div className="palette-tissus"
-      style={{ position: "fixed", top: position.y, left: position.x, zIndex: 1000
-       }}
+      style={{ position: "fixed", top: position.y, left: position.x, zIndex: 1000 }}
+      onClick={(e) => e.stopPropagation()}
       
     >
       <div className="palette-header" 
-        onMouseDown={handleMouseDown}
-        onTouchStart={handleTouchStart}
-        onClick={(e) => e.stopPropagation()}
-        style={{ cursor: dragging ? "grabbing" : "grab"
-       }}
+         {...bindHeader}
+          style={{
+            cursor: dragging ? "grabbing" : "grab",
+            userSelect: "none",
+            touchAction: "none",
+          }}
         >
         <span>Déplacer la palette</span>
       </div>

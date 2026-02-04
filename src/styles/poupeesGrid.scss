@@ -121,7 +121,7 @@
       }
       &:hover:after {
         content: "";
-        background: url("./components/images/pencil-solid-full.svg") no-repeat;
+        background: url("../components/images/pencil-solid-full.svg") no-repeat;
         height: 20px;
         width: 20px;
         display: inline-block;
@@ -146,7 +146,7 @@
     z-index: 50;
     border-radius: 50%;
     
-    background-image: url(./components/images/fleurs-encadrement.svg);
+    background-image: url(../components/images/fleurs-encadrement.svg);
     background-repeat: no-repeat;
     background-position: 18% 82%;
     background-origin: border-box;

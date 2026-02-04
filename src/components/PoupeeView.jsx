@@ -25,6 +25,7 @@ export default function PoupeeView({
   tissuBas,
   setTissuBas,
   openPicker,
+  closePicker,
   revoirGrille
 }) {
 
@@ -50,14 +51,20 @@ export default function PoupeeView({
   const showHaut = () => setActiveCarousel("haut");
   const showBas = () => setActiveCarousel("bas");
 
+  /*---------- FERMER LES PALETTES TISSUS ET COLOR ---------------*/
+  const handleMenuAction = (action) => {
+    closePicker();
+    action();
+  };
+
   return (
     <div id="poupeeView" className="zoomIn">
       {/* Menu */}
-      <Menu  
-        onShowCarousel={showCarousel} 
-        onShowCarouselHauts={showHaut}
-        onShowCarouselBas={showBas}
-        onRevoirGrille={revoirGrille}
+      <Menu
+        onShowCarousel={() => handleMenuAction(showCarousel)}
+        onShowCarouselHauts={() => handleMenuAction(showHaut)}
+        onShowCarouselBas={() => handleMenuAction(showBas)}
+        onRevoirGrille={() => handleMenuAction(revoirGrille)}
       />
 
       {/* Poupée de base */}

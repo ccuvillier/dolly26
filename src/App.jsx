@@ -156,6 +156,7 @@ export default function App() {
 
   const handleChangeTissu = (newTissu) => applyTissu(picker.target, newTissu);
 
+
   // ------------------- RENDER -------------------
   return (
     <div className="App zoomIn">
@@ -223,6 +224,7 @@ export default function App() {
                   : setNomBas
                 }
                 openPicker={openPicker}
+                closePicker={closePicker}
                 revoirGrille={revenirGrille}
                 tissuBas={{ ...tissuBas, instanceId: idPoupee }}
                 setTissuBas={updateTissuBas}

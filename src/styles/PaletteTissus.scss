@@ -3,30 +3,6 @@
     padding: 10px;
     box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 10px;
 
-    > .palette-header {
-        background-color: #fcfcfc;
-        border-top: solid 1px #ccc;
-        position: relative;
-        margin-bottom: 10px;
-
-        &::before, &::after {
-            content: '';
-            display: block ;
-            border-top: solid 1px #ccc;
-            margin-top: 6px;
-        }
-        span {
-            position: absolute;
-            color: lightgray;
-            top: -5px;
-            left: 50%;
-            display: block;
-            transform: translateX(-50%);
-            text-shadow: #fff 0px 0px 5px, #fff 0px 0px 5px, #fff 0px 0px 5px;
-            background: white;
-        }
-    }
-
     > .palette-body {
         width: 250px;
         padding: 10px;
@@ -68,6 +44,32 @@
                 justify-content: space-between;
             }
         }
+    }
+}
+
+/* entete paletteTissu et colorPicker*/
+.palette-header {
+    background-color: #fcfcfc;
+    border-top: solid 1px #ccc;
+    position: relative;
+    margin-bottom: 10px;
+
+    &::before, &::after {
+        content: '';
+        display: block ;
+        border-top: solid 1px #ccc;
+        margin-top: 6px;
+    }
+    span {
+        position: absolute;
+        color: lightgray;
+        top: -5px;
+        left: 50%;
+        display: block;
+        transform: translateX(-50%);
+        text-shadow: #fff 0px 0px 5px, #fff 0px 0px 5px, #fff 0px 0px 5px;
+        background: white;
+        text-wrap: nowrap;
     }
 }
 

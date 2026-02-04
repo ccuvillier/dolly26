@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { SketchPicker } from "react-color";
+import { useDraggable } from "./hooks/useDraggable";
 
 const ColorPicker = ({ x, y, currentColor, target, onChange, onClose }) => {
+
+  const { position, dragging, bindHeader } = useDraggable({ x, y }); // Draggable
   const [tempColor, setTempColor] = useState(currentColor || "#ffffff");
 
   useEffect(() => {
@@ -18,8 +21,8 @@ const ColorPicker = ({ x, y, currentColor, target, onChange, onClose }) => {
     <div
       style={{
         position: "fixed",
-        top: y,
-        left: x,
+        top: position.y,
+        left: position.x,
         zIndex: 1000,
         background: "#fff",
         padding: "10px",
@@ -27,6 +30,19 @@ const ColorPicker = ({ x, y, currentColor, target, onChange, onClose }) => {
       }}
       onClick={e => e.stopPropagation()}
     >
+    
+    {/* HEADER DRAGGABLE */}
+      <div className="palette-header"
+        {...bindHeader}
+        style={{
+          cursor: dragging ? "grabbing" : "grab",
+          userSelect: "none",
+          touchAction: "none",
+        }}
+      >
+        <span>Déplacer la palette</span>
+      </div>
+
       <SketchPicker color={tempColor} onChange={handleChange} />
       <button onClick={onClose} className="close">Fermer</button>
     </div>

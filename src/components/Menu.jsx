@@ -1,6 +1,7 @@
 // Menu.jsx
 import React from "react";
 
+
 const Menu = ({ onShowCarousel, onRevoirGrille, onShowCarouselHauts, onShowCarouselBas }) => {
   return (
     <div className="menu">
