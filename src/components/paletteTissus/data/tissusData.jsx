@@ -21,78 +21,67 @@ export const tissus = [
     name: "antillais",
     label: "Antillais",
     isUni: false,
-    preview: tissuAntillais,
-    size: 270
+    preview: tissuAntillais
   },
   {
     name: "cacao",
     label: "Cacao",
     isUni: false,
-    preview: tissuCacao,
-    size: 270
+    preview: tissuCacao
   },
   {
     name: "eventail",
     label: "Eventail",
     isUni: false,
-    preview: tissuEventail,
-    size: 270
+    preview: tissuEventail
   },
   {
     name: "fleurs",
     label: "Fleurs",
     isUni: false,
-    preview: tissuFleurs,
-    size: 270
+    preview: tissuFleurs
   },
   {
     name: "jean",
     label: "Jean",
     isUni: false,
-    preview: tissuJean,
-    size: 270
+    preview: tissuJean
   },
   {
     name: "roseraie",
     label: "Roseraie",
     isUni: false,
-    preview: tissuRoseraie,
-    size: 270
+    preview: tissuRoseraie
   },
   {
     name: "vichy",
     label: "Vichy",
     isUni: false,
-    preview: tissuVichy,
-    size: 270
+    preview: tissuVichy
   },
   {
     name: "jersey",
     label: "Jersey",
     isUni: false,
-    preview: tissuJersey,
-    size: 270
+    preview: tissuJersey
   },
   {
     name: "tartan",
     label: "Tartan",
     isUni: false,
-    preview: tissuTartan,
-    size: 270
+    preview: tissuTartan
   },
   {
     name: "tweed",
     label: "Tweed",
     isUni: false,
-    preview: tissuTweed,
-    size: 270
+    preview: tissuTweed
   },
   {
     name: "poule",
     label: "Poule",
     isUni: false,
-    preview: tissuPiedDePoule,
-    size: 270
+    preview: tissuPiedDePoule
   }
 ];
 

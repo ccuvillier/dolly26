@@ -50,4 +50,4 @@ const CheveuxRaides = ({ color = "#fff", width = 350, height = 290, onPickColor 
     </svg>
     );
 };
-export default CheveuxRaides;
+export default React.memo(CheveuxRaides);

@@ -31,4 +31,4 @@ const CheveuxLongs = ({ color, width = 350, height = 290, onPickColor }) => {
 
   );
 };
-export default CheveuxLongs;
+export default React.memo(CheveuxLongs);

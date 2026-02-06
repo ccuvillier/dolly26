@@ -32,4 +32,4 @@ const BasJupeAmpleAvecVolant = ({ tissuBas = { name: "uni", color: "#fff" }, wid
 
     );
 };
-export default BasJupeAmpleAvecVolant;
+export default React.memo(BasJupeAmpleAvecVolant);

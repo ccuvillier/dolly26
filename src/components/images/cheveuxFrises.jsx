@@ -135,4 +135,4 @@ const CheveuxFrises = ({ color, width = 350, height = 290, onPickColor }) => {
         </svg>
     );
 };
-export default CheveuxFrises;
+export default React.memo(CheveuxFrises);

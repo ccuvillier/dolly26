@@ -231,9 +231,10 @@
     position: absolute;
     z-index: 0;
     display: inline-block;
-    width: 80vw;
+    width: 100vw;
     left: 50%;
     transform: translateX(-50%);
+    z-index: 0;
 }
 #poupee, .poupees-grid {
     .fille0{fill:#FFE4D9;stroke:#1D1D1B;}

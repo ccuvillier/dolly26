@@ -1,7 +1,7 @@
 import React from 'react';
 
 
-export default function FilleNue({ peau, yeux, levres, preview = false, openPicker }) {
+function FilleNue({ peau, yeux, levres, preview = false, openPicker }) {
 
     return (
 <svg version="1.1"xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" height="100%" width="100%" preserveAspectRatio="xMinYMin meet">
@@ -126,3 +126,5 @@ export default function FilleNue({ peau, yeux, levres, preview = false, openPick
 </svg>
     )
 }
+
+export default React.memo(FilleNue);

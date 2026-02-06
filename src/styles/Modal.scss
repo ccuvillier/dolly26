@@ -1,6 +1,6 @@
 
 .modalPseudo {
-  background: url(../components/images/ma-meilleure-amie.jpg) no-repeat center;
+  background: url(../components/images/ma-meilleure-amie.webp) no-repeat center;
 }
 .modalPrenom {
   background: url(../components/images/girlNue.svg) no-repeat center;
@@ -57,6 +57,11 @@
       padding: 5px 10px;
       border-radius: 5px;
       margin: 0 0 0 5px;
+      
+      &:hover {
+        background-color: forestgreen;
+        cursor: pointer;
+      }
     }
   }
 }
@@ -64,67 +69,5 @@
   background: lightcoral !important;
 }
 
-.formulaire {
-    position: absolute;
-    z-index: 100;
-    left: 50%;
-    transform: translate(-50%);
-    background: rgb(255,255,255,0.75);
-    padding: 25px;
-    border: solid 1px #000;
-    border-radius: 10px;
 
-    button {
-      background-color: dodgerblue;
-      color: #fff;
-      font-size: 16px;
-      border: none;
-      padding: 10px;
-      border-radius: 10px;
-    }
-
-    input {
-    background: none;
-    border: none;
-    }
-    input:focus {
-      background: white;
-      border: 1px solid grey;
-    }
-  }
-
-  .close {
-    position: absolute;
-    top: -12px;
-    right: -12px;
-    width: 25px;
-    height: 25px;
-    overflow: hidden;
-    text-indent: 50px;
-    border-radius: 50%;
-    border-color: #666;
-    cursor: pointer;;
-
-    &::before{
-      background: #666;
-      position: absolute;
-      display:block;
-      content:'';
-      width: 70%;
-      height: 6%;
-      top: 47%;
-      left: 15%;
-      transform: rotate(45deg);
-    } 
-    &::after{
-        background: #666;
-        position: absolute;
-        display:block;
-        content:'';
-        width: 6%;
-        height: 70%;
-        left: 47%;
-        top: 15%;
-        transform: rotate(45deg);
-    } 
-  }
+  

@@ -30,16 +30,48 @@
     display: block;
     line-height: 0;
 }
+#CarouselCoiffure {
+    min-height: 290px;
+}
 #CarouselHauts, #hautChoisi {
-    position: relative;
-    top: -65px;
+    position: absolute;
+    top: 230px;
+    width: 100vw;
 }
 #CarouselBas, #basChoisi {
-    position: relative;
-    top: -135px;
+    position: absolute;
+    top: 370px;
+    width: 100vw;
 }
 
 
 #coiffureChoisie {
-  pointer-events: none;
+    position: absolute;
+    top: 0;
+    width: 100vw;
+    pointer-events: none;
 }
+
+
+/**********/
+/* BOUTON */
+/**********/
+
+.CarouselGeneric button.choix {
+    position: absolute;
+    z-index: 100;
+    left: 50%;
+    transform: translate(-40%);
+    background-color: dodgerblue;
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    padding: 10px;
+    border-radius: 10px;
+
+    &:hover {
+        background-color: forestgreen;
+        cursor: pointer;
+    }
+}
+

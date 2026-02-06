@@ -12,6 +12,7 @@ export default function CarouselCoiffures({ color, onSelect, initialHairName }) 
           width={350}
           height={290}
           label="Choisir cette coiffure"
+          Id="CarouseCoiffures"
         />
   );
 }

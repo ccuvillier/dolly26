@@ -19,4 +19,4 @@ const HautManchesCourtesColBateau = ({ tissuHaut, color, width = 250, height = 2
         </svg>
     );
 };
-export default HautManchesCourtesColBateau;
+export default React.memo(HautManchesCourtesColBateau);

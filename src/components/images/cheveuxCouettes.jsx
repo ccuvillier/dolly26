@@ -59,4 +59,4 @@ const CheveuxCouettes = ({ color = "#fff", width = 350, height = 290, onPickColo
             </svg>
     );
 };
-export default CheveuxCouettes;
+export default React.memo(CheveuxCouettes);

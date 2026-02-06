@@ -19,4 +19,4 @@ const BasJupeDroiteCourte = ({ tissuBas = { name: "uni", color: "#fff" }, color,
         </svg>
     );
 };
-export default BasJupeDroiteCourte;
+export default React.memo(BasJupeDroiteCourte);

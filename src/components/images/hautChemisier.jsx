@@ -49,4 +49,4 @@ const HautChemisier = ({ tissuHaut, width = 250, height = 210, onPickColor }) =>
       </svg>
     );
 };
-export default HautChemisier;
+export default React.memo(HautChemisier);

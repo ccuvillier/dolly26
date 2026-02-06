@@ -27,4 +27,4 @@ const CheveuxCourts = ({ color = "#fff", width = 350, height = 290, onPickColor 
 </svg>
     );
 };
-export default CheveuxCourts;
+export default React.memo(CheveuxCourts);

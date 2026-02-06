@@ -34,4 +34,4 @@ const HautSalopette = ({ tissuHaut, color, width = 250, height = 210, onPickColo
     </svg>
   );
 };
-export default HautSalopette;
+export default React.memo(HautSalopette);

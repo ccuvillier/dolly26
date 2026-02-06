@@ -38,4 +38,4 @@ const CheveuxCarre = ({ color = "#fff", width = 350, height = 290, onPickColor }
       </svg>
     );
 };
-export default CheveuxCarre;
+export default React.memo(CheveuxCarre);

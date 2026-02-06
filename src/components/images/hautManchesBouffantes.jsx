@@ -46,4 +46,4 @@ const HautManchesBouffantes = ({ tissuHaut, color, width = 250, height = 210, on
         </svg>
     );
 };
-export default HautManchesBouffantes;
+export default React.memo(HautManchesBouffantes);

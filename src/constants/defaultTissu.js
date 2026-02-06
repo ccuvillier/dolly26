@@ -2,9 +2,9 @@ export const DEFAULT_TISSU = {
   name: "uni",
   isUni: true,
   color: "#ffffff",
-  size: 270,
-  hue: 0,
-  saturation: 100,
-  brightness: 100,
+  size: 135,
+  hue: 50,
+  saturation: 50,
+  brightness: 50,
   rotate: 0
 };

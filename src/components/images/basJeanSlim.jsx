@@ -46,4 +46,4 @@ const BasJeanSlim = ({ tissuBas = { name: "uni", color: "#fff" }, color, width =
       </svg>
     );
 };
-export default BasJeanSlim;
+export default React.memo(BasJeanSlim);

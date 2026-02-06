@@ -50,7 +50,7 @@ export default function CarouselGeneric({
     onSelect(items[activeIndex].name);
   };
 
-  console.log(color);
+  //console.log(color);
 
   return (
     <div className="CarouselGeneric" id={Id}>
@@ -66,11 +66,11 @@ export default function CarouselGeneric({
         ))}
       </Slider>
 
-      <div className="formulaire">
-        <button onClick={handleSelect}>
+
+        <button className="choix" onClick={handleSelect}>
           {label}
         </button>
-      </div>
+
     </div>
   );
 }

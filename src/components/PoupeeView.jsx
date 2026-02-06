@@ -32,11 +32,11 @@ export default function PoupeeView({
   const [activeCarousel, setActiveCarousel] = useState(null); 
   // valeurs possibles : "coiffure" | "haut" | "bas" | null
 
-  // 🔹 Debug tissus reçus
+  /* Debug tissus reçus
   useEffect(() => {
     console.log("🔹 tissuHaut props", tissuHaut);
     console.log("🔹 tissuBas props", tissuBas);
-  }, [tissuHaut, tissuBas]);
+  }, [tissuHaut, tissuBas]); */
 
   // ----------------- AFFICHAGE DES ÉLÉMENTS -----------------
   const coiffureAAfficher = nomCoiffure ? hairs.find(h => h.name === nomCoiffure) : null;
@@ -85,7 +85,7 @@ export default function PoupeeView({
           onSelect={handleSelectHair}
         />
       ) : coiffureAAfficher ? (
-        <div id="coiffureChoisie" style={{ position: "relative" }}>
+        <div id="coiffureChoisie">
           {React.createElement(coiffureAAfficher.component, {
             color: cheveux,
             onPickColor: (e) => openPicker(e, {
@@ -105,7 +105,7 @@ export default function PoupeeView({
           onSelect={handleSelectHaut}
         />
       ) : hautAAfficher ? (
-        <div id="hautChoisi" style={{ position: "relative" }}>
+        <div id="hautChoisi">
           {React.createElement(hautAAfficher.component, {
             tissuHaut: { ...tissuHaut, instanceId: `${id}-haut` },
             onPickColor: (e) => openPicker(e, {
@@ -125,7 +125,7 @@ export default function PoupeeView({
           onSelect={handleSelectBas}
         />
       ) : basAAfficher ? (
-        <div id="basChoisi" style={{ position: "relative" }}>
+        <div id="basChoisi">
           {React.createElement(basAAfficher.component, {
             tissuBas: { ...tissuBas, instanceId: `${id}-bas` },
             onPickColor: (e) => openPicker(e, {
