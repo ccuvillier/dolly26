@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { bass } from "../components/CarouselBasData";
+import { bass } from "../components/bassData";
 import { savePoupeeField } from "../firebase/firestoreFunctions";
 
 export default function useBas(prenom) {

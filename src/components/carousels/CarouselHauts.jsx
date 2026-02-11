@@ -1,5 +1,5 @@
 import CarouselGeneric from "./CarouselGeneric";
-import { hauts } from "./data/CarouselHautsData";
+import { hauts } from "./data/hautsData";
 
 export default function CarouselHauts({ color, onSelect, initialHautName }) {
   return (

@@ -1,5 +1,5 @@
 import CarouselGeneric from "./CarouselGeneric";
-import { bass } from "./data/CarouselBasData";
+import { bass } from "./data/bassData";
 
 export default function CarouselBas({ color, onSelect, initialBasName }) {
   return (

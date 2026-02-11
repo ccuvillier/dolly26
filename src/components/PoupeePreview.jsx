@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import FilleNue from "./filleNue";
-import { hairs } from "./carousels/data/CarouselCoiffuresData";
-import { hauts } from "./carousels/data/CarouselHautsData";
-import { bass } from "./carousels/data/CarouselBasData";
+import { hairs } from "./carousels/data/coiffuresData";
+import { hauts } from "./carousels/data/hautsData";
+import { bass } from "./carousels/data/bassData";
 
 export default function PoupeePreview({ id, data, renommerPoupee }) {
 const { 

@@ -7,7 +7,8 @@ export default function useStylePicker() {
     target: null,   // "cheveux" | "haut" | "bas"
     value: null,
     x: 0,
-    y: 0
+    y: 0,
+    positionClass: "top"
   });
 
   const openPicker = (e, options) => {
@@ -16,13 +17,18 @@ export default function useStylePicker() {
     const x = e?.clientX ?? window.innerWidth / 2;
     const y = e?.clientY ?? window.innerHeight / 2;
 
+
+    // Classe CSS top/bottom selon position du clic
+    const positionClass = y < window.innerHeight / 2 ? "top" : "bottom";
+
     setPicker({
       visible: true,
       type: options.type || "color",
       target: options.target,
       value: options.value,
       x: x + 20,
-      y
+      y,
+      positionClass
     });
   };
 

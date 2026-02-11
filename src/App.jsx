@@ -3,7 +3,7 @@ import ModalPseudo from "./components/ModalPseudo";
 import ModalPrenom from "./components/ModalPrenom";
 import PoupeesGrid from "./components/PoupeesGrid";
 import PoupeeView from "./components/PoupeeView";
-import ColorPicker from "./ColorPicker.jsx";
+import ColorfulPicker from "./ColorfulPicker.jsx";
 import PaletteTissus from "./components/paletteTissus/PaletteTissus";
 import usePoupee from "./hooks/usePoupee";
 import useCreationPoupee from "./hooks/useCreationPoupee";
@@ -234,13 +234,14 @@ export default function App() {
 
               {/* COLOR PICKER */}
               {picker.visible && picker.type === "color" && (
-                <ColorPicker
+                <ColorfulPicker
                   x={picker.x}
                   y={picker.y}
                   currentColor={picker.value}
                   target={picker.target}
                   onChange={applyColor}
                   onClose={closePicker}
+                  picker={picker}
                 />
               )}
 
@@ -254,6 +255,7 @@ export default function App() {
                   onChange={handleChangeTissu}
                   onClose={closePicker}
                   openPicker={openPicker}
+                  picker={picker}
                 />
               )}
             </>

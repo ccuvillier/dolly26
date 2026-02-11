@@ -1,5 +1,5 @@
 import CarouselGeneric from "./CarouselGeneric";
-import { hairs } from "./data/CarouselCoiffuresData";
+import { hairs } from "./data/coiffuresData";
 
 export default function CarouselCoiffures({ color, onSelect, initialHairName }) {
 

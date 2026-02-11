@@ -1,3 +1,11 @@
+/* position de la palette */
+.bottom {
+  transform: translateY(-100%); /* décale légèrement vers le bas */
+}
+
+
+
+
 .palette-tissus {
     background: rgb(255, 255, 255);
     padding: 10px;
@@ -71,6 +79,12 @@
         background: white;
         text-wrap: nowrap;
     }
+}
+
+/* Custom ColorfulPickerBase*/
+.Color-ful-picker-base {
+    width: 100% !important;
+    height: 150px !important;
 }
 
 /* bouton close paletteTissus et colorPicker*/

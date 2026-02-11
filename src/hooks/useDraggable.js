@@ -33,7 +33,14 @@ export function useDraggable(initialPosition = { x: 0, y: 0 }) {
     });
   }, [dragging, offset]);
 
-  const onMouseMove = (e) => onMove(e.clientX, e.clientY);
+  //const onMouseMove = (e) => onMove(e.clientX, e.clientY);
+  const onMouseMove = useCallback(
+  (e) => {
+    console.log("🟢 mouse move", e.clientX, e.clientY);
+    onMove(e.clientX, e.clientY);
+  },
+  [onMove]
+);
   const onTouchMove = (e) => onMove(e.touches[0].clientX, e.touches[0].clientY);
 
   // ----- END -----
@@ -57,6 +64,10 @@ export function useDraggable(initialPosition = { x: 0, y: 0 }) {
       window.removeEventListener("touchcancel", endDrag);
     };
   }, [dragging, onMove]);
+
+  useEffect(() => {
+    setPosition(initialPosition);
+  }, [initialPosition.x, initialPosition.y]);
 
   return {
     position,

@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { tissus } from "./data/tissusData";
+import { tissus } from "./data/tissusData.js";
 import { DEFAULT_TISSU } from "../../constants/defaultTissu";
+import ColorfulPickerBase from "../../ColorfulPickerBase";
 import { useDraggable } from "../../hooks/useDraggable";
 
-export default function PaletteTissus({ x, y, tissu, onChange, onClose, openPicker }) {
+export default function PaletteTissus({ x, y, tissu, onChange, onClose, openPicker, picker }) {
 
   //  State local pour l'UI du picker
   const [localTissu, setLocalTissu] = useState(tissu ?? DEFAULT_TISSU);
@@ -51,13 +52,15 @@ export default function PaletteTissus({ x, y, tissu, onChange, onClose, openPick
 
 
   /* PALETTE TISSU DRAGGABLE */ 
-  const { position, dragging, bindHeader } = useDraggable({ x, y });
+  const { position, dragging, bindHeader } = useDraggable({
+    x: picker?.x ?? x,
+    y: picker?.y ?? y,
+  });
 
   return (
-    <div className="palette-tissus"
+    <div className={`palette-tissus ${picker.positionClass ?? "top"}`}
       style={{ position: "fixed", top: position.y, left: position.x, zIndex: 1000 }}
       onClick={(e) => e.stopPropagation()}
-      
     >
       <div className="palette-header" 
          {...bindHeader}
@@ -153,12 +156,9 @@ export default function PaletteTissus({ x, y, tissu, onChange, onClose, openPick
 
         {selectedTissu && selectedTissu.isUni && (
           <div className="tissu-options">
-            <input
-              ref={colorInputRef}
-              type="color"
-              value={localTissu.color || "#ffffff"}
-              onChange={(e) => updateField("color", e.target.value)}
-              style={{ opacity: 0, position: "absolute", pointerEvents: "none" }}
+            <ColorfulPickerBase
+              color={localTissu.color}
+              onChange={(color) => updateField("color", color)}
             />
           </div>
         )}

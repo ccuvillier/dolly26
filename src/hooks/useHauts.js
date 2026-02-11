@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { hauts } from "../components/CarouselHautsData";
+import { hauts } from "../components/hautsData";
 import { savePoupeeField } from "../firebase/firestoreFunctions";
 
 export default function useHauts(prenom) {

@@ -1,0 +1,80 @@
+import React from 'react';
+import EnteteSvg from "../../EnteteSvg";
+import { DEFAULT_TISSU } from "../../../constants/defaultTissu";
+
+const HautPullColRoule = ({ tissuHaut, color, width = 250, height = 210, onPickColor }) => {
+
+    const mergedTissu = { ...DEFAULT_TISSU, ...tissuHaut };
+
+    return (
+      <svg version="1.1" xmlns="http://www.w3.org/2000/svg"  
+           width={width} height={height} viewBox="-25 0 250 210" className="svg"
+           style={{ cursor: "pointer" }}
+      >
+        <EnteteSvg tissu={tissuHaut} />
+        <g>
+          <path  fill={mergedTissu.isUni ? mergedTissu.color : `url(#tissu-${mergedTissu.instanceId})`}
+            onClick={(e) => onPickColor && onPickColor(e, { type: "tissu", target: "haut", value: mergedTissu })}
+            class="st0" d="M112.3,32.3c13.7,0,16.7-10.5,16.7-10.5,0,0-5.3-2.5-6.1-8.5s-.1-12-.1-12c0,0-2.7.8-10.4.8-7.7,0-10.4-.8-10.4-.8,0,0,.7,6-.1,12s-6.1,8.5-6.1,8.5c0,0,3,10.5,16.7,10.5Z"/>
+          <g>
+            <path d="M104.3,2.4s.6,10.7-.4,14-4.6,6.6-4.6,6.6"/>
+            <path d="M107.1,2.4s1.1,9.6-.3,14.2-4.6,9.1-4.6,9.1"/>
+            <path d="M109.6,2.5s.8,9.6.1,13.8-3.8,11.2-3.8,11.2"/>
+            <path d="M120.3,2.4s-.6,10.7.4,14,4.6,6.6,4.6,6.6"/>
+            <path d="M117.5,2.4s-1.1,9.6.3,14.2,4.6,9.1,4.6,9.1"/>
+            <path d="M115,2.5s-.8,9.6-.1,13.8,3.8,11.3,3.8,11.3"/>
+            <path d="M112.2,2.5s.3,11.7.3,15.4-.3,11.1-.3,11.1"/>
+          </g>
+        </g>
+        <g>
+          <path fill={mergedTissu.isUni ? mergedTissu.color : `url(#tissu-${mergedTissu.instanceId})`}
+            onClick={(e) => onPickColor && onPickColor(e, { type: "tissu", target: "haut", value: mergedTissu })}
+            d="M144.7,142.7s-.7-31.9,1.5-50.2c2.4-20.6,19.1-57.7,19.1-57.7,0,0-1.9-9-16.5-10.1s-20.2-2.7-20.2-2.7c0,0-2.6,10.5-16.5,10.5-13.9,0-16.5-10.5-16.5-10.5,0,0-2.6,1.4-20.2,2.7s-16.5,10.1-16.5,10.1c0,0,16.7,37.1,19.1,57.8s1.5,50.2,1.5,50.2h65.2Z"/>
+          <g>
+            <line x1="82.9" y1="141.9" x2="82.9" y2="129.4"/>
+            <line x1="86.1" y1="141.9" x2="86.1" y2="129.4"/>
+            <line x1="89.4" y1="141.9" x2="89.4" y2="129.4"/>
+            <line x1="92.6" y1="141.9" x2="92.6" y2="129.4"/>
+            <line x1="95.8" y1="141.9" x2="95.8" y2="129.4"/>
+            <line x1="99.1" y1="141.9" x2="99.1" y2="129.4"/>
+            <line x1="102.3" y1="141.9" x2="102.3" y2="129.4"/>
+            <line x1="105.5" y1="141.9" x2="105.5" y2="129.4"/>
+            <line x1="108.8" y1="141.9" x2="108.8" y2="129.4"/>
+            <line x1="112" y1="141.9" x2="112" y2="129.4"/>
+            <line x1="115.2" y1="141.9" x2="115.2" y2="129.4"/>
+            <line x1="118.5" y1="141.9" x2="118.5" y2="129.4"/>
+            <line x1="121.7" y1="141.9" x2="121.7" y2="129.4"/>
+            <line x1="124.9" y1="141.9" x2="124.9" y2="129.4"/>
+            <line x1="128.2" y1="141.9" x2="128.2" y2="129.4"/>
+            <line x1="131.4" y1="141.9" x2="131.4" y2="129.4"/>
+            <line x1="134.6" y1="141.9" x2="134.6" y2="129.4"/>
+            <line x1="137.9" y1="141.9" x2="137.9" y2="129.4"/>
+            <line x1="141.1" y1="141.9" x2="141.1" y2="129.4"/>
+          </g>
+        </g>
+        <g>
+          <path fill={mergedTissu.isUni ? mergedTissu.color : `url(#tissu-${mergedTissu.instanceId})`}
+            onClick={(e) => onPickColor && onPickColor(e, { type: "tissu", target: "haut", value: mergedTissu })} d="M57.2,129.7c.7-1.3,1.1-2.4,1.9-3.5,3.4-5.1,16.1-42.5,15.2-50.2s-15.4-40.9-15.4-40.9l-22.1,84c-3,5.6-19.9,36-24,44.2S.7,191.4.7,191.4c0,0,2.2,5.2,6.8,6s7.1-.8,7.1-.8l15.8-23.6s14.6-20.2,19.5-28.9,5.6-11.3,7.4-14.5Z"/>
+          <g>
+            <line x1="2.2" y1="193" x2="8.7" y2="178.4"/>
+            <line x1="4" y1="195.1" x2="11" y2="180.3"/>
+            <line x1="6.2" y1="196.5" x2="13.7" y2="182.2"/>
+            <line x1="9" y1="197.1" x2="16.9" y2="183.4"/>
+            <line x1="11.7" y1="197.5" x2="20" y2="184"/>
+          </g>
+        </g>
+        <g>
+          <path fill={mergedTissu.isUni ? mergedTissu.color : `url(#tissu-${mergedTissu.instanceId})`}
+            onClick={(e) => onPickColor && onPickColor(e, { type: "tissu", target: "haut", value: mergedTissu })} d="M167,129.7c-.7-1.3-1.1-2.4-1.9-3.5-3.4-5.1-16.1-42.5-15.2-50.2,1.1-9,15.4-40.9,15.4-40.9l22.1,84c3,5.6,19.9,36,24,44.3s12,28.1,12,28.1c0,0-2.3,5.2-6.8,6s-7.1-.8-7.1-.8l-15.7-23.6s-14.6-20.3-19.5-28.9-5.6-11.3-7.4-14.5Z"/>
+          <g>
+            <line x1="222.4" y1="193" x2="215.9" y2="178.4"/>
+            <line x1="220.6" y1="195.1" x2="213.6" y2="180.3"/>
+            <line x1="218.4" y1="196.5" x2="210.9" y2="182.2"/>
+            <line x1="215.5" y1="197.1" x2="207.7" y2="183.4"/>
+            <line x1="212.9" y1="197.5" x2="204.6" y2="184"/>
+          </g>
+        </g>
+      </svg>
+    );
+  };
+export default React.memo(HautPullColRoule);

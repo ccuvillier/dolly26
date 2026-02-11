@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import FilleNue from "./FilleNue";
-import { hairs } from "./carousels/data/CarouselCoiffuresData";
+import { hairs } from "./carousels/data/coiffuresData";
 import CarouselCoiffures from "./carousels/CarouselCoiffures.jsx";
-import { hauts } from "./carousels/data/CarouselHautsData.jsx";
+import { hauts } from "./carousels/data/hautsData";
 import CarouselHauts from "./carousels/CarouselHauts.jsx";
-import { bass } from "./carousels/data/CarouselBasData.jsx";
+import { bass } from "./carousels/data/bassData";
 import CarouselBas from "./carousels/CarouselBas.jsx";
 import Menu from "./Menu.jsx";
 

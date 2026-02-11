@@ -1,5 +1,5 @@
 import React from "react";
-import { tissus } from "./paletteTissus/data/tissusData";
+import { tissus } from "./paletteTissus/data/tissusData.js";
 import { DEFAULT_TISSU } from "../constants/defaultTissu";
 
 const EnteteSvg = ({ tissu }) => {
