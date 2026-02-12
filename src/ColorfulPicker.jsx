@@ -11,7 +11,7 @@ const ColorfulPicker = ({ x, y, currentColor, target, onChange, onClose, picker 
   }, [currentColor]);
 
   const handleChange = (color) => {
-    console.log(color, typeof color);
+    //console.log(color, typeof color);
     setTempColor(color);
     onChange?.(target, color); // <-- important : target + color
   };

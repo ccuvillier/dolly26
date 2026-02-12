@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import FilleNue from "./filleNue";
 import { hairs } from "./carousels/data/coiffuresData";
+import { chaussures } from "./carousels/data/chaussuresData";
 import { hauts } from "./carousels/data/hautsData";
 import { bass } from "./carousels/data/bassData";
 
@@ -11,6 +12,8 @@ const {
   levres, 
   cheveux, 
   nomCoiffure, 
+  chaussuresColor,
+  nomChaussures,
   nomHaut, 
   nomBas,
   tissuHaut,
@@ -19,6 +22,8 @@ const {
 
 const coiffure = hairs.find(h => h.name === nomCoiffure);
 const HairComponent = coiffure ? coiffure.component : null;
+const chaussuresData = chaussures.find(h => h.name === nomChaussures);
+const ChaussuresComponent = chaussuresData ? chaussuresData.component : null;
 const haut = hauts.find(h => h.name === nomHaut);
 const HautComponent = haut ? haut.component : null;
 const bas = bass.find(h => h.name === nomBas);
@@ -82,6 +87,14 @@ return (
       {BasComponent && (
         <div className="basPreview">
           <BasComponent color={bas} tissuBas={tissuBasWithId} />
+        </div>
+      )}
+
+      
+       {/* Chaussures */}
+      {ChaussuresComponent && (
+        <div className="chaussuresPreview">
+          <ChaussuresComponent color={chaussuresColor} />
         </div>
       )}
     </div>

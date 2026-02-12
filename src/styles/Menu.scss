@@ -93,4 +93,15 @@
       background-position: center;
     }
   }
+  button#chaussures {
+    color: #fff;
+    background: #e0a855;
+    background: linear-gradient(33deg, rgba(224, 168, 85, 1) 9%, rgba(196, 79, 55, 1) 87%);
+    &:before {
+      background: no-repeat url('../components/images/picto-chaussures.svg');
+      background-size: 90%;
+      background-position: center;
+    }
+    
+  }
 }

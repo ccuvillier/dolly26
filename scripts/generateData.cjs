@@ -116,6 +116,13 @@ generateComponentData({
   exportName: "hairs"
 });
 
+// Chaussure
+generateComponentData({
+  imagesFolder: path.join(__dirname, "../src/components/images/chaussures"),
+  outputFile: path.join(__dirname, "../src/components/carousels/data/chaussuresData.js"),
+  exportName: "chaussures"
+});
+
 // Tissus
 generateTissusData({
   imagesFolder: path.join(__dirname, "../src/components/images/tissus"),

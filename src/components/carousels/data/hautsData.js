@@ -5,6 +5,7 @@ import HautManchesCourtesColBateau from "../../images/hauts/hautManchesCourtesCo
 import HautMonoBretelle from "../../images/hauts/hautMonoBretelle.jsx";
 import HautPullColRoule from "../../images/hauts/hautPullColRoule.jsx";
 import HautSalopette from "../../images/hauts/hautSalopette.jsx";
+import HautTshirt from "../../images/hauts/hautTshirt.jsx";
 
 export const hauts = [
   { name: "HautChemisier", component: HautChemisier },
@@ -12,5 +13,6 @@ export const hauts = [
   { name: "HautManchesCourtesColBateau", component: HautManchesCourtesColBateau },
   { name: "HautMonoBretelle", component: HautMonoBretelle },
   { name: "HautPullColRoule", component: HautPullColRoule },
-  { name: "HautSalopette", component: HautSalopette }
+  { name: "HautSalopette", component: HautSalopette },
+  { name: "HautTshirt", component: HautTshirt }
 ];

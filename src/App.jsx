@@ -31,6 +31,8 @@ export default function App() {
     levres, setLevres,
     cheveux, setCheveux,
     nomCoiffure, setNomCoiffure,
+    chaussuresColor, setChaussuresColor,
+    nomChaussures, setNomChaussures,
     nomHaut, setNomHaut,
     nomBas, setNomBas,
     poupeeExiste,
@@ -70,6 +72,7 @@ export default function App() {
       case "yeux": setYeux(color); break;
       case "levres": setLevres(color); break;
       case "cheveux": setCheveux(color); break;
+      case "chaussures": setChaussuresColor(color); break;
       case "haut": setNomHaut(prev => ({ ...prev, color })); break;
       case "bas": setNomBas(prev => ({ ...prev, color })); break;
       default: break;
@@ -108,7 +111,7 @@ export default function App() {
     cancelCreation();
   };
 
-  // ------------------- CARROUSEL -------------------
+  // ------------------- CARROUSEL COIFFURE - CHAUSSURES -------------------
   const selectHair = async (hairName) => {
     if (isCreating) setCreationData(prev => ({ ...prev, nomCoiffure: hairName }));
     else {
@@ -116,11 +119,18 @@ export default function App() {
       await savePoupeeField(prenom, "nomCoiffure", hairName);
     }
   };
+  const selectChaussures = async (chaussuresName) => {
+    if (isCreating) setCreationData(prev => ({ ...prev, nomChaussures: chaussuresName }));
+    else {
+      updateNomChaussures(chaussuresName);
+      await savePoupeeField(prenom, "nomChaussures", chaussuresName);
+    }
+  };
 
   // ------------------- POUPEE AFFICHEE -------------------
   const poupeeAffichee = isCreating
     ? creationData
-    : { peau, yeux, levres, cheveux, nomCoiffure, nomHaut, nomBas, prenom, tissuHaut, tissuBas };
+    : { peau, yeux, levres, cheveux, nomCoiffure, chaussuresColor, nomChaussures, nomHaut, nomBas, prenom, tissuHaut, tissuBas };
 
   const titrePoupée = isCreating
     ? "Ma nouvelle amie"
@@ -222,6 +232,10 @@ export default function App() {
                 setNomBas={isCreating
                   ? (value) => setCreationData(prev => ({ ...prev, nomBas: value }))
                   : setNomBas
+                }
+                setNomChaussures={isCreating
+                  ? (value) => setCreationData(prev => ({ ...prev, nomChaussures: value }))
+                  : setNomChaussures
                 }
                 openPicker={openPicker}
                 closePicker={closePicker}

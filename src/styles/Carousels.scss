@@ -33,6 +33,13 @@
 #CarouselCoiffure {
     min-height: 290px;
 }
+#coiffureChoisie {
+    position: absolute;
+    top: 0;
+    width: 100vw;
+    pointer-events: none;
+}
+
 #CarouselHauts, #hautChoisi {
     position: absolute;
     top: 230px;
@@ -42,15 +49,26 @@
     position: absolute;
     top: 370px;
     width: 100vw;
+    z-index: 50;
 }
-
-
-#coiffureChoisie {
+#CarouselChaussures {
     position: absolute;
-    top: 0;
+    top: 632px;
     width: 100vw;
-    pointer-events: none;
+    z-index: 100;
+
+    button.choix {
+        margin-top: -190px;
+    }
 }
+#chaussuresChoisies {
+    position: absolute;
+    top: 632px;
+    width: 100vw;
+    z-index: 0;
+}
+
+
 
 
 /**********/

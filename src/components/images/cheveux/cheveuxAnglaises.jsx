@@ -96,4 +96,4 @@ const CheveuxAnglaises = ({ color, width = 350, height = 290, onPickColor }) => 
         </svg>
     );
 };
-export default CheveuxAnglaises;
+export default React.memo(CheveuxAnglaises);

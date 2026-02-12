@@ -123,7 +123,7 @@ export default function PaletteTissus({ x, y, tissu, onChange, onClose, openPick
               Saturation
               <input
                 type="range"
-                min="50"
+                min="0"
                 max="200"
                 value={localTissu.saturation}
                 onChange={e => updateField("saturation", Number(e.target.value))}
@@ -135,7 +135,7 @@ export default function PaletteTissus({ x, y, tissu, onChange, onClose, openPick
               <input
                 type="range"
                 min="50"
-                max="150"
+                max="200"
                 value={localTissu.brightness}
                 onChange={e => updateField("brightness", Number(e.target.value))}
               />

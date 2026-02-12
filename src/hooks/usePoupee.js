@@ -167,10 +167,12 @@ const renommerPoupee = async (oldId, newId) => {
   const updateNomCoiffure = (value) => updateField("nomCoiffure", value);
   const updateNomHaut = (value) => updateField("nomHaut", value);
   const updateNomBas = (value) => updateField("nomBas", value);
+  const updateNomChaussures = (value) => updateField("nomChaussures", value);
   const setPeau = (v) => updateField("peau", v);
   const setYeux = (v) => updateField("yeux", v);
   const setLevres = (v) => updateField("levres", v);
   const setCheveux = (v) => updateField("cheveux", v);
+  const setChaussuresColor = (v) => updateField("chaussuresColor", v);
   const setPrenom = (v) => updateField("prenom", v);
   const updateTissuBas = (patch) => updateField("tissuBas", {...data.tissuBas, ...patch});
   const updateTissuHaut = (patch) => updateField("tissuHaut", {...data.tissuHaut, ...patch});
@@ -189,8 +191,10 @@ const renommerPoupee = async (oldId, newId) => {
     setYeux,
     setLevres,
     setCheveux,
+    setChaussuresColor,
     setPrenom,
     setNomCoiffure: updateNomCoiffure,
+    setNomChaussures: updateNomChaussures,
     setNomHaut: updateNomHaut,
     setNomBas: updateNomBas,
     creerPoupee,
