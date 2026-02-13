@@ -2,15 +2,15 @@ import React from 'react';
 import EnteteSvg from "../../enteteSvg";
 import { DEFAULT_TISSU } from "../../../constants/defaultTissu";
 
-const BasJupeAmpleAvecVolant = ({ tissuBas = { name: "uni", color: "#fff" }, width = 400, height = 400, onPickColor }) => {
+const BasJupeAmpleAvecVolant = ({ tissuBas, onPickColor }) => {
 
       const mergedTissu = { ...DEFAULT_TISSU, ...tissuBas };
 
     return (
         <svg version="1.1" xmlns="http://www.w3.org/2000/svg"  
-           width={width} height={height} viewBox="27 0 400 400" className="svg"
+           width="100%" viewBox="-174 -370 800 800" className="svg"
            style={{ cursor: "pointer" }}
-        >
+      >
          <EnteteSvg tissu={tissuBas} />
 
         <g fill={mergedTissu.isUni ? mergedTissu.color : `url(#tissu-${mergedTissu.instanceId})`} 

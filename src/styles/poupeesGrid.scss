@@ -195,7 +195,7 @@
 .cheveuxPreview {
   position: absolute;
   z-index: 10;
-  transform: scale(0.39) translateX(-50%);
+  transform: scale(2) translateX(-50%);
   transform-origin: top left;
   top: 11px;
   left: 50%;
@@ -210,25 +210,25 @@
 }.chaussuresPreview {
   position: absolute;
   z-index: 0;
-  transform: scale(0.41) translateX(-50%);
+  transform: scale(2) translateX(-50%);
   transform-origin: top left;
-  top: 255px;
+  top: 10px;
   left: 50%;
 }
 .hautPreview {
   position: absolute;
   z-index: 10;
-  transform: scale(0.41) translateX(-50%);
+  transform: scale(2) translateX(-50%);
   transform-origin: top left;
-  top: 100px;
+  top: 10px;
   left: 50%;
 }
 .basPreview {
   position: absolute;
   z-index: 10;
-  transform: scale(0.41) translateX(-50%);
+  transform: scale(2) translateX(-50%);
   transform-origin: top left;
-  top: 157px;
+  top: 10px;
   left: 50%;
 }
 

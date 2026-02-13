@@ -2,13 +2,13 @@ import React from 'react';
 import EnteteSvg from "../../EnteteSvg";
 import { DEFAULT_TISSU } from "../../../constants/defaultTissu";
 
-const HautPullColRoule = ({ tissuHaut, color, width = 250, height = 210, onPickColor }) => {
+const HautPullColRoule = ({ tissuHaut, onPickColor }) => {
 
     const mergedTissu = { ...DEFAULT_TISSU, ...tissuHaut };
 
     return (
       <svg version="1.1" xmlns="http://www.w3.org/2000/svg"  
-           width={width} height={height} viewBox="-25 0 250 210" className="svg"
+           width="100%" viewBox="-298 -230 800 800" className="svg"
            style={{ cursor: "pointer" }}
       >
         <EnteteSvg tissu={tissuHaut} />

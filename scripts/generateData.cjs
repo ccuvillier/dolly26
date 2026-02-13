@@ -92,6 +92,49 @@ ${items.map(i => `  { name: "${i.name}", label: "${i.label}", isUni: ${i.isUni},
   console.log(`Tissus data generated: ${outputFile}`);
 }
 
+// ---------- GENERATION DE LA BDD ACCESSOIRES --------- //
+function generateAccessoiresData({ imagesFolder, outputFile }) {
+  const files = fs.existsSync(imagesFolder)
+    ? fs.readdirSync(imagesFolder).filter(f => f.endsWith(".jsx"))
+    : [];
+
+  const imports = files.map(f => {
+    const rawName = path.basename(f, ".jsx");     // accPerles
+    const varName = rawName.charAt(0).toUpperCase() + rawName.slice(1); // AccPerles
+
+    const relativePath = path
+      .relative(path.dirname(outputFile), path.join(imagesFolder, f))
+      .replace(/\\/g, "/");
+
+    return `import ${varName} from "${relativePath}";`;
+  }).join("\n");
+
+  const items = files.map(f => {
+    const rawName = path.basename(f, ".jsx"); // accPerles
+    const type = rawName.replace(/^acc/, "");  // Perles
+
+    const varName = rawName.charAt(0).toUpperCase() + rawName.slice(1);
+
+    return `  { type: "${type}", component: ${varName} }`;
+  }).join(",\n");
+
+  const content = `
+${imports}
+
+export const accessoiresPalette = [
+${items}
+];
+
+// accessoires placés sur la poupée
+export const accessoiresInstances = [];
+`;
+
+  fs.writeFileSync(outputFile, content, "utf8");
+  console.log(`Accessoires data generated: ${outputFile}`);
+}
+
+
+
 // -------------------------------
 // EXÉCUTION
 
@@ -127,4 +170,10 @@ generateComponentData({
 generateTissusData({
   imagesFolder: path.join(__dirname, "../src/components/images/tissus"),
   outputFile: path.join(__dirname, "../src/components/paletteTissus/data/tissusData.js")
+});
+
+// Accessoires
+generateAccessoiresData({
+  imagesFolder: path.join(__dirname, "../src/components/images/accessoires"),
+  outputFile: path.join(__dirname, "../src/components/paletteAccessoires/data/accessoiresData.js")
 });

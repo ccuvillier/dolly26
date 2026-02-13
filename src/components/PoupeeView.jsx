@@ -8,6 +8,7 @@ import { bass } from "./carousels/data/bassData";
 import CarouselBas from "./carousels/CarouselBas.jsx";
 import { chaussures } from "./carousels/data/chaussuresData";
 import CarouselChaussures from "./carousels/CarouselChaussures";
+import PaletteAccessoires from "./paletteAccessoires/paletteAccessoires.jsx";
 import Menu from "./Menu.jsx";
 
 export default function PoupeeView({
@@ -35,7 +36,7 @@ export default function PoupeeView({
 }) {
 
   const [activeCarousel, setActiveCarousel] = useState(null); 
-  // valeurs possibles : "coiffure" | "haut" | "bas" | "chaussures" | null
+  // valeurs possibles : "coiffure" | "haut" | "bas" | "chaussures" | "Accessoires" | null
 
   /* Debug tissus reçus
   useEffect(() => {
@@ -58,12 +59,34 @@ export default function PoupeeView({
   const showHaut = () => setActiveCarousel("haut");
   const showBas = () => setActiveCarousel("bas");
   const showChaussures = () => setActiveCarousel("chaussures");
+  const showAccessoires = (e) => {
+    setPalettePos({
+      x: e.clientX,
+      y: e.clientY
+    });
+    setActiveCarousel("accessoires");
+  };
+  const [palettePos, setPalettePos] = useState({ x: 0, y: 0 });
 
   /*---------- FERMER LES PALETTES TISSUS ET COLOR ---------------*/
-  const handleMenuAction = (action) => {
+  const handleMenuAction = (action, e) => {
     closePicker();
-    action();
+    action(e);
   };
+
+  /*---------- AFFICHAGE DE LA PALETTE ACCESSOIRES ---------------*/
+  const handleAddAccessoire = (type) => {
+  const newAcc = {
+    id: crypto.randomUUID(),
+    type,
+    x: 150,
+    y: 200,
+    color: "#ffffff"
+  };
+
+  setAccessoires(prev => [...prev, newAcc]);
+};
+
 
   return (
     <div id="poupeeView" className="zoomIn">
@@ -73,6 +96,7 @@ export default function PoupeeView({
         onShowCarouselHauts={() => handleMenuAction(showHaut)}
         onShowCarouselBas={() => handleMenuAction(showBas)}
         onShowCarouselChaussures={() => handleMenuAction(showChaussures)}
+        onShowAccessoires = {(e) => handleMenuAction(showAccessoires, e)}
         onRevoirGrille={() => handleMenuAction(revoirGrille)}
       />
 
@@ -165,6 +189,18 @@ export default function PoupeeView({
           })}
         </div>
       ) : null}
+
+
+      {/*----------- PALETTE ACCESSOIRES -------------*/}
+      {activeCarousel === "accessoires" ? (
+        <PaletteAccessoires
+          x={palettePos.x}
+          y={palettePos.y}
+          onAddAccessoire={handleAddAccessoire}
+        />
+      ) : null}
+
+      
 
     </div>
   );

@@ -30,8 +30,13 @@
     display: block;
     line-height: 0;
 }
-#CarouselCoiffure {
-    min-height: 290px;
+#CarouselCoiffures {
+    .slick-prev, .slick-next {
+        top:  15%;
+    }
+    button.choix {
+        top: 40%;
+    }
 }
 #coiffureChoisie {
     position: absolute;
@@ -42,30 +47,63 @@
 
 #CarouselHauts, #hautChoisi {
     position: absolute;
-    top: 230px;
+    top: 0;
     width: 100vw;
+
+    .slick-prev, .slick-next {
+        top:  30%;
+    }
+    button.choix {
+        top: 50%;
+    }
+}
+#hautChoisi {
+    z-index: 50;
+    pointer-events: none;
+
+    g {
+        pointer-events: all;
+    }
 }
 #CarouselBas, #basChoisi {
     position: absolute;
-    top: 370px;
+    top: 0;
     width: 100vw;
-    z-index: 50;
+    
+    .slick-prev, .slick-next {
+        top:  55%;
+    }
+    button.choix {
+        top: 40%;
+    }
 }
-#CarouselChaussures {
+#basChoisi {
+    z-index: 49;
+    pointer-events: none;
+
+    g {
+        pointer-events: all;
+    }
+}
+#CarouselChaussures, #chaussuresChoisies {
     position: absolute;
-    top: 632px;
+    top: 0;
     width: 100vw;
     z-index: 100;
 
+    .slick-prev, .slick-next {
+        top:  85%;
+    }
     button.choix {
-        margin-top: -190px;
+        top: 75%;
     }
 }
 #chaussuresChoisies {
-    position: absolute;
-    top: 632px;
-    width: 100vw;
-    z-index: 0;
+    pointer-events: none;
+
+    g {
+        pointer-events: all;
+    }
 }
 
 

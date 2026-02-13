@@ -1,11 +1,12 @@
 import React from 'react';
 
-const CheveuxFrises = ({ color, width = 350, height = 290, onPickColor }) => {
+const CheveuxFrises = ({ color = "#fff", onPickColor }) => {
     return (
-        <svg version="1.1" xmlns="http://www.w3.org/2000/svg"  
-           width={width} height={height} viewBox="-16 -5 350 290" className="svg"
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="xMinYMin meet"
+           width="100%" viewBox="-242 -5 800 800" className="svg"
            style={{ cursor: "pointer" }}
-        >
+           >
 
             <path fill={color} onClick={(e) => onPickColor && onPickColor(e)} style={{ pointerEvents: "all" }}
                 d="M114.3,266.5c3.4-10.2,5.4-14.6,10.6-15c5.1-0.3,22.5-0.7,31.7-5.8c9.2-5.1,5.8-26.8,5.8-26.8

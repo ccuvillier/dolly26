@@ -1,12 +1,12 @@
 import React from 'react';
 
-const ChaussuresBottes = ({ color = "#fff", width = 135, height = 170, onPickColor }) => {
+const ChaussuresBottes = ({ color = "#fff", onPickColor }) => {
 
     return (
         <svg version="1.1" xmlns="http://www.w3.org/2000/svg"  
-           width={width} height={height} viewBox="-11 0 135 170" className="svg"
+           width="100%" viewBox="-344 -633 800 800" className="svg"
            style={{ cursor: "pointer" }}
-        >
+      >
 
           <g fill={color} onClick={(e) => onPickColor && onPickColor(e)} style={{ pointerEvents: "all" }}>
             <path d="M38.3,75.3s1.8,20.4,2.9,27.6,4.4,23,4.4,23c0,0-1.6,6.8-2.8,11.1s-5.2,12.6-2.7,17.7,7.7,7.7,14.3,7.8c6.6.2,13.2-1.4,13.6-6s-.8-14.3-1.9-19.3c-1.1-4.9-2-8.7-1.7-12.6s1.5-49.7,1.5-49.7c0,0-2.1.8-11.8.9s-15.8-.6-15.8-.6Z"/>

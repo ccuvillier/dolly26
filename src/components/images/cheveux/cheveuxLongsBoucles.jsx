@@ -1,9 +1,10 @@
 import React from 'react';
 
-const CheveuxLongsBoucles = ({ color = "#fff", width = 350, height = 290, onPickColor }) => {
+const CheveuxLongsBoucles = ({ color = "#fff", onPickColor }) => {
     return (
-        <svg version="1.1" xmlns="http://www.w3.org/2000/svg"  
-           width={width} height={height} viewBox="-11 -1 350 290" className="svg"
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="xMinYMin meet"
+           width="100%" viewBox="-236 0 800 800" className="svg"
            style={{ cursor: "pointer" }}
            >
            <g fill={color} onClick={(e) => onPickColor && onPickColor(e)} style={{ pointerEvents: "all" }}>
