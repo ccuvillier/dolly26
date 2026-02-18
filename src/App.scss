@@ -2,8 +2,10 @@
 @import url('styles/Menu.scss');
 @import url('styles/Modal.scss');
 @import url('styles/poupeesGrid.scss');
+@import url('styles/poupeeView.scss');
 @import url('styles/Carousels.scss');
 @import url('styles/PaletteTissus.scss');
+@import url('styles/PaletteAccessoires.scss');
 .App {
   text-align: center;
   position: relative;
@@ -41,32 +43,6 @@
 }
 
 
-
-svg {
-  margin: auto;
-  max-width: 800px;
-}
-.svg {
-}
-.svg * {
-    stroke: #000;
-}
-.svg > path:not([fill]),
-.svg g.notfill * {
-    fill: none;
-    stroke: #000;
-}
-.svg path.relief,
-.svg > g.relief path {
-    fill: black;
-    fill-opacity: 20%;
-    stroke: none;
-}
-svg .dash {
-  stroke-dasharray: 1;
-}
-
-
 h1, h2, h3, label {
   font-family: 'Parisienne', cursive;
   font-weight: 100;
@@ -89,11 +65,6 @@ label {
   font-size: 1.5em;
   line-height: 1em;
   margin: 0;
-}
-.blockCenter {
-  margin: 0 auto;
-  display: inline-block;
-
 }
 
 

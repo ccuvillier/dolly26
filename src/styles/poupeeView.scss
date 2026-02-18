@@ -1,0 +1,27 @@
+svg {
+  margin: auto;
+  max-width: 800px;
+}
+
+.svg * {
+    stroke: #000;
+}
+.svg > path:not([fill]),
+.svg g.notfill * {
+    fill: none;
+    stroke: #000;
+}
+.svg path.relief,
+.svg > g.relief path {
+    fill: black;
+    fill-opacity: 20%;
+    stroke: none;
+}
+svg .dash {
+  stroke-dasharray: 1;
+}
+
+#poupeeView {
+    height: 90vh;
+    width: 100vw;
+}

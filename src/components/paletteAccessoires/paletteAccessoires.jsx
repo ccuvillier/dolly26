@@ -1,20 +1,20 @@
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
 import { accessoiresPalette } from "./data/accessoiresData";
 
-export default function PaletteAccessoires({ x, y, onAddAccessoire }) {
+export default function PaletteAccessoires({ onAddAccessoire, onClose }) {
 
   return (
-    <div style={styles.container} id="paletteAccessoires"
-        style={{ position: "absolute", top: y, left: x, zIndex: 1000, transform: "translate(-50%, -50%)" }}>
-      {accessoiresPalette.map((acc, index) => {
-        const Component = acc.component;
+    <div id="paletteAccessoires">
+      <button className="close" onClick={onClose}>fermer</button>
+
+      {accessoiresPalette.map((item, index) => {
+        const Component = item.component;
 
         return (
           <div
             key={index}
-            style={styles.item}
-            onClick={() => onAddAccessoire(acc.type)}
-            title={acc.type}
+            title={item.type}
+            onClick={() => onAddAccessoire(item)}
           >
             <Component width={50} height={50} />
           </div>
@@ -23,23 +23,3 @@ export default function PaletteAccessoires({ x, y, onAddAccessoire }) {
     </div>
   );
 }
-
-const styles = {
-  container: {
-    display: "flex",
-    gap: "8px",
-    padding: "10px",
-    background: "#fff0f6",
-    borderRadius: "12px",
-    border: "2px solid #ffb6d9"
-  },
-
-  item: {
-    cursor: "pointer",
-    padding: "6px",
-    background: "white",
-    borderRadius: "8px",
-    border: "1px solid #ddd",
-    transition: "transform 0.1s",
-  }
-};
