@@ -39,11 +39,6 @@ export default function PoupeeView({
   const [activeCarousel, setActiveCarousel] = useState(null); 
   // valeurs possibles : "coiffure" | "haut" | "bas" | "chaussures" | "Accessoires" | null
 
-  /* Debug tissus reçus
-  useEffect(() => {
-    console.log("🔹 tissuHaut props", tissuHaut);
-    console.log("🔹 tissuBas props", tissuBas);
-  }, [tissuHaut, tissuBas]); */
 
   // ----------------- AFFICHAGE DES ÉLÉMENTS -----------------
   const coiffureAAfficher = nomCoiffure ? hairs.find(h => h.name === nomCoiffure) : null;
@@ -88,6 +83,7 @@ export default function PoupeeView({
     };
 
     setAccessoires(prev => [...prev, newAcc]);
+    setSelectedAccessoireId(newAcc.id);
     setAccessoireActif(newAcc);
   };
 
@@ -140,12 +136,18 @@ export default function PoupeeView({
     );
   };
 
-  // click hors de l'accessoire
  const [selectedAccessoireId, setSelectedAccessoireId] = useState(null);
 
+  /* click hors de l'accessoire 
  useEffect(() => {
-    const handleClickOutside = () => {
-      setSelectedAccessoireId(null);
+    const handleClickOutside = (e) => {
+      if (
+        viewportRef.current &&
+        !viewportRef.current.contains(e.target)
+      ) {
+        console.log("CLICK OUTSIDE VIEWPORT");
+        setSelectedAccessoireId(null);
+      }
     };
 
     document.addEventListener("click", handleClickOutside);
@@ -153,17 +155,23 @@ export default function PoupeeView({
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, []);
+  }, []);*/
 
 
 
 
 
   return (
-    <div id="poupeeView" className="zoomIn" 
+    <div id="poupeeView" className="zoomIn"
       ref={viewportRef}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
+      onMouseDown={(e) => {
+        console.log("VIEWPORT MOUSEDOWN", e.target);
+        if (e.target === viewportRef.current) {
+          setSelectedAccessoireId(null);
+        }
+      }}
     >
       {/* Menu */}
       <Menu
@@ -280,7 +288,7 @@ export default function PoupeeView({
         <Accessoire
           key={acc.id}
           acc={acc}
-          isActive={accessoireActif?.id === acc.id}
+          selectedAccessoireId={selectedAccessoireId}
           onDragStart={handleDragStart}
           onUpdate={handleUpdateAccessoire}
           onDelete={handleDeleteAccessoire}

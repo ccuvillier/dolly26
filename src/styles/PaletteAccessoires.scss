@@ -45,15 +45,22 @@
         background: white;
         border: 1px solid black;
         position: absolute;
-        cursor: nwse-resize;
     }
-    .top-left { top: -4px; left: -4px; }
-    .top-right { top: -4px; right: -4px; }
-    .bottom-left { bottom: -4px; left: -4px; }
-    .bottom-right { bottom: -4px; right: -4px; }
+    .top-left { top: -4px; left: -4px; cursor: nwse-resize; transform-origin: bottom right;}
+    .top-right { top: -4px; right: -4px; cursor: nesw-resize;}
+    .bottom-left { bottom: -4px; left: -4px;  cursor: nesw-resize;}
+    .bottom-right { bottom: -4px; right: -4px; cursor: nwse-resize;}
 
     .close {
         top: -25px;
         right: -25px;
     }
+}
+
+#poupee,
+#coiffureChoisie,
+#hautChoisi,
+#basChoisi,
+#chaussuresChoisies {
+  pointer-events: none;
 }

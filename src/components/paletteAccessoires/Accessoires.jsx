@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 
-export default function Accessoire({ acc, onDragStart, onUpdate, isActive, onDelete, setSelected }) {
+export default function Accessoire({ acc, onDragStart, onUpdate, selectedAccessoireId, onDelete, setSelected }) {
   const [size, setSize] = useState({ width: 65, height: 65 });
-  const [position, setPosition] = useState({ x: acc.x, y: acc.y });
 
   const Component = acc.component;
 
   const handleScaleMouseDown = (e, corner) => {
     e.stopPropagation();
+    e.preventDefault();
     const startX = e.clientX;
     const startY = e.clientY;
     const startWidth = size.width;
     const startHeight = size.height;
-    const startPos = { ...position };
+    const startPos = { x: acc.x, y: acc.y };
 
     const onMouseMove = (moveEvent) => {
       let deltaX = moveEvent.clientX - startX;
@@ -30,7 +30,6 @@ export default function Accessoire({ acc, onDragStart, onUpdate, isActive, onDel
       if(newHeight < 10) newHeight = 10;
 
       setSize({ width: newWidth, height: newHeight });
-      setPosition({ x: newX, y: newY });
       onUpdate(acc.id, { width: newWidth, height: newHeight, x: newX, y: newY });
     };
 
@@ -42,20 +41,26 @@ export default function Accessoire({ acc, onDragStart, onUpdate, isActive, onDel
     document.addEventListener("mouseup", onMouseUp);
   };
 
+  console.log("RENDER Accessoire", acc.id, "selected:", selectedAccessoireId === acc.id);
+
   return (
     <div
-      className={`accessoires-wrapper ${isActive ? "selected" : ""}`}
+      className={`accessoires-wrapper ${selectedAccessoireId === acc.id ? "selected" : ""}`}
       style={{ position: "absolute", left: acc.x, top: acc.y, width: size.width, height: size.height }}
-      onMouseDown={(e) => onDragStart(e, acc)}
-      onClick={(e) => { e.stopPropagation(); setSelected(acc.id); }}
+      onMouseDown={(e) => {
+        console.log("ACCESSOIRE MOUSEDOWN");
+        e.stopPropagation();      // empêche la désélection globale
+        setSelected(acc.id);      // sélection immédiate
+        onDragStart(e, acc);      // puis drag
+      }}
     >
       <Component width={size.width} height={size.height} />
-      {isActive && (
+      {selectedAccessoireId === acc.id && (
         <>
           {["top-left","top-right","bottom-left","bottom-right"].map(corner => (
             <div key={corner} className={`handle ${corner}`} onMouseDown={(e) => handleScaleMouseDown(e, corner)} />
           ))}
-          <button className="close" onClick={() => onDelete(acc.id)}>Supprimer</button>
+          <button className="close" onClick={(e) => { e.stopPropagation(); onDelete(acc.id); }}>Supprimer</button>
         </>
       )}
     </div>
