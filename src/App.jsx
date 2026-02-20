@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import ModalPseudo from "./components/ModalPseudo";
 import ModalPrenom from "./components/ModalPrenom";
 import PoupeesGrid from "./components/PoupeesGrid";
 import PoupeeView from "./components/PoupeeView";
 import ColorfulPicker from "./ColorfulPicker.jsx";
 import PaletteTissus from "./components/paletteTissus/PaletteTissus";
+import PaletteAccessoires from "./components/paletteAccessoires/PaletteAccessoires.jsx";
+import Accessoire from "./components/paletteAccessoires/Accessoires.jsx";
 import usePoupee from "./hooks/usePoupee";
 import useCreationPoupee from "./hooks/useCreationPoupee";
 import useStylePicker from "./hooks/useStylePicker";
@@ -47,7 +49,7 @@ export default function App() {
     updateTissuHaut,
     tissuBas,
     setTissuBas,
-    updateTissuBas
+    updateTissuBas,
   } = usePoupee(pseudo);
 
   // ------------------- HOOK CREATION -------------------
@@ -167,9 +169,63 @@ export default function App() {
   const handleChangeTissu = (newTissu) => applyTissu(picker.target, newTissu);
 
 
+  // ------------ GESTION DE LA PALETTE ACCESSOIRES ----------//
+  const [activePalette, setActivePalette] = useState(null); 
+  const showAccessoires = () => setActivePalette("accessoires");
+  const [selectedAccessoireId, setSelectedAccessoireId] = useState(null);
+  const [accessoires, setAccessoires] = useState([]);
+  const viewportRef = useRef(null);
+
+  const handleAddAccessoire = (item) => {
+    const rect = viewportRef.current.getBoundingClientRect(); // Placer les accessoires au centre
+
+    const newAcc = {
+      id: crypto.randomUUID(),
+      type: item.type,
+      component: item.component,
+      x: rect.width / 2,
+      y: rect.height / 2,
+      scale: 1,
+      rotation: 0,
+      color: "#ffffff"
+    };
+
+    setAccessoires(prev => [...prev, newAcc]);
+    setSelectedAccessoireId(newAcc.id);
+  };
+  /*--------- DRAG D'UN ACCESSOIRE --------*/
+  const handleMoveAccessoire = (id, x, y) => {
+  setAccessoires(prev =>
+    prev.map(acc =>
+      acc.id === id ? { ...acc, x, y } : acc
+    )
+  );
+};
+
+  // supprimer un accessoire
+  const handleDeleteAccessoire = (id) => {
+    setAccessoires(prev => prev.filter(acc => acc.id !== id));
+  };
+
+  // mettre à jour l'accessoire
+  const handleUpdateAccessoire = (id, newProps) => {
+    setAccessoires(prev =>
+      prev.map(acc => acc.id === id ? { ...acc, ...newProps } : acc)
+    );
+  };
+
+
+
   // ------------------- RENDER -------------------
   return (
-    <div className="App zoomIn">
+    <div className="App zoomIn" 
+    ref={viewportRef}
+      onMouseDown={(e) => {
+        if (e.target === viewportRef.current) {
+          setSelectedAccessoireId(null);
+        }
+      }}>
+
       {/* MODALE PSEUDO */}
       {!hasPseudo && (
         <ModalPseudo
@@ -244,6 +300,13 @@ export default function App() {
                 setTissuBas={updateTissuBas}
                 tissuHaut={tissuHaut}
                 setTissuHaut={updateTissuHaut}
+                accessoires={accessoires}
+                selectedAccessoireId={selectedAccessoireId}
+                setSelected={setSelectedAccessoireId}
+                onUpdate={handleUpdateAccessoire}
+                onMove={handleMoveAccessoire}
+                onDelete={handleDeleteAccessoire}
+                showAccessoires={showAccessoires}
               />
 
               {/* COLOR PICKER */}
@@ -272,6 +335,26 @@ export default function App() {
                   picker={picker}
                 />
               )}
+
+              {/* PALETTE ACCESSOIRES */}
+              {activePalette === "accessoires" ? (
+                <PaletteAccessoires
+                  onAddAccessoire={handleAddAccessoire}
+                  onClose={() => setActivePalette(null)}
+                />
+              ) : null}
+
+              {accessoires.map(acc => (
+                <Accessoire
+                  key={acc.id}
+                  acc={acc}
+                  selectedAccessoireId={selectedAccessoireId}
+                  onUpdate={handleUpdateAccessoire}
+                  onDelete={handleDeleteAccessoire}
+                  setSelected={setSelectedAccessoireId}
+                  onMove={handleMoveAccessoire}
+                />
+              ))}
             </>
           )}
         </>

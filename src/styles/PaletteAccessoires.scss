@@ -32,7 +32,6 @@
 
 /* Elements sur le viewport */
 .accessoires-wrapper {
-    margin: 15px;
     position: relative;
     z-index: 100;
 
@@ -57,10 +56,15 @@
     }
 }
 
-#poupee,
-#coiffureChoisie,
-#hautChoisi,
-#basChoisi,
-#chaussuresChoisies {
-  pointer-events: none;
+.rotate-handle {
+    cursor: url('../components/images/picto-rotate.svg') 15 15, grab;
+
+    top: -25%;
+    left: -25%;
+    right: -25%;
+    width: 150% !important;
+    height: 150% !important;
+    z-index: -13;
+    background: transparent !important;
+    border: none !important;
 }
