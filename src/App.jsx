@@ -68,7 +68,7 @@ export default function App() {
   const { picker, openPicker, closePicker } = useStylePicker();
 
   // Appliquer une couleur à un élément
-  const applyColor = (target, color) => {
+  const applyColor = (target, color, id = null) => {
     switch (target) {
       case "peau": setPeau(color); break;
       case "yeux": setYeux(color); break;
@@ -77,6 +77,15 @@ export default function App() {
       case "chaussures": setChaussuresColor(color); break;
       case "haut": setNomHaut(prev => ({ ...prev, color })); break;
       case "bas": setNomBas(prev => ({ ...prev, color })); break;
+      case "accessoire":
+        setAccessoires(prev =>
+          prev.map(acc => acc.id === id ? { ...acc, 
+            tissu:
+              typeof color === "string"
+                ? { ...acc.tissu, color, isUni: true }
+                : color } : acc)
+        );
+      break;
       default: break;
     }
   };
@@ -153,7 +162,7 @@ export default function App() {
   }, [poupeeExiste, idPoupee, poupees, prenom]);
 
   // ------------------- GESTION PALETTE TISSUS -------------------
-  const applyTissu = (target, patch) => {
+  const applyTissu = (target, patch, id) => {
     const cleanPatch = {
       ...patch,
       ref: patch.ref ?? patch.name.replace(/^tissu-/, "")
@@ -163,10 +172,19 @@ export default function App() {
       updateTissuHaut(cleanPatch);
     } else if (target === "bas") {
       updateTissuBas(cleanPatch);
+    } else if (target === "accessoire") {
+      setAccessoires(prev =>
+        prev.map(acc =>
+          acc.id === id
+            ? { ...acc, tissu: { ...acc.tissu, ...cleanPatch } }
+            : acc
+        )
+      );
+      console.log("accessoire updated:", id, patch);
     }
   };
 
-  const handleChangeTissu = (newTissu) => applyTissu(picker.target, newTissu);
+  const handleChangeTissu = (newTissu, id) => {console.log("accessoire updated:", id, newTissu); applyTissu(picker.target, newTissu, id)};
 
 
   // ------------ GESTION DE LA PALETTE ACCESSOIRES ----------//
@@ -187,12 +205,14 @@ export default function App() {
       y: rect.height / 2,
       scale: 1,
       rotation: 0,
-      color: "#ffffff"
+      tissu: { ...DEFAULT_TISSU, color: "#ffffff", isUni: true, instanceId: crypto.randomUUID() }
     };
 
     setAccessoires(prev => [...prev, newAcc]);
     setSelectedAccessoireId(newAcc.id);
   };
+
+
   /*--------- DRAG D'UN ACCESSOIRE --------*/
   const handleMoveAccessoire = (id, x, y) => {
   setAccessoires(prev =>
@@ -353,8 +373,25 @@ export default function App() {
                   onDelete={handleDeleteAccessoire}
                   setSelected={setSelectedAccessoireId}
                   onMove={handleMoveAccessoire}
+                  openPicker={openPicker}
+                  tissuAccessoire={acc.tissu}
                 />
               ))}
+
+              {/* PALETTE TISSUS POUR ACCESSOIRE */}
+              {picker.visible && picker.type === "accessoire" && (
+                <PaletteTissus
+                  x={picker.x}
+                  y={picker.y}
+                  target={picker.target}
+                  id={picker.id} 
+                  tissu={picker.value}
+                  onChange={handleChangeTissu}
+                  onClose={closePicker}
+                  openPicker={openPicker}
+                  picker={picker}
+                />
+              )}
             </>
           )}
         </>

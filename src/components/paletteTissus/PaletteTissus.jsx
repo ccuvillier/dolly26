@@ -4,7 +4,7 @@ import { DEFAULT_TISSU } from "../../constants/defaultTissu";
 import ColorfulPickerBase from "../../ColorfulPickerBase";
 import { useDraggable } from "../../hooks/useDraggable";
 
-export default function PaletteTissus({ x, y, tissu, onChange, onClose, openPicker, picker }) {
+export default function PaletteTissus({ x, y, id, tissu, onChange, onClose, openPicker, picker }) {
 
   //  State local pour l'UI du picker
   const [localTissu, setLocalTissu] = useState(tissu ?? DEFAULT_TISSU);
@@ -32,7 +32,7 @@ export default function PaletteTissus({ x, y, tissu, onChange, onClose, openPick
     const updated = { ...localTissu, ...t }; 
     setLocalTissu(updated);
     setSelectedName(t.name);
-    onChange(updated); 
+    onChange(updated, picker.id); 
 
       // si tissu uni, ouvrir le color picker
     if (t.isUni && colorInputRef.current) {
@@ -45,7 +45,7 @@ export default function PaletteTissus({ x, y, tissu, onChange, onClose, openPick
   const updateField = (field, value) => {
     const updated = { ...localTissu, [field]: value };
     setLocalTissu(updated);
-    onChange(updated);
+    onChange(updated, picker.id);
   };
 
 

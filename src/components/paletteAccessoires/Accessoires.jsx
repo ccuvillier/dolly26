@@ -6,8 +6,20 @@ export default function Accessoire({
   selectedAccessoireId,
   onDelete,
   setSelected,
-  onMove
+  onMove,
+  openPicker,
+  tissuAccessoire
 }) {
+
+  /* forcer la mise à jour du tissu */
+  const [localTissu, setLocalTissu] = useState(acc.tissu);
+
+  useEffect(() => {
+    setLocalTissu(acc.tissu);
+  }, [acc.tissu]);
+
+
+
   const [size, setSize] = useState({ width: 65, height: 65 });
   const [isDragging, setIsDragging] = useState(false);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -147,6 +159,8 @@ export default function Accessoire({
     };
   }, [isDragging, offset]);
 
+  console.log("Rendering Accessoire", acc.id, acc.tissu);
+
   /* ================= RENDER ================= */
 
   return (
@@ -167,8 +181,9 @@ export default function Accessoire({
         setSelected(acc.id);
         handleDragStart(e);
       }}
+      
     >
-      <Component width={size.width} height={size.height} />
+      <Component width={size.width} height={size.height} accId={acc.id} tissuAccessoire={localTissu} onPickColor={openPicker}/>
 
       {selectedAccessoireId === acc.id && (
         <>

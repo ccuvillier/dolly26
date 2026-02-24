@@ -6,6 +6,7 @@ export default function useStylePicker() {
     type: null,     // "color" | "tissu"
     target: null,   // "cheveux" | "haut" | "bas"
     value: null,
+    id: null,
     x: 0,
     y: 0,
     positionClass: "top"
@@ -25,6 +26,7 @@ export default function useStylePicker() {
       visible: true,
       type: options.type || "color",
       target: options.target,
+      id: options.id ?? null,
       value: options.value,
       x: x + 20,
       y,
