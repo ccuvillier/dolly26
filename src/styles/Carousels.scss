@@ -37,7 +37,6 @@
     }
     button.choix {
         top: 40%;
-        pointer-events: all;
     }
 }
 #coiffureChoisie {
@@ -130,6 +129,7 @@
     border: none;
     padding: 10px;
     border-radius: 10px;
+    pointer-events: all;
 
     &:hover {
         background-color: forestgreen;

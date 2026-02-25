@@ -26,6 +26,11 @@
     .fille13{stroke:#000000;}   
     .fille3{stroke:#000000;}
 }
+#poupee {
+    > svg > g {
+        pointer-events: all;
+    }
+}
 
 svg {
   margin: auto;
@@ -55,6 +60,7 @@ svg .dash {
     width: 100vw;
 }
 
+#poupeeView,
 #coiffureChoisie,
 #hautChoisi,
 #basChoisi,

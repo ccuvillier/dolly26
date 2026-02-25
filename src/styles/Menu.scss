@@ -105,6 +105,16 @@
     }
     
   }
+  button#accessoires {
+    color: #fff;
+    background: #eb73c1;
+    background: linear-gradient(33deg, rgba(235, 115, 193, 1) 10%, rgba(250, 213, 92, 1) 93%);
+    &:before {
+      background: no-repeat url('../components/images/picto-accessoires.svg');
+      background-size: 85%;
+      background-position: center;
+    }
+  }
 }
 
 /* MENU RESPONSIVE */

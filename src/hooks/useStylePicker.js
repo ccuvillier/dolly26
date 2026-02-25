@@ -28,7 +28,7 @@ export default function useStylePicker() {
       target: options.target,
       id: options.id ?? null,
       value: options.value,
-      x: x + 20,
+      x: x + 100,
       y,
       positionClass
     });

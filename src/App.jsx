@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import ModalPseudo from "./components/ModalPseudo";
 import ModalPrenom from "./components/ModalPrenom";
 import PoupeesGrid from "./components/PoupeesGrid";
@@ -7,8 +7,6 @@ import ColorfulPicker from "./ColorfulPicker.jsx";
 import PaletteTissus from "./components/paletteTissus/PaletteTissus";
 import PaletteAccessoires from "./components/paletteAccessoires/PaletteAccessoires.jsx";
 import Accessoire from "./components/paletteAccessoires/Accessoires.jsx";
-import { ACCESSOIRES_COMPONENTS } from "./components/paletteAccessoires/data/componentsRegistry";
-
 import usePoupee from "./hooks/usePoupee";
 import useCreationPoupee from "./hooks/useCreationPoupee";
 import useStylePicker from "./hooks/useStylePicker";
@@ -22,41 +20,42 @@ export default function App() {
   const [pseudo, setPseudo] = useState("");
   const [pseudoError, setPseudoError] = useState("");
   const hasPseudo = pseudo.trim() !== "";
+  const [carouselVisible, setCarouselVisible] = useState(false);
 
   // ------------------- HOOK POUPEE -------------------
   const {
     poupees,
     idPoupee,
     setIdPoupee,
-    poupeeExiste,
-    setPoupeeExiste,
-
     prenom,
     peau, setPeau,
     yeux, setYeux,
     levres, setLevres,
     cheveux, setCheveux,
-
-    nomCoiffure, updateNomCoiffure, setNomCoiffure,
-    nomHaut, updateTissuHaut, setNomHaut,
-    nomBas, updateTissuBas, setNomBas,
-    nomChaussures, updateNomChaussures, setNomChaussures,
+    nomCoiffure, setNomCoiffure,
     chaussuresColor, setChaussuresColor,
-
-    tissuHaut, setTissuHaut,
-    tissuBas, setTissuBas,
-
+    nomChaussures, setNomChaussures,
+    nomHaut, setNomHaut,
+    nomBas, setNomBas,
+    poupeeExiste,
+    setPoupeeExiste,
+    creerPoupee,
+    chargerPoupee,
+    supprimerPoupee,
+    renommerPoupee,
+    updateNomCoiffure,
+    tissuHaut,
+    setTissuHaut,
+    updateTissuHaut,
+    tissuBas,
+    setTissuBas,
+    updateTissuBas,
     accessoires,
     addAccessoire,
     updateAccessoire,
     deleteAccessoire,
-    updateAccessoireTissu,
-
-    creerPoupee,
-    chargerPoupee,
-    supprimerPoupee,
-    renommerPoupee
-  } = usePoupee(pseudo);
+    updateAccessoireTissu
+    } = usePoupee(pseudo);
 
   // ------------------- HOOK CREATION -------------------
   const {
@@ -73,6 +72,7 @@ export default function App() {
   // ------------------- PICKERS -------------------
   const { picker, openPicker, closePicker } = useStylePicker();
 
+  // Appliquer une couleur à un élément
   const applyColor = (target, color, id = null) => {
     switch (target) {
       case "peau": setPeau(color); break;
@@ -80,11 +80,17 @@ export default function App() {
       case "levres": setLevres(color); break;
       case "cheveux": setCheveux(color); break;
       case "chaussures": setChaussuresColor(color); break;
-      case "haut": updateTissuHaut({ color, isUni: true }); break;
-      case "bas": updateTissuBas({ color, isUni: true }); break;
+      case "haut": setNomHaut(prev => ({ ...prev, color })); break;
+      case "bas": setNomBas(prev => ({ ...prev, color })); break;
       case "accessoire":
-        if (id) updateAccessoireTissu(id, typeof color === "string" ? { color, isUni: true } : color);
-        break;
+        setAccessoires(prev =>
+          prev.map(acc => acc.id === id ? { ...acc, 
+            tissu:
+              typeof color === "string"
+                ? { ...acc.tissu, color, isUni: true }
+                : color } : acc)
+        );
+      break;
       default: break;
     }
   };
@@ -107,6 +113,7 @@ export default function App() {
 
   const handleCreer = async () => {
     if (!nouveauPrenom) return;
+
     const id = await creerPoupee(nouveauPrenom);
     await chargerPoupee(id);
     setIdPoupee(id);
@@ -120,60 +127,113 @@ export default function App() {
     cancelCreation();
   };
 
-  // ------------------- PALETTE TISSUS -------------------
-  const applyTissu = (target, patch, id) => {
-    const cleanPatch = { ...patch, ref: patch.ref ?? patch.name?.replace(/^tissu-/, "") };
-    if (target === "haut") updateTissuHaut(cleanPatch);
-    else if (target === "bas") updateTissuBas(cleanPatch);
-    else if (target === "accessoire" && id) updateAccessoireTissu(id, cleanPatch);
+  // ------------------- CARROUSEL COIFFURE - CHAUSSURES -------------------
+  const selectHair = async (hairName) => {
+    if (isCreating) setCreationData(prev => ({ ...prev, nomCoiffure: hairName }));
+    else {
+      updateNomCoiffure(hairName);
+      await savePoupeeField(prenom, "nomCoiffure", hairName);
+    }
   };
-  const handleChangeTissu = (newTissu, id) => applyTissu(picker.target, newTissu, id);
+  const selectChaussures = async (chaussuresName) => {
+    if (isCreating) setCreationData(prev => ({ ...prev, nomChaussures: chaussuresName }));
+    else {
+      updateNomChaussures(chaussuresName);
+      await savePoupeeField(prenom, "nomChaussures", chaussuresName);
+    }
+  };
 
-  // ------------------- PALETTE ACCESSOIRES -------------------
-  const [activePalette, setActivePalette] = useState(null);
+  // ------------------- POUPEE AFFICHEE -------------------
+  const poupeeAffichee = isCreating
+    ? creationData
+    : { peau, yeux, levres, cheveux, nomCoiffure, chaussuresColor, nomChaussures, nomHaut, nomBas, prenom, tissuHaut, tissuBas };
+
+  const titrePoupée = isCreating
+    ? "Ma nouvelle amie"
+    : idPoupee ? `Mon amie ${idPoupee}` : "Ma meilleure amie";
+
+  // ------------------- CHARGEMENT DES TISSUS DEPUIS FIREBASE -------------------
+  useEffect(() => {
+    if (!poupeeExiste || !idPoupee) return;
+
+    const p = poupees.find(p => p.data.prenom === prenom || p.id === idPoupee);
+    if (!p) return;
+
+    const loadedTissuHaut = { ...DEFAULT_TISSU, ...p.data.tissuHaut };
+    const loadedTissuBas = { ...DEFAULT_TISSU, ...p.data.tissuBas };
+
+    setTissuHaut(loadedTissuHaut);
+    setTissuBas(loadedTissuBas);
+  }, [poupeeExiste, idPoupee, poupees, prenom]);
+
+  // ------------------- GESTION PALETTE TISSUS -------------------
+  const applyTissu = (target, patch, id) => {
+    const cleanPatch = {
+      ...patch,
+      ref: patch.ref ?? patch.name.replace(/^tissu-/, "")
+    };
+
+    if (target === "haut") {  updateTissuHaut(cleanPatch); } 
+    else if (target === "bas") { updateTissuBas(cleanPatch); } 
+    else if (target === "accessoire") { updateAccessoireTissu(id, cleanPatch); }
+  };
+
+  const handleChangeTissu = (newTissu, id) => {applyTissu(picker.target, newTissu, id)}; //,console.log("accessoire updated:", id, newTissu);
+
+
+  // ------------ GESTION DE LA PALETTE ACCESSOIRES ----------//
+  const [activePalette, setActivePalette] = useState(null); 
+  const showAccessoires = () => setActivePalette("accessoires");
   const [selectedAccessoireId, setSelectedAccessoireId] = useState(null);
   const viewportRef = useRef(null);
 
   const handleAddAccessoire = (item) => {
-    const rect = viewportRef.current.getBoundingClientRect();
+    const rect = viewportRef.current.getBoundingClientRect(); // Placer les accessoires au centre du viewport
+
     const newAcc = {
       id: crypto.randomUUID(),
       type: item.type,
-      component: ACCESSOIRES_COMPONENTS[item.type] || item.component || null,
+      component: item.component,
       x: rect.width / 2,
       y: rect.height / 2,
       scale: 1,
       rotation: 0,
       tissu: { ...DEFAULT_TISSU, instanceId: crypto.randomUUID() }
     };
-    addAccessoire(newAcc);
+
+    addAccessoire(newAcc); 
     setSelectedAccessoireId(newAcc.id);
   };
 
-  const handleMoveAccessoire = (id, x, y) => updateAccessoire(id, { x, y });
-  const handleDeleteAccessoire = (id) => deleteAccessoire(id);
-  const handleUpdateAccessoire = (id, newProps) =>
-    updateAccessoire(id, { ...newProps, component: ACCESSOIRES_COMPONENTS[newProps.type] || newProps.component });
 
-  // ------------------- POUPEE AFFICHEE -------------------
-  const poupeeAffichee = isCreating
-    ? creationData
-    : {
-        prenom, peau, yeux, levres, cheveux,
-        nomCoiffure, nomHaut, nomBas, nomChaussures,
-        chaussuresColor, tissuHaut, tissuBas, accessoires
-      };
+  /*--------- DRAG D'UN ACCESSOIRE --------*/
+  const handleMoveAccessoire = (id, x, y) => {
+    updateAccessoire(id, { x, y });
+  };
 
-  const titrePoupée = isCreating ? "Ma nouvelle amie" : idPoupee ? `Mon amie ${idPoupee}` : "Ma meilleure amie";
+  // supprimer un accessoire
+  const handleDeleteAccessoire = (id) => {
+    deleteAccessoire(id);
+  };
+
+  // mettre à jour l'accessoire
+  const handleUpdateAccessoire = (id, newProps) => {
+    updateAccessoire(id, newProps);
+  };
+
+
 
   // ------------------- RENDER -------------------
   return (
-    <div
-      className="App zoomIn"
-      ref={viewportRef}
-      onMouseDown={(e) => { if (e.target === viewportRef.current) setSelectedAccessoireId(null); }}
-    >
+    <div className="App zoomIn" 
+    ref={viewportRef}
+      onMouseDown={(e) => {
+        if (e.target === viewportRef.current) {
+          setSelectedAccessoireId(null);
+        }
+      }}>
 
+      {/* MODALE PSEUDO */}
       {!hasPseudo && (
         <ModalPseudo
           visible={!hasPseudo}
@@ -183,8 +243,10 @@ export default function App() {
         />
       )}
 
+      {/* APRÈS PSEUDO */}
       {hasPseudo && (
         <>
+          {/* GRILLE DE POUPEES */}
           {!poupeeExiste && !showModalPrenom && !isCreating && (
             <PoupeesGrid
               poupees={poupees}
@@ -195,9 +257,10 @@ export default function App() {
             />
           )}
 
+          {/* MODALE PRENOM */}
           {showModalPrenom && (
             <ModalPrenom
-              visible
+              visible={true}
               prenom={nouveauPrenom}
               setPrenom={setNouveauPrenom}
               exists={false}
@@ -209,36 +272,55 @@ export default function App() {
                 placeholder="Nom de la poupée"
                 value={nouveauPrenom}
                 onChange={(e) => setNouveauPrenom(e.target.value)}
-                style={{ marginBottom: 10 }}
+                style={{ marginBottom: "10px" }}
               />
             </ModalPrenom>
           )}
 
+          {/* POUPEE VIEW */}
           {!showModalPrenom && (isCreating || poupeeExiste) && (
             <>
               <h1>{titrePoupée}</h1>
-
               <PoupeeView
                 id={idPoupee}
                 {...poupeeAffichee}
+                setNomCoiffure={isCreating
+                  ? (value) => setCreationData(prev => ({ ...prev, nomCoiffure: value }))
+                  : setNomCoiffure
+                }
+                setNomHaut={isCreating
+                  ? (value) => setCreationData(prev => ({ ...prev, nomHaut: value }))
+                  : setNomHaut
+                }
+                setNomBas={isCreating
+                  ? (value) => setCreationData(prev => ({ ...prev, nomBas: value }))
+                  : setNomBas
+                }
+                setNomChaussures={isCreating
+                  ? (value) => setCreationData(prev => ({ ...prev, nomChaussures: value }))
+                  : setNomChaussures
+                }
                 openPicker={openPicker}
                 closePicker={closePicker}
                 revoirGrille={revenirGrille}
+                tissuBas={{ ...tissuBas, instanceId: idPoupee }}
+                setTissuBas={updateTissuBas}
+                tissuHaut={tissuHaut}
+                setTissuHaut={updateTissuHaut}
+                accessoires={accessoires}
                 selectedAccessoireId={selectedAccessoireId}
                 setSelected={setSelectedAccessoireId}
                 onUpdate={handleUpdateAccessoire}
                 onMove={handleMoveAccessoire}
-                onDelete={handleDeleteAccessoire}
-                showAccessoires={() => setActivePalette("accessoires")}
-                setNomCoiffure={setNomCoiffure}
-                setNomHaut={setNomHaut}
-                setNomBas={setNomBas}
-                setNomChaussures={setNomChaussures}
+                //onDelete={handleDeleteAccessoire}
+                showAccessoires={showAccessoires}
               />
 
+              {/* COLOR PICKER */}
               {picker.visible && picker.type === "color" && (
                 <ColorfulPicker
-                  x={picker.x} y={picker.y}
+                  x={picker.x}
+                  y={picker.y}
                   currentColor={picker.value}
                   target={picker.target}
                   onChange={applyColor}
@@ -247,11 +329,12 @@ export default function App() {
                 />
               )}
 
-              {picker.visible && (picker.type === "tissu" || picker.type === "accessoire") && (
+              {/* PALETTE TISSUS */}
+              {picker.visible && picker.type === "tissu" && (
                 <PaletteTissus
-                  x={picker.x} y={picker.y}
+                  x={picker.x}
+                  y={picker.y}
                   target={picker.target}
-                  id={picker.id}
                   tissu={picker.value}
                   onChange={handleChangeTissu}
                   onClose={closePicker}
@@ -260,6 +343,7 @@ export default function App() {
                 />
               )}
 
+              {/* PALETTE ACCESSOIRES */}
               {activePalette === "accessoires" && (
                 <PaletteAccessoires
                   onAddAccessoire={handleAddAccessoire}
@@ -272,14 +356,29 @@ export default function App() {
                   key={acc.id}
                   acc={acc}
                   selectedAccessoireId={selectedAccessoireId}
-                  setSelected={setSelectedAccessoireId}
                   onUpdate={handleUpdateAccessoire}
-                  onMove={handleMoveAccessoire}
                   onDelete={handleDeleteAccessoire}
+                  setSelected={setSelectedAccessoireId}
+                  onMove={handleMoveAccessoire}
                   openPicker={openPicker}
                   tissuAccessoire={acc.tissu}
                 />
               ))}
+
+              {/* PALETTE TISSUS POUR ACCESSOIRE */}
+              {picker.visible && picker.type === "accessoire" && (
+                <PaletteTissus
+                  x={picker.x}
+                  y={picker.y}
+                  target={picker.target}
+                  id={picker.id} 
+                  tissu={picker.value}
+                  onChange={handleChangeTissu}
+                  onClose={closePicker}
+                  openPicker={openPicker}
+                  picker={picker}
+                />
+              )}
             </>
           )}
         </>
