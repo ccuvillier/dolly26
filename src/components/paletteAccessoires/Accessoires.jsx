@@ -7,44 +7,64 @@ export default function Accessoire({
   selectedAccessoireId,
   onDelete,
   setSelected,
-  onMove,
   openPicker
 }) {
+  // ================= POSITION LOCALE =================
   const [pos, setPos] = useState({ x: acc.x, y: acc.y });
-  const [size, setSize] = useState({ width: acc.width || 65, height: acc.height || 65 });
-  const [rotation, setRotation] = useState(acc.rotation || 0);
-  const [localTissu, setLocalTissu] = useState(acc.tissu);
+  useEffect(() => setPos({ x: acc.x, y: acc.y }), [acc.x, acc.y]);
 
+  // ================= SIZE =================
+  const [size, setSize] = useState({
+    width: acc.width || 65,
+    height: acc.height || 65
+  });
+
+  // ================= ROTATION =================
+  const [rotation, setRotation] = useState(acc.rotation || 0);
+
+  // ================= DRAG =================
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
-  useEffect(() => {
-    setPos({ x: acc.x, y: acc.y });
-  }, [acc.x, acc.y]);
-
-  // Toujours recalculer Component depuis le type
-  const Component = ACCESSOIRES_COMPONENTS[acc.type] || null;
-
-  useEffect(() => setPos({ x: acc.x, y: acc.y }), [acc.x, acc.y]);
+  // ================= TISSU =================
+  const [localTissu, setLocalTissu] = useState(acc.tissu);
   useEffect(() => setLocalTissu(acc.tissu), [acc.tissu]);
 
+  const Component = ACCESSOIRES_COMPONENTS[acc.type];
+
+  // ===================================================
+  // DRAG START
+  // ===================================================
   const handleDragStart = (e) => {
     e.stopPropagation();
     setIsDragging(true);
-    setDragOffset({ x: e.clientX - pos.x, y: e.clientY - pos.y });
-    setSelected(acc.id);
+    setDragOffset({
+      x: e.clientX - pos.x,
+      y: e.clientY - pos.y
+    });
   };
 
+  // ===================================================
+  // DRAG MOVE
+  // ===================================================
   const handleMouseMove = (e) => {
     if (!isDragging) return;
+
     const newX = e.clientX - dragOffset.x;
     const newY = e.clientY - dragOffset.y;
-    setPos({ x: newX, y: newY }); // UI fluide locale
+
+    setPos({ x: newX, y: newY }); // UI locale uniquement
   };
 
+  // ===================================================
+  // DRAG END
+  // ===================================================
   const handleMouseUp = () => {
     if (!isDragging) return;
+
     setIsDragging(false);
+
+    // 🔥 Firebase seulement ici
     onUpdate(acc.id, {
       x: pos.x,
       y: pos.y,
@@ -55,72 +75,76 @@ export default function Accessoire({
     });
   };
 
-  useEffect(() => {
-    if (!isDragging) return;
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
-    return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, [isDragging, dragOffset, pos, size, rotation, localTissu]);
-
+  // ===================================================
+  // SCALE
+  // ===================================================
   const handleScale = (corner, e) => {
     e.stopPropagation();
+
     const startX = e.clientX;
     const startY = e.clientY;
     const startWidth = size.width;
     const startHeight = size.height;
-    const startPos = { ...pos };
 
     const onMove = (moveEvent) => {
       let deltaX = moveEvent.clientX - startX;
       let deltaY = moveEvent.clientY - startY;
+
       let newWidth = startWidth;
       let newHeight = startHeight;
-      let newX = startPos.x;
-      let newY = startPos.y;
 
-      switch (corner) {
-        case "top-left": newWidth -= deltaX; newHeight -= deltaY; newX += deltaX; newY += deltaY; break;
-        case "top-right": newWidth += deltaX; newHeight -= deltaY; newY += deltaY; break;
-        case "bottom-left": newWidth -= deltaX; newHeight += deltaY; newX += deltaX; break;
-        case "bottom-right": newWidth += deltaX; newHeight += deltaY; break;
-      }
+      if (corner.includes("right")) newWidth += deltaX;
+      if (corner.includes("left")) newWidth -= deltaX;
+      if (corner.includes("bottom")) newHeight += deltaY;
+      if (corner.includes("top")) newHeight -= deltaY;
 
       newWidth = Math.max(10, newWidth);
       newHeight = Math.max(10, newHeight);
 
       setSize({ width: newWidth, height: newHeight });
-      setPos({ x: newX, y: newY });
     };
 
     const onUp = () => {
       document.removeEventListener("mousemove", onMove);
       document.removeEventListener("mouseup", onUp);
-      onUpdate(acc.id, { x: pos.x, y: pos.y, width: size.width, height: size.height });
+
+      onUpdate(acc.id, {
+        width: size.width,
+        height: size.height
+      });
     };
 
     document.addEventListener("mousemove", onMove);
     document.addEventListener("mouseup", onUp);
   };
 
+  // ===================================================
+  // ROTATE
+  // ===================================================
   const handleRotate = (e) => {
     e.stopPropagation();
+
     const rect = e.target.parentElement.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    const startAngle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * (180 / Math.PI);
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+
+    const startAngle = Math.atan2(e.clientY - cy, e.clientX - cx);
     const initialRotation = rotation;
 
     const onMove = (moveEvent) => {
-      const currentAngle = Math.atan2(moveEvent.clientY - centerY, moveEvent.clientX - centerX) * (180 / Math.PI);
-      setRotation(initialRotation + (currentAngle - startAngle));
+      const currentAngle = Math.atan2(
+        moveEvent.clientY - cy,
+        moveEvent.clientX - cx
+      );
+
+      const diff = (currentAngle - startAngle) * (180 / Math.PI);
+      setRotation(initialRotation + diff);
     };
 
     const onUp = () => {
       document.removeEventListener("mousemove", onMove);
       document.removeEventListener("mouseup", onUp);
+
       onUpdate(acc.id, { rotation });
     };
 
@@ -128,23 +152,41 @@ export default function Accessoire({
     document.addEventListener("mouseup", onUp);
   };
 
-  const handleTissuChange = (newTissu) => {
-    setLocalTissu(newTissu);
-    onUpdate(acc.id, { tissu: newTissu });
-  };
+  // ===================================================
+  // EFFECT LISTENERS DRAG
+  // ===================================================
+  useEffect(() => {
+    if (!isDragging) return;
 
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isDragging, dragOffset, pos]);
+
+  // ===================================================
+  // RENDER
+  // ===================================================
   return (
     <div
-      className={`accessoires-wrapper ${selectedAccessoireId === acc.id ? "selected" : ""}`}
+      className={`accessoires-wrapper ${
+        selectedAccessoireId === acc.id ? "selected" : ""
+      }`}
       style={{
         position: "absolute",
         left: pos.x,
         top: pos.y,
         width: size.width,
         height: size.height,
-        transform: `rotate(${rotation}deg) scale(${acc.scale})`
+        transform: `rotate(${rotation}deg)`
       }}
-      onMouseDown={handleDragStart}
+      onMouseDown={(e) => {
+        handleDragStart(e);
+        setSelected(acc.id);
+      }}
     >
       {Component ? (
         <Component
@@ -170,7 +212,15 @@ export default function Accessoire({
               onMouseDown={(e) => handleScale(corner, e)}
             />
           ))}
-          <button className="close" onClick={(e) => { e.stopPropagation(); onDelete(acc.id); }}>Supprimer</button>
+          <button
+            className="close"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(acc.id);
+            }}
+          >
+            Supprimer
+          </button>
         </>
       )}
     </div>
