@@ -1,12 +1,12 @@
 
-import AccFleurs5 from "../../images/accessoires/accFleurs5.jsx";
-import AccNoeudPapillon from "../../images/accessoires/accNoeudPapillon.jsx";
-import AccPerles from "../../images/accessoires/accPerles.jsx";
+import Fleurs5 from "../../images/accessoires/Fleurs5.jsx";
+import NoeudPapillon from "../../images/accessoires/NoeudPapillon.jsx";
+import Perles from "../../images/accessoires/Perles.jsx";
 
 export const accessoiresPalette = [
-  { type: "Fleurs5", component: AccFleurs5 },
-  { type: "NoeudPapillon", component: AccNoeudPapillon },
-  { type: "Perles", component: AccPerles }
+  { type: "Fleurs5", component: Fleurs5 },
+  { type: "NoeudPapillon", component: NoeudPapillon },
+  { type: "Perles", component: Perles }
 ];
 
 // accessoires placés sur la poupée

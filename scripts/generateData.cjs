@@ -94,13 +94,17 @@ ${items.map(i => `  { name: "${i.name}", label: "${i.label}", isUni: ${i.isUni},
 
 // ---------- GENERATION DE LA BDD ACCESSOIRES --------- //
 function generateAccessoiresData({ imagesFolder, outputFile }) {
+  const fs = require("fs");
+  const path = require("path");
+
   const files = fs.existsSync(imagesFolder)
     ? fs.readdirSync(imagesFolder).filter(f => f.endsWith(".jsx"))
     : [];
 
+  // Générer les imports et le tableau
   const imports = files.map(f => {
-    const rawName = path.basename(f, ".jsx");     // accPerles
-    const varName = rawName.charAt(0).toUpperCase() + rawName.slice(1); // AccPerles
+    const rawName = path.basename(f, ".jsx");     // ex: perles
+    const varName = rawName.charAt(0).toUpperCase() + rawName.slice(1); // Perles
 
     const relativePath = path
       .relative(path.dirname(outputFile), path.join(imagesFolder, f))
@@ -110,12 +114,13 @@ function generateAccessoiresData({ imagesFolder, outputFile }) {
   }).join("\n");
 
   const items = files.map(f => {
-    const rawName = path.basename(f, ".jsx"); // accPerles
-    const type = rawName.replace(/^acc/, "");  // Perles
+    const rawName = path.basename(f, ".jsx"); // ex: Perles
+    const componentName = rawName.charAt(0).toUpperCase() + rawName.slice(1); // Perles
 
-    const varName = rawName.charAt(0).toUpperCase() + rawName.slice(1);
+    // type = nom exact du component pour un mapping direct
+    const type = componentName;
 
-    return `  { type: "${type}", component: ${varName} }`;
+    return `  { type: "${type}", component: ${componentName} }`;
   }).join(",\n");
 
   const content = `

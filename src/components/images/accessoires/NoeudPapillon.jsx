@@ -1,6 +1,6 @@
 import React from 'react';
 
-const AccNoeudPapillon = ({ color = "#fff", width = "65", height = "57" }) => {
+const NoeudPapillon = ({ color = "#fff", width = "65", height = "57" }) => {
     return (
         <svg version="1.1" xmlns="http://www.w3.org/2000/svg"  
            width={width} height={height} viewBox="0 0 65 57" className="svg"
@@ -17,4 +17,4 @@ const AccNoeudPapillon = ({ color = "#fff", width = "65", height = "57" }) => {
     );
 };
 
-export default React.memo(AccNoeudPapillon);
+export default React.memo(NoeudPapillon);

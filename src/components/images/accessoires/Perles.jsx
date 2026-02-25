@@ -1,6 +1,6 @@
 import React from 'react';
 
-const AccPerles = ({ color = "#fff", width = "65", height = "57" }) => {
+const Perles = ({ color = "#fff", width = "65", height = "57" }) => {
     return (
         <svg version="1.1" xmlns="http://www.w3.org/2000/svg"  
            width={width} height={height} viewBox="0 0 65 57" className="svg"
@@ -16,4 +16,4 @@ const AccPerles = ({ color = "#fff", width = "65", height = "57" }) => {
     );
 };
 
-export default React.memo(AccPerles);
+export default React.memo(Perles);

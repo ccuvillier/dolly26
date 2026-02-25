@@ -16,15 +16,7 @@ const HautPullColRoule = ({ tissuHaut, onPickColor }) => {
           <path  fill={mergedTissu.isUni ? mergedTissu.color : `url(#tissu-${mergedTissu.instanceId})`}
             onClick={(e) => onPickColor && onPickColor(e, { type: "tissu", target: "haut", value: mergedTissu })}
             d="M112.3,32.3c13.7,0,16.7-10.5,16.7-10.5,0,0-5.3-2.5-6.1-8.5s-.1-12-.1-12c0,0-2.7.8-10.4.8-7.7,0-10.4-.8-10.4-.8,0,0,.7,6-.1,12s-6.1,8.5-6.1,8.5c0,0,3,10.5,16.7,10.5Z"/>
-          <g>
-            <path d="M104.3,2.4s.6,10.7-.4,14-4.6,6.6-4.6,6.6"/>
-            <path d="M107.1,2.4s1.1,9.6-.3,14.2-4.6,9.1-4.6,9.1"/>
-            <path d="M109.6,2.5s.8,9.6.1,13.8-3.8,11.2-3.8,11.2"/>
-            <path d="M120.3,2.4s-.6,10.7.4,14,4.6,6.6,4.6,6.6"/>
-            <path d="M117.5,2.4s-1.1,9.6.3,14.2,4.6,9.1,4.6,9.1"/>
-            <path d="M115,2.5s-.8,9.6-.1,13.8,3.8,11.3,3.8,11.3"/>
-            <path d="M112.2,2.5s.3,11.7.3,15.4-.3,11.1-.3,11.1"/>
-          </g>
+
         </g>
         <g>
           <path fill={mergedTissu.isUni ? mergedTissu.color : `url(#tissu-${mergedTissu.instanceId})`}

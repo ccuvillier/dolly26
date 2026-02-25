@@ -2,7 +2,7 @@ import React from 'react';
 import EnteteSvg from "../../enteteSvg";
 import { DEFAULT_TISSU } from "../../../constants/defaultTissu";
 
-const AccFleurs5 = ({ accId, tissuAccessoire, onPickColor, width = "65", height = "57" }) => {
+const Fleurs5 = ({ accId, tissuAccessoire, onPickColor, width = "65", height = "57" }) => {
 
     const mergedTissu = { ...DEFAULT_TISSU, ...tissuAccessoire };
 
@@ -28,4 +28,5 @@ const AccFleurs5 = ({ accId, tissuAccessoire, onPickColor, width = "65", height 
     );
 };
 
-export default React.memo(AccFleurs5);
+//export default React.memo(Fleurs5);
+export default Fleurs5;
