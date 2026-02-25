@@ -36,7 +36,6 @@ export function useDraggable(initialPosition = { x: 0, y: 0 }) {
   //const onMouseMove = (e) => onMove(e.clientX, e.clientY);
   const onMouseMove = useCallback(
   (e) => {
-    console.log("🟢 mouse move", e.clientX, e.clientY);
     onMove(e.clientX, e.clientY);
   },
   [onMove]

@@ -50,7 +50,12 @@ export default function App() {
     tissuBas,
     setTissuBas,
     updateTissuBas,
-  } = usePoupee(pseudo);
+    accessoires,
+    addAccessoire,
+    updateAccessoire,
+    deleteAccessoire,
+    updateAccessoireTissu
+    } = usePoupee(pseudo);
 
   // ------------------- HOOK CREATION -------------------
   const {
@@ -168,34 +173,22 @@ export default function App() {
       ref: patch.ref ?? patch.name.replace(/^tissu-/, "")
     };
 
-    if (target === "haut") {
-      updateTissuHaut(cleanPatch);
-    } else if (target === "bas") {
-      updateTissuBas(cleanPatch);
-    } else if (target === "accessoire") {
-      setAccessoires(prev =>
-        prev.map(acc =>
-          acc.id === id
-            ? { ...acc, tissu: { ...acc.tissu, ...cleanPatch } }
-            : acc
-        )
-      );
-      console.log("accessoire updated:", id, patch);
-    }
+    if (target === "haut") {  updateTissuHaut(cleanPatch); } 
+    else if (target === "bas") { updateTissuBas(cleanPatch); } 
+    else if (target === "accessoire") { updateAccessoireTissu(id, cleanPatch); }
   };
 
-  const handleChangeTissu = (newTissu, id) => {console.log("accessoire updated:", id, newTissu); applyTissu(picker.target, newTissu, id)};
+  const handleChangeTissu = (newTissu, id) => {applyTissu(picker.target, newTissu, id)}; //,console.log("accessoire updated:", id, newTissu);
 
 
   // ------------ GESTION DE LA PALETTE ACCESSOIRES ----------//
   const [activePalette, setActivePalette] = useState(null); 
   const showAccessoires = () => setActivePalette("accessoires");
   const [selectedAccessoireId, setSelectedAccessoireId] = useState(null);
-  const [accessoires, setAccessoires] = useState([]);
   const viewportRef = useRef(null);
 
   const handleAddAccessoire = (item) => {
-    const rect = viewportRef.current.getBoundingClientRect(); // Placer les accessoires au centre
+    const rect = viewportRef.current.getBoundingClientRect(); // Placer les accessoires au centre du viewport
 
     const newAcc = {
       id: crypto.randomUUID(),
@@ -205,33 +198,27 @@ export default function App() {
       y: rect.height / 2,
       scale: 1,
       rotation: 0,
-      tissu: { ...DEFAULT_TISSU, color: "#ffffff", isUni: true, instanceId: crypto.randomUUID() }
+      tissu: { ...DEFAULT_TISSU, instanceId: crypto.randomUUID() }
     };
 
-    setAccessoires(prev => [...prev, newAcc]);
+    addAccessoire(newAcc); 
     setSelectedAccessoireId(newAcc.id);
   };
 
 
   /*--------- DRAG D'UN ACCESSOIRE --------*/
   const handleMoveAccessoire = (id, x, y) => {
-  setAccessoires(prev =>
-    prev.map(acc =>
-      acc.id === id ? { ...acc, x, y } : acc
-    )
-  );
-};
+    updateAccessoire(id, { x, y });
+  };
 
   // supprimer un accessoire
   const handleDeleteAccessoire = (id) => {
-    setAccessoires(prev => prev.filter(acc => acc.id !== id));
+    deleteAccessoire(id);
   };
 
   // mettre à jour l'accessoire
   const handleUpdateAccessoire = (id, newProps) => {
-    setAccessoires(prev =>
-      prev.map(acc => acc.id === id ? { ...acc, ...newProps } : acc)
-    );
+    updateAccessoire(id, newProps);
   };
 
 
@@ -325,7 +312,7 @@ export default function App() {
                 setSelected={setSelectedAccessoireId}
                 onUpdate={handleUpdateAccessoire}
                 onMove={handleMoveAccessoire}
-                onDelete={handleDeleteAccessoire}
+                //onDelete={handleDeleteAccessoire}
                 showAccessoires={showAccessoires}
               />
 
@@ -357,14 +344,14 @@ export default function App() {
               )}
 
               {/* PALETTE ACCESSOIRES */}
-              {activePalette === "accessoires" ? (
+              {activePalette === "accessoires" && (
                 <PaletteAccessoires
                   onAddAccessoire={handleAddAccessoire}
                   onClose={() => setActivePalette(null)}
                 />
-              ) : null}
+              )}
 
-              {accessoires.map(acc => (
+              {accessoires?.map(acc => (
                 <Accessoire
                   key={acc.id}
                   acc={acc}

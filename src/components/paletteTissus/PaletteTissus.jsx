@@ -32,6 +32,7 @@ export default function PaletteTissus({ x, y, id, tissu, onChange, onClose, open
     const updated = { ...localTissu, ...t }; 
     setLocalTissu(updated);
     setSelectedName(t.name);
+    //console.log("PaletteTissus onChange:", updated, "picker.id=", picker.id);
     onChange(updated, picker.id); 
 
       // si tissu uni, ouvrir le color picker

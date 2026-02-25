@@ -9,7 +9,7 @@ import { savePoupeeField, supprimerPoupeeFirestore, renommerPoupeeFirestore } fr
 export default function usePoupee(pseudo) {
   const [poupees, setPoupees] = useState([]);      // liste des poupées { id, data }
   const [idPoupee, setIdPoupee] = useState("");    // ID de la poupée active
-  const [data, setData] = useState(DEFAULT_POUPEE); // données de la poupée active
+  const [data, setData] = useState({DEFAULT_POUPEE, accessoires: []}); // données de la poupée active
   const [poupeeExiste, setPoupeeExiste] = useState(false);
 
   const [tissuHaut, setTissuHaut] = useState(DEFAULT_TISSU);
@@ -47,7 +47,7 @@ export default function usePoupee(pseudo) {
       ...DEFAULT_POUPEE, 
       prenom,
       tissuBas: DEFAULT_TISSU,
-      tissuHaut: DEFAULT_TISSU
+      tissuHaut: DEFAULT_TISSU, accessoires: []
     };
 
     await setDoc(ref, newData);
@@ -55,6 +55,8 @@ export default function usePoupee(pseudo) {
     setPoupees(prev => [...prev, { id: prenom, data: newData }]);
     setIdPoupee(prenom);
     setData(newData);
+    setTissuHaut(newData.tissuHaut);
+    setTissuBas(newData.tissuBas);
     setPoupeeExiste(true);
 
     return prenom;
@@ -71,6 +73,8 @@ export default function usePoupee(pseudo) {
       setIdPoupee("");
       setPoupeeExiste(false);
       setData(DEFAULT_POUPEE);
+      setTissuHaut(newData.tissuHaut);
+      setTissuBas(newData.tissuBas);
     }
   };
 
@@ -164,6 +168,84 @@ const renommerPoupee = async (oldId, newId) => {
 
   };
 
+
+// ----------------- SANITIZE -----------------
+function sanitize(obj) {
+  // Supprime tout ce qui n'est pas JSON-serializable
+  if (typeof obj === "symbol" || typeof obj === "function") return undefined;
+  if (Array.isArray(obj)) return obj.map(sanitize);
+  if (obj && typeof obj === "object") {
+    const clean = {};
+    for (const key in obj) {
+      if (key === "component") continue; // on ignore le component pour la BDD
+      const sanitized = sanitize(obj[key]);
+      if (sanitized !== undefined) clean[key] = sanitized;
+    }
+    return clean;
+  }
+  return obj;
+}
+
+
+  // ----------------- ACCESSOIRES -----------------
+  // Ajouter
+  const addAccessoire = async (newAcc) => {
+    const current = Array.isArray(data.accessoires) ? data.accessoires : [];
+      
+    // Crée une version safe pour Firestore
+    const safeAcc = sanitize(newAcc);
+      
+    // Mise à jour Firestore
+    await updateField("accessoires", [...current, safeAcc]);
+
+    // Pour l'UI, on garde le component intact
+    setData({
+      ...data,
+      accessoires: [...current, newAcc] // newAcc contient component pour l'affichage
+    });
+  };
+
+  // Modifier
+  const updateAccessoire = async (id, patch) => {
+    const current = Array.isArray(data.accessoires) ? data.accessoires : [];
+
+    // On applique le patch à l'accessoire ciblé pour l'UI
+    const updatedUI = current.map(acc =>
+      acc.id === id ? { ...acc, ...patch } : acc
+    );
+
+    // Version safe pour Firestore
+    const updatedSafe = updatedUI.map(acc => sanitize(acc));
+
+    // Mise à jour Firestore
+    await updateField("accessoires", updatedSafe);
+
+    // Mise à jour UI locale
+    setData({
+      ...data,
+      accessoires: updatedUI
+    });
+  };
+
+  // Supprimer
+  const deleteAccessoire = async (id) => {
+    const updated = data.accessoires.filter(acc => acc.id !== id);
+
+    await updateField("accessoires", updated);
+  };
+
+  // Modifier le tissu de l'accessoire
+  const updateAccessoireTissu = async (id, patch) => {
+    const updated = data.accessoires.map(acc =>
+      acc.id === id
+        ? { ...acc, tissu: { ...acc.tissu, ...patch } }
+        : acc
+    );
+
+    await updateField("accessoires", updated);
+  };
+
+  // ----------------- MÉTHODES SPÉCIFIQUES -----------------
   const updateNomCoiffure = (value) => updateField("nomCoiffure", value);
   const updateNomHaut = (value) => updateField("nomHaut", value);
   const updateNomBas = (value) => updateField("nomBas", value);
@@ -207,7 +289,12 @@ const renommerPoupee = async (oldId, newId) => {
     updateTissuHaut,
     tissuBas,
     setTissuBas,
-    updateTissuBas
+    updateTissuBas,
+    accessoires: data.accessoires,
+    updateAccessoire,
+    addAccessoire,
+    deleteAccessoire,
+    updateAccessoireTissu
   };
 }
 

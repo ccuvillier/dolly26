@@ -4,6 +4,7 @@
 /*********************/
 .slick-prev, .slick-next {
     z-index: 50;
+    pointer-events: all;
 }
 .slick-prev {
     left: 50%;
@@ -36,6 +37,7 @@
     }
     button.choix {
         top: 40%;
+        pointer-events: all;
     }
 }
 #coiffureChoisie {
@@ -43,6 +45,10 @@
     top: 0;
     width: 100vw;
     pointer-events: none;
+
+    g[fill] {
+        pointer-events: fill;
+    }
 }
 
 #CarouselHauts, #hautChoisi {

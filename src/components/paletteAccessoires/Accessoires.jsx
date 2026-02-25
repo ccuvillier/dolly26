@@ -7,205 +7,167 @@ export default function Accessoire({
   onDelete,
   setSelected,
   onMove,
-  openPicker,
-  tissuAccessoire
+  openPicker
 }) {
-
-  /* forcer la mise à jour du tissu */
+  // ================= TISSU LOCAL =================
   const [localTissu, setLocalTissu] = useState(acc.tissu);
+  useEffect(() => setLocalTissu(acc.tissu), [acc.tissu]);
 
-  useEffect(() => {
-    setLocalTissu(acc.tissu);
-  }, [acc.tissu]);
-
-
-
+  // ================= UI STATE =================
+  const [pos, setPos] = useState({ x: acc.x, y: acc.y });
   const [size, setSize] = useState({ width: 65, height: 65 });
+  const [rotation, setRotation] = useState(acc.rotation || 0);
   const [isDragging, setIsDragging] = useState(false);
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [activeAction, setActiveAction] = useState(null); // "drag" | "scale" | "rotate"
+  const [scaleStart, setScaleStart] = useState(null); // { mouseX, mouseY, width, height, x, y, corner }
+  const [rotateStart, setRotateStart] = useState(null); // { centerX, centerY, startAngle, initialRotation }
 
-  const Component = acc.component;
+  // ================= SAFE COMPONENT =================
+  const getComponent = (component) => {
+    if (!component) return null;
+    if (typeof component === "function") return component;
+    if (component.type && typeof component.type === "function") return component.type;
+    if (component.default && typeof component.default === "function") return component.default;
+    return null;
+  };
+  const Component = getComponent(acc.component);
 
-  /* ================= SCALE ================= */
+  // ================= HANDLERS =================
+  const handleDragStart = (e) => {
+    e.stopPropagation();
+    setIsDragging(true);
+    setDragOffset({ x: e.clientX - pos.x, y: e.clientY - pos.y });
+    setActiveAction("drag");
+  };
 
   const handleScaleMouseDown = (e, corner) => {
     e.stopPropagation();
     e.preventDefault();
-
-    const startX = e.clientX;
-    const startY = e.clientY;
-    const startWidth = size.width;
-    const startHeight = size.height;
-    const startPos = { x: acc.x, y: acc.y };
-
-    const onMouseMove = (moveEvent) => {
-      let deltaX = moveEvent.clientX - startX;
-      let deltaY = moveEvent.clientY - startY;
-      let newWidth = startWidth;
-      let newHeight = startHeight;
-      let newX = startPos.x;
-      let newY = startPos.y;
-
-      switch (corner) {
-        case "top-left":
-          newWidth -= deltaX;
-          newHeight -= deltaY;
-          newX += deltaX;
-          newY += deltaY;
-          break;
-        case "top-right":
-          newWidth += deltaX;
-          newHeight -= deltaY;
-          newY += deltaY;
-          break;
-        case "bottom-left":
-          newWidth -= deltaX;
-          newHeight += deltaY;
-          newX += deltaX;
-          break;
-        case "bottom-right":
-          newWidth += deltaX;
-          newHeight += deltaY;
-          break;
-      }
-
-      newWidth = Math.max(10, newWidth);
-      newHeight = Math.max(10, newHeight);
-
-      setSize({ width: newWidth, height: newHeight });
-      onUpdate(acc.id, { width: newWidth, height: newHeight, x: newX, y: newY });
-    };
-
-    const onMouseUp = () => {
-      document.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("mouseup", onMouseUp);
-    };
-
-    document.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("mouseup", onMouseUp);
+    setActiveAction("scale");
+    setScaleStart({
+      mouseX: e.clientX,
+      mouseY: e.clientY,
+      width: size.width,
+      height: size.height,
+      x: pos.x,
+      y: pos.y,
+      corner
+    });
   };
-
-  /* ================= ROTATE ================= */
 
   const handleRotateMouseDown = (e) => {
     e.stopPropagation();
     e.preventDefault();
-
     const rect = e.target.parentElement.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
-
-    const startAngle =
-      Math.atan2(e.clientY - centerY, e.clientX - centerX) * (180 / Math.PI);
-
-    const initialRotation = acc.rotation;
-
-    const onMouseMove = (moveEvent) => {
-      const currentAngle =
-        Math.atan2(
-          moveEvent.clientY - centerY,
-          moveEvent.clientX - centerX
-        ) *
-        (180 / Math.PI);
-
-      const newRotation = initialRotation + (currentAngle - startAngle);
-      onUpdate(acc.id, { rotation: newRotation });
-    };
-
-    const onMouseUp = () => {
-      document.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("mouseup", onMouseUp);
-    };
-
-    document.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("mouseup", onMouseUp);
+    const startAngle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * (180 / Math.PI);
+    setRotateStart({ centerX, centerY, startAngle, initialRotation: rotation });
+    setActiveAction("rotate");
   };
 
-  /* ================= DRAG ================= */
-
-  const handleDragStart = (e) => {
-    setIsDragging(true);
-    setOffset({
-      x: e.clientX - acc.x,
-      y: e.clientY - acc.y
-    });
-  };
-
+  /* ----- SCALE ----- */
   const handleMouseMove = (e) => {
-    if (!isDragging) return;
+    if (!activeAction) return;
 
-    const newX = e.clientX - offset.x;
-    const newY = e.clientY - offset.y;
+    if (activeAction === "drag") {
+      const newX = e.clientX - dragOffset.x;
+      const newY = e.clientY - dragOffset.y;
+      setPos({ x: newX, y: newY });
+    }
 
-    onMove(acc.id, newX, newY);
+    if (activeAction === "scale" && scaleStart) {
+      const { mouseX, mouseY, width, height, x, y, corner } = scaleStart;
+      let deltaX = e.clientX - mouseX;
+      let deltaY = e.clientY - mouseY;
+      let newWidth = width;
+      let newHeight = height;
+      let newX = x;
+      let newY = y;
+
+      switch (corner) {
+        case "top-left":
+          newWidth -= deltaX; newHeight -= deltaY; newX += deltaX; newY += deltaY; break;
+        case "top-right":
+          newWidth += deltaX; newHeight -= deltaY; newY += deltaY; break;
+        case "bottom-left":
+          newWidth -= deltaX; newHeight += deltaY; newX += deltaX; break;
+        case "bottom-right":
+          newWidth += deltaX; newHeight += deltaY; break;
+      }
+
+      newWidth = Math.max(10, newWidth);
+      newHeight = Math.max(10, newHeight);
+      setSize({ width: newWidth, height: newHeight });
+      setPos({ x: newX, y: newY });
+    }
+
+    if (activeAction === "rotate" && rotateStart) {
+      const { centerX, centerY, startAngle, initialRotation } = rotateStart;
+      const currentAngle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * (180 / Math.PI);
+      setRotation(initialRotation + (currentAngle - startAngle));
+    }
   };
 
+
+  /* ----- DRAG ----- */
   const handleMouseUp = () => {
+    // Persist changes à la fin
+    if (activeAction === "drag" || activeAction === "scale" || activeAction === "rotate") {
+      onUpdate(acc.id, { x: pos.x, y: pos.y, width: size.width, height: size.height, rotation });
+    }
     setIsDragging(false);
+    setActiveAction(null);
+    setScaleStart(null);
+    setRotateStart(null);
   };
 
+  // ================= EFFECT =================
   useEffect(() => {
-    if (!isDragging) return;
-
-    const moveListener = (e) => handleMouseMove(e);
-    const upListener = () => handleMouseUp();
-
-    document.addEventListener("mousemove", moveListener);
-    document.addEventListener("mouseup", upListener);
-
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
     return () => {
-      document.removeEventListener("mousemove", moveListener);
-      document.removeEventListener("mouseup", upListener);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [isDragging, offset]);
+  }, [activeAction, dragOffset, scaleStart, rotateStart, pos, size, rotation]);
 
-  console.log("Rendering Accessoire", acc.id, acc.tissu);
-
-  /* ================= RENDER ================= */
-
+  // ================= RENDER =================
   return (
     <div
-      className={`accessoires-wrapper ${
-        selectedAccessoireId === acc.id ? "selected" : ""
-      }`}
+      className={`accessoires-wrapper ${selectedAccessoireId === acc.id ? "selected" : ""}`}
       style={{
         position: "absolute",
-        left: acc.x,
-        top: acc.y,
+        left: pos.x,
+        top: pos.y,
         width: size.width,
         height: size.height,
-        transform: `rotate(${acc.rotation}deg) scale(${acc.scale})`
+        transform: `rotate(${rotation}deg) scale(${acc.scale || 1})`
       }}
-      onMouseDown={(e) => {
-        e.stopPropagation();
-        setSelected(acc.id);
-        handleDragStart(e);
-      }}
-      
+      onMouseDown={(e) => { e.stopPropagation(); setSelected(acc.id); handleDragStart(e); }}
     >
-      <Component width={size.width} height={size.height} accId={acc.id} tissuAccessoire={localTissu} onPickColor={openPicker}/>
+      {Component && (
+        <Component
+          width={size.width}
+          height={size.height}
+          accId={acc.id}
+          tissuAccessoire={localTissu}
+          onPickColor={openPicker}
+        />
+      )}
 
       {selectedAccessoireId === acc.id && (
         <>
           <div className="handle rotate-handle" onMouseDown={handleRotateMouseDown} />
-
-          {["top-left", "top-right", "bottom-left", "bottom-right"].map(
-            (corner) => (
-              <div
-                key={corner}
-                className={`handle ${corner}`}
-                onMouseDown={(e) => handleScaleMouseDown(e, corner)}
-              />
-            )
-          )}
-
-          <button
-            className="close"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete(acc.id);
-            }}
-          >
+          {["top-left","top-right","bottom-left","bottom-right"].map(corner => (
+            <div
+              key={corner}
+              className={`handle ${corner}`}
+              onMouseDown={(e) => handleScaleMouseDown(e, corner)}
+            />
+          ))}
+          <button className="close" onClick={(e) => { e.stopPropagation(); onDelete(acc.id); }}>
             Supprimer
           </button>
         </>
