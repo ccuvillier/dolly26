@@ -9,8 +9,7 @@ export default function CarouselChaussures({ color, onSelect, initialChaussuresN
           color={color}
           initialName={initialChaussuresName}
           onSelect={onSelect}
-          width={135}
-          height={170}
+
           label="Choisir ces chaussures"
           Id="CarouselChaussures"
         />

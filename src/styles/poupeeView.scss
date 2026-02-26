@@ -3,12 +3,13 @@
 /******************/
 #poupee {
     position: absolute;
+    top: 0;
+    left: 0;
     z-index: 0;
-    display: inline-block;
     width: 100vw;
-    left: 50%;
+    /*left: 50%;
     transform: translateX(-50%);
-    z-index: 0;
+    display: inline-block;*/
 }
 #poupee, .poupees-grid {
     .fille0{fill:#FFE4D9;stroke:#1D1D1B;}
@@ -66,4 +67,46 @@ svg .dash {
 #basChoisi,
 #chaussuresChoisies {
   pointer-events: none;
+}
+
+/* Zoom Pan Pinch */
+#poupeeView {
+  cursor: grab; /* curseur par défaut */
+}
+
+#poupeeView.dragging {
+  cursor: grabbing; /* curseur pendant le drag */
+}
+.react-transform-wrapper {
+  overflow: visible !important;
+}
+#zoomButtons {
+    position:absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: all;
+    z-index: 500;
+
+    button {
+        text-indent: -1000px;
+        overflow: hidden;
+        height: 24px;
+        width: 24px;
+        border: none;
+        border-radius: 5px;
+        box-shadow: 0px 0px 5px #aaa;
+        margin: 0 5px;
+        background-size: 75% !important;
+        cursor: pointer;
+    }
+
+    .zoom {
+        background: url(../components/images/picto-zoom.svg) no-repeat #fff 80%;
+    }
+    .dezoom {
+        background: url(../components/images/picto-dezoom.svg) no-repeat #fff 80%;
+    }
+    .reset {
+        background: url(../components/images/picto-reset.svg) no-repeat #fff 80%;
+    }
 }

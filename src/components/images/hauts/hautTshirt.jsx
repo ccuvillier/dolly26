@@ -8,7 +8,7 @@ const HautTshirt = ({ tissuHaut, onPickColor }) => {
 
   return (
     <svg version="1.1" xmlns="http://www.w3.org/2000/svg"  
-           width="100%" viewBox="-298 -230 800 800" className="svg"
+           width="100%" viewBox="-300 -230 800 800" className="svg"
            style={{ cursor: "pointer" }}
       >
 
