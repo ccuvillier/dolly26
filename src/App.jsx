@@ -6,7 +6,6 @@ import PoupeeView from "./components/PoupeeView";
 import ColorfulPicker from "./ColorfulPicker.jsx";
 import PaletteTissus from "./components/paletteTissus/PaletteTissus";
 import PaletteAccessoires from "./components/paletteAccessoires/PaletteAccessoires.jsx";
-import Accessoire from "./components/paletteAccessoires/Accessoires.jsx";
 import usePoupee from "./hooks/usePoupee";
 import useCreationPoupee from "./hooks/useCreationPoupee";
 import useStylePicker from "./hooks/useStylePicker";
@@ -183,7 +182,7 @@ export default function App() {
 
   // ------------ GESTION DE LA PALETTE ACCESSOIRES ----------//
   const [activePalette, setActivePalette] = useState(null); 
-  const showAccessoires = () => setActivePalette("accessoires");
+  const showAccessoires = (state = "accessoires") => setActivePalette(state);
   const [selectedAccessoireId, setSelectedAccessoireId] = useState(null);
   const viewportRef = useRef(null);
 
@@ -206,10 +205,11 @@ export default function App() {
   };
 
 
-  /*--------- DRAG D'UN ACCESSOIRE --------*/
+  /*--------- DRAG D'UN ACCESSOIRE --------
   const handleMoveAccessoire = (id, x, y) => {
+    console.log("MOVE ACCESSOIRE", id, x, y);
     updateAccessoire(id, { x, y });
-  };
+  };*/
 
   // supprimer un accessoire
   const handleDeleteAccessoire = (id) => {
@@ -311,8 +311,7 @@ export default function App() {
                 selectedAccessoireId={selectedAccessoireId}
                 setSelected={setSelectedAccessoireId}
                 onUpdate={handleUpdateAccessoire}
-                onMove={handleMoveAccessoire}
-                //onDelete={handleDeleteAccessoire}
+                onDelete={handleDeleteAccessoire}
                 showAccessoires={showAccessoires}
               />
 
@@ -351,19 +350,7 @@ export default function App() {
                 />
               )}
 
-              {accessoires?.map(acc => (
-                <Accessoire
-                  key={acc.id}
-                  acc={acc}
-                  selectedAccessoireId={selectedAccessoireId}
-                  onUpdate={handleUpdateAccessoire}
-                  onDelete={handleDeleteAccessoire}
-                  setSelected={setSelectedAccessoireId}
-                  onMove={handleMoveAccessoire}
-                  openPicker={openPicker}
-                  tissuAccessoire={acc.tissu}
-                />
-              ))}
+              
 
               {/* PALETTE TISSUS POUR ACCESSOIRE */}
               {picker.visible && picker.type === "accessoire" && (

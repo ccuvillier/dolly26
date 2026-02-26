@@ -7,7 +7,8 @@ export default function Accessoire({
   selectedAccessoireId,
   onDelete,
   setSelected,
-  openPicker
+  openPicker,
+  onClosePicker
 }) {
   // ================= POSITION LOCALE =================
   const [pos, setPos] = useState({ x: acc.x, y: acc.y });
@@ -42,6 +43,8 @@ export default function Accessoire({
       x: e.clientX - pos.x,
       y: e.clientY - pos.y
     });
+    // Fermer le picker si ouvert
+    if (openPicker) onClosePicker();
   };
 
   // ===================================================
@@ -64,7 +67,7 @@ export default function Accessoire({
 
     setIsDragging(false);
 
-    // 🔥 Firebase seulement ici
+    // Firebase seulement ici
     onUpdate(acc.id, {
       x: pos.x,
       y: pos.y,
@@ -194,7 +197,7 @@ export default function Accessoire({
           height={size.height}
           accId={acc.id}
           tissuAccessoire={localTissu}
-          onPickColor={openPicker}
+          //onPickColor={openPicker}
         />
       ) : (
         <div style={{ width: size.width, height: size.height, border: "1px dashed red" }}>
@@ -212,6 +215,21 @@ export default function Accessoire({
               onMouseDown={(e) => handleScale(corner, e)}
             />
           ))}
+          <div 
+            className="color-hint" 
+            style={{ backgroundColor: localTissu.color ?? "#fff" }}
+            onClick={(e) => {
+              e.stopPropagation();
+              openPicker(e, {
+                type: "tissu",          // ou "accessoire"
+                target: "accessoire",   // selon ce que tu veux modifier
+                id: acc.id,
+                value: localTissu
+              });
+              console.log(acc.id);
+            }}
+          />
+
           <button
             className="close"
             onClick={(e) => {

@@ -122,7 +122,26 @@
         top: 15%;
         transform: rotate(45deg);
     } 
-  }
+}
+
+.color-hint {
+    position: absolute;
+    top: -25px;
+    right: -53px;
+    width: 23px;
+    height: 23px;
+    border-radius: 50%;
+    border: 1px solid #aaa;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    background: linear-gradient(231deg,
+        rgba(58, 74, 180, 1) 0%, 
+        rgba(131, 58, 180, 1) 18%, 
+        rgba(253, 29, 29, 1) 38%, 
+        rgba(252, 176, 69, 1) 60%, 
+        rgba(252, 228, 69, 1) 80%, 
+        rgba(69, 252, 90, 1) 100%);
+}
 
 /* SVG dynamique */
 .tissu {

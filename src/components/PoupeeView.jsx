@@ -8,6 +8,7 @@ import { bass } from "./carousels/data/bassData";
 import CarouselBas from "./carousels/CarouselBas.jsx";
 import { chaussures } from "./carousels/data/chaussuresData";
 import CarouselChaussures from "./carousels/CarouselChaussures";
+import Accessoire from "./paletteAccessoires/Accessoires.jsx";
 import Menu from "./Menu.jsx";
 
 export default function PoupeeView({
@@ -29,6 +30,15 @@ export default function PoupeeView({
   setNomBas,
   tissuBas,
   setTissuBas,
+  
+  //accessoires
+  accessoires,
+  selectedAccessoireId,
+  setSelected,
+  onUpdate,
+  onMove,
+  onDelete,
+
   openPicker,
   closePicker,
   showAccessoires,
@@ -50,32 +60,35 @@ export default function PoupeeView({
   const handleSelectBas = (name) => { setNomBas(name); setActiveCarousel(null); };
   const handleSelectChaussures = (name) => { setNomChaussures(name); setActiveCarousel(null); };
 
-  const showCarousel = () => setActiveCarousel("coiffure");
-  const showHaut = () => setActiveCarousel("haut");
-  const showBas = () => setActiveCarousel("bas");
-  const showChaussures = () => setActiveCarousel("chaussures");
+  const showCarousel = () => handleMenuAction(() => setActiveCarousel("coiffure"));
+  const showHaut = () => handleMenuAction(() => setActiveCarousel("haut"));
+  const showBas = () => handleMenuAction(() => setActiveCarousel("bas"));
+  const showChaussures = () => handleMenuAction(() => setActiveCarousel("chaussures"));
 
 
-  /*---------- FERMER LES PALETTES TISSUS ET COLOR ---------------*/
-  const handleMenuAction = (action, e) => {
+
+  /*---------- FERMER LES PALETTES ACCESSOIRES - TISSUS ET COLOR ---------------*/
+  const handleMenuAction = (action) => {
+    setActiveCarousel(null);
+    showAccessoires(null)
     closePicker();
-    action(e);
+    setSelected(null);
+    if (action) action();   // ouvrir la palette ou carousel ciblé
+    console.log(setActiveCarousel);
   };
 
   
-
-
 
 
   return (
     <div id="poupeeView" className="zoomIn">
       {/* Menu */}
       <Menu
-        onShowCarousel={() => handleMenuAction(showCarousel)}
-        onShowCarouselHauts={() => handleMenuAction(showHaut)}
-        onShowCarouselBas={() => handleMenuAction(showBas)}
-        onShowCarouselChaussures={() => handleMenuAction(showChaussures)}
-        onShowAccessoires={showAccessoires}
+        onShowCarousel={showCarousel}
+        onShowCarouselHauts={showHaut}
+        onShowCarouselBas={showBas}
+        onShowCarouselChaussures={showChaussures}
+        onShowAccessoires={() => handleMenuAction(() => showAccessoires("accessoires"))}
         onRevoirGrille={() => handleMenuAction(revoirGrille)}
       />
 
@@ -168,6 +181,21 @@ export default function PoupeeView({
           })}
         </div>
       ) : null}
+
+      {/* -------------- ACCESSOIRES ---------------------- */}
+      {accessoires?.map(acc => (
+        <Accessoire
+          key={acc.id}
+          acc={acc}
+          selectedAccessoireId={selectedAccessoireId}
+          onUpdate={onUpdate}
+          onDelete={onDelete}
+          setSelected={setSelected}
+          onClosePicker={closePicker}
+          openPicker={openPicker}
+          tissuAccessoire={acc.tissu}
+        />
+      ))}
 
     </div>
   );

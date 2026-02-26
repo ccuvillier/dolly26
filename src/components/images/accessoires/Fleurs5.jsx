@@ -28,5 +28,4 @@ const Fleurs5 = ({ accId, tissuAccessoire, onPickColor, width = "65", height = "
     );
 };
 
-//export default React.memo(Fleurs5);
-export default Fleurs5;
+export default React.memo(Fleurs5);
