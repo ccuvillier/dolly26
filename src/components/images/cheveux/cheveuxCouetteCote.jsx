@@ -1,13 +1,9 @@
 import React from 'react';
 
-const CheveuxCouetteCote = ({ color = "#fff", onPickColor }) => {
+const CheveuxCouetteCote = ({ color = "#fff" }) => {
     return (
-        <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
-            preserveAspectRatio="xMinYMin meet"
-           width="100%" viewBox="-230 0 800 800" className="svg"
-           style={{ cursor: "pointer" }}
-           >
-            <g fill={color} onClick={(e) => onPickColor && onPickColor(e)} style={{ pointerEvents: "all" }}>
+        <g transform="translate(230 0)" className='svg'>
+            <g fill={color}>
 
                 <path d="M110.3,158.2s-5.2-42-1.9-60.4c3.4-18.4,23-63.4,72.5-63.4,49.5,0,69.1,45,72.5,63.4s-1.9,60.4-1.9,60.4l-4.5,1.5s2.2-21.4,1.1-32.6-13.1-27-28.1-29.6-26.8.4-39.1.4c-12.4,0-24.1-3-39.1-.4-15,2.6-27,18.4-28.1,29.6-1.1,11.2.6,32.6.6,32.6l-4-1.5Z"/>
                 <path d="M180.9,97.9s-.8-19.2-.6-34.9.6-28.5.6-28.5c0,0,4.3,18.8,4.6,27.8s.4,35.2.4,35.2"/>
@@ -68,7 +64,7 @@ const CheveuxCouetteCote = ({ color = "#fff", onPickColor }) => {
                 <path  d="M108.3,147.5s-6.8-16.9-8.2-35.4,14.1-42.5,21.7-52.3,30.1-27.3,45.3-32.9,31.5-3.4,36.6,1.7,4.2,10.7,4.2,10.7l-6.6-1.7s.7-8.7-14.8-8.4-37.9,14.1-37.9,14.1c0,0-24.6,11.3-34.5,36.4s-5.8,68-5.8,68Z"/>
                 <path d="M134.2,203.2s8.1,6.9,9,16.7-3.2,18.6-9.8,21.2-14.8,2.1-14.8,2.1c0,0,11.8,3.4,18.4.9s13.1-10.1,12.6-18.4-6-17.6-6-17.6c0,0,11.6,7.3,12.6,14.8s-.8,11.4-3.9,14.8-8.4,8.2-13.5,9.6"/>
             </g>
-        </svg>
+        </g>
     );
 };
 export default React.memo(CheveuxCouetteCote);

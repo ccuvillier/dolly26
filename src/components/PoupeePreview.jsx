@@ -4,6 +4,7 @@ import { hairs } from "./carousels/data/coiffuresData";
 import { chaussures } from "./carousels/data/chaussuresData";
 import { hauts } from "./carousels/data/hautsData";
 import { bass } from "./carousels/data/bassData";
+import Accessoire from "./paletteAccessoires/Accessoires.jsx";
 
 export default function PoupeePreview({ id, data, renommerPoupee }) {
 const { 
@@ -17,7 +18,10 @@ const {
   nomHaut, 
   nomBas,
   tissuHaut,
-  tissuBas 
+  tissuBas,
+  //accessoires
+  accessoires,
+  selectedAccessoireId,
 } = data;
 
 const coiffure = hairs.find(h => h.name === nomCoiffure);
@@ -45,10 +49,61 @@ const handleRename = async () => {
 return (
     <div>
        
-      {/* Corps */}
-      <div>
-        <FilleNue peau={peau} yeux={yeux} levres={levres} preview={true} />
-      </div>
+      <svg
+        viewBox="0 0 800 800"
+        width="100%"
+        height="100%"
+      >
+        {/* Corps */}
+        <FilleNue
+          peau={peau}
+          yeux={yeux}
+          levres={levres}
+          preview={true}
+        />
+        
+
+        {/* Cheveux */}
+        {HairComponent && (
+          <HairComponent
+            color={cheveux}
+          />
+        )}
+
+        {/* Bas */}
+        {BasComponent && (
+          <BasComponent
+            color={bas}
+            tissuBas={tissuBasWithId}
+          />
+        )}
+
+        {/* Haut */}
+        {HautComponent && (
+          <HautComponent
+            color={haut}
+            tissuHaut={tissuHautWithId}
+          />
+        )}
+
+        {/* Chaussures */}
+        {ChaussuresComponent && (
+          <ChaussuresComponent
+            color={chaussuresColor}
+          />
+        )}
+
+        {/* Accessoires */}
+        {accessoires?.map(acc => (
+          <Accessoire
+            key={acc.id}
+            acc={acc}
+            tissuAccessoire={acc.tissu}
+            preview={true}
+          />
+        ))}
+
+      </svg>
 
       {!editing ? (
         <h2 onClick={(e) => {
@@ -67,36 +122,7 @@ return (
           />
         )}
 
-       {/* Coiffure */}
-      {HairComponent && (
-        <div className="cheveuxPreview">
-          <HairComponent color={cheveux} />
-        </div>
-      )}
-      
-
-       {/* Haut */}
-      {HautComponent && (
-        <div className="hautPreview">
-          <HautComponent color={haut} tissuHaut={tissuHautWithId} />
-        </div>
-      )}
-      
-
-       {/* Bas */}
-      {BasComponent && (
-        <div className="basPreview">
-          <BasComponent color={bas} tissuBas={tissuBasWithId} />
-        </div>
-      )}
-
-      
-       {/* Chaussures */}
-      {ChaussuresComponent && (
-        <div className="chaussuresPreview">
-          <ChaussuresComponent color={chaussuresColor} />
-        </div>
-      )}
+       
     </div>
   );
 }

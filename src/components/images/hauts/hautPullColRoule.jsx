@@ -2,25 +2,20 @@ import React from 'react';
 import EnteteSvg from "../../EnteteSvg";
 import { DEFAULT_TISSU } from "../../../constants/defaultTissu";
 
-const HautPullColRoule = ({ tissuHaut, onPickColor }) => {
+const HautPullColRoule = ({ tissuHaut }) => {
 
     const mergedTissu = { ...DEFAULT_TISSU, ...tissuHaut };
 
     return (
-      <svg version="1.1" xmlns="http://www.w3.org/2000/svg"  
-           width="100%" viewBox="-298 -230 800 800" className="svg"
-           style={{ cursor: "pointer" }}
-      >
+      <g transform="translate(298 230)" className='svg'>
         <EnteteSvg tissu={tissuHaut} />
-        <g>
-          <path  fill={mergedTissu.isUni ? mergedTissu.color : `url(#tissu-${mergedTissu.instanceId})`}
-            onClick={(e) => onPickColor && onPickColor(e, { type: "tissu", target: "haut", value: mergedTissu })}
+        <g fill={mergedTissu.isUni ? mergedTissu.color : `url(#tissu-${mergedTissu.instanceId})`}>
+          <path
             d="M112.3,32.3c13.7,0,16.7-10.5,16.7-10.5,0,0-5.3-2.5-6.1-8.5s-.1-12-.1-12c0,0-2.7.8-10.4.8-7.7,0-10.4-.8-10.4-.8,0,0,.7,6-.1,12s-6.1,8.5-6.1,8.5c0,0,3,10.5,16.7,10.5Z"/>
 
         </g>
         <g>
           <path fill={mergedTissu.isUni ? mergedTissu.color : `url(#tissu-${mergedTissu.instanceId})`}
-            onClick={(e) => onPickColor && onPickColor(e, { type: "tissu", target: "haut", value: mergedTissu })}
             d="M144.7,142.7s-.7-31.9,1.5-50.2c2.4-20.6,19.1-57.7,19.1-57.7,0,0-1.9-9-16.5-10.1s-20.2-2.7-20.2-2.7c0,0-2.6,10.5-16.5,10.5-13.9,0-16.5-10.5-16.5-10.5,0,0-2.6,1.4-20.2,2.7s-16.5,10.1-16.5,10.1c0,0,16.7,37.1,19.1,57.8s1.5,50.2,1.5,50.2h65.2Z"/>
           <g>
             <line x1="82.9" y1="141.9" x2="82.9" y2="129.4"/>
@@ -46,7 +41,7 @@ const HautPullColRoule = ({ tissuHaut, onPickColor }) => {
         </g>
         <g>
           <path fill={mergedTissu.isUni ? mergedTissu.color : `url(#tissu-${mergedTissu.instanceId})`}
-            onClick={(e) => onPickColor && onPickColor(e, { type: "tissu", target: "haut", value: mergedTissu })} d="M57.2,129.7c.7-1.3,1.1-2.4,1.9-3.5,3.4-5.1,16.1-42.5,15.2-50.2s-15.4-40.9-15.4-40.9l-22.1,84c-3,5.6-19.9,36-24,44.2S.7,191.4.7,191.4c0,0,2.2,5.2,6.8,6s7.1-.8,7.1-.8l15.8-23.6s14.6-20.2,19.5-28.9,5.6-11.3,7.4-14.5Z"/>
+            d="M57.2,129.7c.7-1.3,1.1-2.4,1.9-3.5,3.4-5.1,16.1-42.5,15.2-50.2s-15.4-40.9-15.4-40.9l-22.1,84c-3,5.6-19.9,36-24,44.2S.7,191.4.7,191.4c0,0,2.2,5.2,6.8,6s7.1-.8,7.1-.8l15.8-23.6s14.6-20.2,19.5-28.9,5.6-11.3,7.4-14.5Z"/>
           <g>
             <line x1="2.2" y1="193" x2="8.7" y2="178.4"/>
             <line x1="4" y1="195.1" x2="11" y2="180.3"/>
@@ -57,7 +52,7 @@ const HautPullColRoule = ({ tissuHaut, onPickColor }) => {
         </g>
         <g>
           <path fill={mergedTissu.isUni ? mergedTissu.color : `url(#tissu-${mergedTissu.instanceId})`}
-            onClick={(e) => onPickColor && onPickColor(e, { type: "tissu", target: "haut", value: mergedTissu })} d="M167,129.7c-.7-1.3-1.1-2.4-1.9-3.5-3.4-5.1-16.1-42.5-15.2-50.2,1.1-9,15.4-40.9,15.4-40.9l22.1,84c3,5.6,19.9,36,24,44.3s12,28.1,12,28.1c0,0-2.3,5.2-6.8,6s-7.1-.8-7.1-.8l-15.7-23.6s-14.6-20.3-19.5-28.9-5.6-11.3-7.4-14.5Z"/>
+            d="M167,129.7c-.7-1.3-1.1-2.4-1.9-3.5-3.4-5.1-16.1-42.5-15.2-50.2,1.1-9,15.4-40.9,15.4-40.9l22.1,84c3,5.6,19.9,36,24,44.3s12,28.1,12,28.1c0,0-2.3,5.2-6.8,6s-7.1-.8-7.1-.8l-15.7-23.6s-14.6-20.3-19.5-28.9-5.6-11.3-7.4-14.5Z"/>
           <g>
             <line x1="222.4" y1="193" x2="215.9" y2="178.4"/>
             <line x1="220.6" y1="195.1" x2="213.6" y2="180.3"/>
@@ -66,7 +61,7 @@ const HautPullColRoule = ({ tissuHaut, onPickColor }) => {
             <line x1="212.9" y1="197.5" x2="204.6" y2="184"/>
           </g>
         </g>
-      </svg>
+      </g>
     );
   };
 export default React.memo(HautPullColRoule);

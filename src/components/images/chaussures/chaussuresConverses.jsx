@@ -1,14 +1,10 @@
 import React from 'react';
 
-const ChaussuresConverses = ({ color="#fff", onPickColor }) => {
+const ChaussuresConverses = ({ color="#fff" }) => {
 
     return (
-        <svg version="1.1" xmlns="http://www.w3.org/2000/svg"  
-           width="100%" viewBox="-344 -633 800 800" className="svg"
-           style={{ cursor: "pointer" }}
-      >
-
-          <g fill={color} onClick={(e) => onPickColor && onPickColor(e)} style={{ pointerEvents: "all" }}>
+        <g transform="translate(344 633)" className='svg'>
+          <g fill={color}>
             <path d="M42.2,108.7s2.6,13.9,0,23.3-1.7,4.9-1.8,9.3c-.1,6.4,5.2,14.4,13.4,14.4s12.9-5.2,13.6-12.8-2-10.9-2.2-13.6c-.9-10.7,1.5-20.1,1.5-20.1-2.7-1-4.9,0-6.6,2.5,0,0-1.2-3.6-6-3.6s-5.4,4-5.4,4c0,0-2.5-3.2-6.4-3.5Z"/>
             <path d="M93.5,108.7s-2.6,13.9,0,23.3,1.7,4.9,1.8,9.3c.1,6.4-5.2,14.4-13.4,14.4-8.2,0-12.9-5.2-13.6-12.8s2-10.9,2.2-13.6c.9-10.7-1.5-20.1-1.5-20.1,2.7-1,4.9,0,6.6,2.5,0,0,1.2-3.6,6-3.6,4.8,0,5.4,4,5.4,4,0,0,2.5-3.2,6.4-3.5Z"/>
 
@@ -33,7 +29,7 @@ const ChaussuresConverses = ({ color="#fff", onPickColor }) => {
             </g>
           </g>
 
-        </svg>
+        </g>
     );
 };
 export default React.memo(ChaussuresConverses);

@@ -4,12 +4,10 @@
 #poupee {
     position: absolute;
     top: 0;
-    left: 0;
     z-index: 0;
     width: 100vw;
-    /*left: 50%;
+    left: 50%;
     transform: translateX(-50%);
-    display: inline-block;*/
 }
 #poupee, .poupees-grid {
     .fille0{fill:#FFE4D9;stroke:#1D1D1B;}
@@ -28,24 +26,29 @@
     .fille3{stroke:#000000;}
 }
 #poupee {
-    > svg > g {
-        pointer-events: all;
+    > g {
+        pointer-events: fill;
     }
+    overflow: visible;
 }
 
 svg {
   margin: auto;
   max-width: 800px;
 }
+svg g {
+  cursor: pointer;
+}
 
 .svg * {
     stroke: #000;
 }
-.svg > path:not([fill]),
+
 .svg g.notfill * {
     fill: none;
     stroke: #000;
 }
+
 .svg path.relief,
 .svg > g.relief path {
     fill: black;

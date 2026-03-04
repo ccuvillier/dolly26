@@ -57,11 +57,16 @@ export default function CarouselGeneric({
       <Slider ref={sliderRef} {...settings}>
         {items.map((Item, index) => (
           <div key={index}>
-            <Item.component
-              color={color}
-              width={width}
-              height={height}
-            />
+            <svg
+              viewBox="0 0 800 800"
+              className="carousel-svg"
+            >
+              <Item.component
+                color={color}
+                width={width}
+                height={height}
+              />
+            </svg>
           </div>
         ))}
       </Slider>

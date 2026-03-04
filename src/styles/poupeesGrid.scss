@@ -207,28 +207,25 @@
   top: 0;
   left: 50%;
 
-}.chaussuresPreview {
+}
+.chaussuresPreview, .hautPreview, .basPreview, .accessoiresPreview {
   position: absolute;
-  z-index: 0;
   transform: scale(2) translateX(-50%);
   transform-origin: top left;
   top: 10px;
   left: 50%;
+}
+.chaussuresPreview {
+  z-index: 0;
 }
 .hautPreview {
-  position: absolute;
   z-index: 10;
-  transform: scale(2) translateX(-50%);
-  transform-origin: top left;
-  top: 10px;
-  left: 50%;
 }
 .basPreview {
-  position: absolute;
-  z-index: 10;
-  transform: scale(2) translateX(-50%);
-  transform-origin: top left;
-  top: 10px;
-  left: 50%;
+  z-index: 20;
 }
+.accessoiresPreview {
+  z-index: 30;
+}
+
 

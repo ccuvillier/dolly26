@@ -184,17 +184,17 @@ export default function App() {
   const [activePalette, setActivePalette] = useState(null); 
   const showAccessoires = (state = "accessoires") => setActivePalette(state);
   const [selectedAccessoireId, setSelectedAccessoireId] = useState(null);
-  const viewportRef = useRef(null);
+  const documentRef = useRef(null);
 
   const handleAddAccessoire = (item) => {
-    const rect = viewportRef.current.getBoundingClientRect(); // Placer les accessoires au centre du viewport
+    const rect = documentRef.current.getBoundingClientRect(); // Placer les accessoires au centre de la page
 
     const newAcc = {
       id: crypto.randomUUID(),
       type: item.type,
       component: item.component,
-      x: rect.width / 2,
-      y: rect.height / 2,
+      x: 50,
+      y: 50,
       scale: 1,
       rotation: 0,
       tissu: { ...DEFAULT_TISSU, instanceId: crypto.randomUUID() }
@@ -204,12 +204,6 @@ export default function App() {
     setSelectedAccessoireId(newAcc.id);
   };
 
-
-  /*--------- DRAG D'UN ACCESSOIRE --------
-  const handleMoveAccessoire = (id, x, y) => {
-    console.log("MOVE ACCESSOIRE", id, x, y);
-    updateAccessoire(id, { x, y });
-  };*/
 
   // supprimer un accessoire
   const handleDeleteAccessoire = (id) => {
@@ -225,13 +219,7 @@ export default function App() {
 
   // ------------------- RENDER -------------------
   return (
-    <div className="App zoomIn" 
-    ref={viewportRef}
-      onMouseDown={(e) => {
-        if (e.target === viewportRef.current) {
-          setSelectedAccessoireId(null);
-        }
-      }}>
+    <div className="App zoomIn" ref={documentRef}>
 
       {/* MODALE PSEUDO */}
       {!hasPseudo && (

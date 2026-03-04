@@ -16,7 +16,16 @@ export default function PaletteAccessoires({ onAddAccessoire, onClose }) {
             title={item.type}
             onClick={() => onAddAccessoire(item)}
           >
-            <Component width={50} height={50} />
+            <svg
+              width={50}
+              height={50}
+              viewBox="0 0 800 800"
+              className="svg"
+            >
+                <g transform="translate(-10 100) scale(12)">
+                  <Component />
+                </g>
+            </svg>
           </div>
         );
       })}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import FilleNue from "./FilleNue";
 import { hairs } from "./carousels/data/coiffuresData";
 import CarouselCoiffures from "./carousels/CarouselCoiffures.jsx";
@@ -11,6 +11,7 @@ import CarouselChaussures from "./carousels/CarouselChaussures";
 import Accessoire from "./paletteAccessoires/Accessoires.jsx";
 import Menu from "./Menu.jsx";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import { usePickerClick } from "../hooks/usePickerClick.js";
 
 export default function PoupeeView({
   id,
@@ -46,6 +47,8 @@ export default function PoupeeView({
   revoirGrille
 }) {
 
+  const viewportRef = useRef(null);
+
   const [activeCarousel, setActiveCarousel] = useState(null); 
   // valeurs possibles : "coiffure" | "haut" | "bas" | "chaussures" | null
 
@@ -60,8 +63,6 @@ export default function PoupeeView({
   const handleSelectHaut = (name) => { setNomHaut(name); setActiveCarousel(null); };
   const handleSelectBas = (name) => { setNomBas(name); setActiveCarousel(null); };
   const handleSelectChaussures = (name) => { setNomChaussures(name); setActiveCarousel(null); };
-
-
 
 
   /*---------- FERMER LES PALETTES ACCESSOIRES - TISSUS ET COLOR ---------------*/
@@ -102,7 +103,21 @@ export default function PoupeeView({
     revoirGrille();
   };
 
-  
+  /* GESTION DES DRAG ET CLICK */
+  /*const handleHairClick = useDragOrClick((e) => {
+    openPicker(e, {
+      type: "color",
+      target: "cheveux",
+      value: cheveux,
+    });
+  });*/
+
+
+  const hairClick = usePickerClick(openPicker, "color", "cheveux", cheveux);
+  const chaussuresClick = usePickerClick(openPicker, "color", "chaussures", chaussuresColor);
+
+  const hautClick = usePickerClick(openPicker, "tissu", "haut", tissuHaut);
+  const basClick = usePickerClick(openPicker, "tissu", "bas", tissuBas);
 
 
   return (
@@ -132,8 +147,8 @@ export default function PoupeeView({
           doubleClick={{ disabled: true }}
           minScale={0.5}  // limite du zoom arrière
           maxScale={3}    // limite du zoom avant
-          onPanningStart={() => document.getElementById("poupeeView").classList.add("dragging")}
-          onPanningStop={() => document.getElementById("poupeeView").classList.remove("dragging")}
+          onPanningStart={(e) => {document.getElementById("poupeeView").classList.add("dragging");}}
+          onPanningStop={(e) => {document.getElementById("poupeeView").classList.remove("dragging");}}
         >
 
         {({ zoomIn, zoomOut, resetTransform }) => (
@@ -145,130 +160,165 @@ export default function PoupeeView({
             </div>
 
           {/* Contenu zoomable */}
-            <TransformComponent
-            wrapperStyle={{
-              width: "100%",
-              height: "100%"
-            }}
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center"
-            }}>
+            <TransformComponent>
               <div
+                onMouseDown={() => setSelected(null)}
                 style={{
-                  position: "relative",
-                  width: "100%",
-                  height: "100%",
+                  position: "absolute",
+                  width: "100vw",
+                  height: "100vh",
                   pointerEvents: "all"
                 }}
               >
                 
+              <svg
+                  ref={viewportRef}
+                  id="poupee"
+                  viewBox="0 0 800 800"
+                  width="100%"
+                  height="100%"
+                  preserveAspectRatio="xMinYMin meet"
+                >
+                  {/* CORPS */}
+                  <FilleNue
+                    peau={peau}
+                    yeux={yeux}
+                    levres={levres}
+                    openPicker={openPicker}
+                  />
 
-              {/* Poupée de base */}
-              <div id="poupee">
-                <FilleNue
-                  peau={peau}
-                  yeux={yeux}
-                  levres={levres}
-                  openPicker={openPicker}
-                />
-              </div>
+                  {/* CHEVEUX choisis (si carousel non actif) */}
+                  {!activeCarousel || activeCarousel !== "coiffure" ? (
+                    coiffureAAfficher && (
+                      <g
+                        id="coiffureChoisie"
+                        style={{ cursor: "pointer", pointerEvents: "all" }}
+                        onMouseDown={hairClick}
+                      >
+                        {React.createElement(coiffureAAfficher.component, {
+                          color: cheveux,
+                        })}
+                      </g>
+                    )
+                  ) : null}
 
-              {/* ------------------- COIFFURE ------------------- */}
-              {activeCarousel === "coiffure" ? (
-                <CarouselCoiffures
-                  color={cheveux}
-                  initialHairName={nomCoiffure}
-                  onSelect={handleSelectHair}
-                />
-              ) : coiffureAAfficher ? (
-                <div id="coiffureChoisie">
-                  {React.createElement(coiffureAAfficher.component, {
-                    color: cheveux,
-                    onPickColor: (e) => openPicker(e, {
-                      type: "color",
-                      target: "cheveux",
-                      value: cheveux
-                    }),
-                  })}
-                </div>
-              ) : null}
+                  {/* BAS */}
+                  {!activeCarousel || activeCarousel !== "bas" ? (
+                    basAAfficher &&(
+                      <g id="basChoisi" 
+                        style={{ cursor: "pointer", pointerEvents: "all" }}
+                        onMouseDown={basClick}
+                        >
+                        {React.createElement(basAAfficher.component, {
+                          tissuBas: { ...tissuBas, instanceId: `${id}-bas` }
+                        })}
+                      </g>
+                    )
+                  ) : null}
 
-              {/* ------------------- HAUT ------------------- */}
-              {activeCarousel === "haut" ? (
-                <CarouselHauts
-                  color={tissuHaut.color}   // couleur principale du tissu
-                  initialHautName={nomHaut}
-                  onSelect={handleSelectHaut}
-                />
-              ) : hautAAfficher ? (
-                <div id="hautChoisi">
-                  {React.createElement(hautAAfficher.component, {
-                    tissuHaut: { ...tissuHaut, instanceId: `${id}-haut` },
-                    onPickColor: (e) => openPicker(e, {
-                      type: "tissu",
-                      target: "haut",
-                      value: tissuHaut
-                    }),
-                  })}
-                </div>
-              ) : null}
+                  {/* HAUT */}
+                  {!activeCarousel || activeCarousel !== "haut" ? (
+                    hautAAfficher &&(
+                      <g id="hautChoisi"
+                        style={{ cursor: "pointer", pointerEvents: "all" }}
+                        onMouseDown={hautClick}
+                      >
+                        {React.createElement(hautAAfficher.component, {
+                          tissuHaut: { ...tissuHaut, instanceId: `${id}-haut` }
+                        })}
+                      </g>
+                    )
+                  ) : null}
 
-              {/* ------------------- BAS ------------------- */}
-              {activeCarousel === "bas" ? (
-                <CarouselBas
-                  color={tissuBas.color}
-                  initialBasName={nomBas}
-                  onSelect={handleSelectBas}
-                />
-              ) : basAAfficher ? (
-                <div id="basChoisi">
-                  {React.createElement(basAAfficher.component, {
-                    tissuBas: { ...tissuBas, instanceId: `${id}-bas` },
-                    onPickColor: (e) => openPicker(e, {
-                      type: "tissu",
-                      target: "bas",
-                      value: tissuBas
-                    }),
-                  })}
-                </div>
-              ) : null}
+                  {/* CHAUSSURES */}
+                   {!activeCarousel || activeCarousel !== "chaussures" ? (
+                    chaussuresAAfficher &&(
+                      <g id="chaussuresChoisies"
+                        style={{ cursor: "pointer", pointerEvents: "all" }}
+                        onMouseDown={chaussuresClick}
+                      >
+                        {React.createElement(chaussuresAAfficher.component, {
+                          color: chaussuresColor
+                        })}
+                      </g>
+                    )
+                  ) : null}
 
-              {/* ------------------- CHAUSSURES ------------------- */}
-              {activeCarousel === "chaussures" ? (
-                <CarouselChaussures
-                  color={chaussuresColor}
-                  initialChaussuresName={nomChaussures}
-                  onSelect={handleSelectChaussures}
-                />
-              ) : chaussuresAAfficher ? (
-                <div id="chaussuresChoisies">
-                  {React.createElement(chaussuresAAfficher.component, {
-                    color: chaussuresColor,
-                    onPickColor: (e) => openPicker(e, {
-                      type: "color",
-                      target: "chaussures",
-                      value: chaussuresColor
-                    }),
-                  })}
-                </div>
-              ) : null}
+                  {/* ACCESSOIRES */}
+                  {accessoires?.map(acc => (
+                    <Accessoire
+                      key={acc.id}
+                      acc={acc}
+                      selectedAccessoireId={selectedAccessoireId}
+                      onUpdate={onUpdate}
+                      onDelete={onDelete}
+                      setSelected={setSelected}
+                      onClosePicker={closePicker}
+                      openPicker={openPicker}
+                      tissuAccessoire={acc.tissu}
+                      viewportRef={viewportRef}
+                    />
+                  ))}
 
-              {/* -------------- ACCESSOIRES ---------------------- */}
-              {accessoires?.map(acc => (
-                <Accessoire
-                  key={acc.id}
-                  acc={acc}
-                  selectedAccessoireId={selectedAccessoireId}
-                  onUpdate={onUpdate}
-                  onDelete={onDelete}
-                  setSelected={setSelected}
-                  onClosePicker={closePicker}
-                  openPicker={openPicker}
-                  tissuAccessoire={acc.tissu}
-                />
-              ))}
+
+                </svg>
+
+
+
+                {/* -------------  CAROUSELS  ------------ */}
+                {/* COIFFURES */}
+                {activeCarousel === "coiffure" && (
+                  <div className="carouselWrapper">
+                    <CarouselCoiffures
+                      color={cheveux}
+                      initialHairName={nomCoiffure}
+                      onSelect={handleSelectHair}
+                    />
+                  </div>
+                )}
+
+                {/* BAS */}
+                {activeCarousel === "bas" && (
+                  <div className="carouselWrapper">
+                    <CarouselBas
+                      color={tissuBas.color}
+                      initialBasName={nomBas}
+                      onSelect={handleSelectBas}
+                    />
+                  </div>
+                )}
+
+                {/* HAUT */}
+                {activeCarousel === "haut" && (
+                  <div className="carouselWrapper">
+                    <CarouselHauts
+                      color={tissuHaut.color}
+                      initialHautName={nomHaut}
+                      onSelect={handleSelectHaut}
+                    />
+                  </div>
+                )}
+
+                {/* CHAUSSURES */}
+                {activeCarousel === "chaussures" && (
+                  <div className="carouselWrapper">
+                     <CarouselChaussures
+                        color={chaussuresColor}
+                        initialChaussuresName={nomChaussures}
+                        onSelect={handleSelectChaussures}
+                      />
+                  </div>
+                )}
+
+                {/* CAROUSEL ACCESSOIRES */}
+                {activeCarousel === "accessoires" && (
+                  <div className="carouselWrapper">
+                    <CarouselAccessoires
+                      items={accessoiresDispo}
+                      onSelect={handleSelectAccessoire}
+                    />
+                  </div>
+                )}
               </div>
             </TransformComponent>
           </>

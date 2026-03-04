@@ -1,14 +1,10 @@
 import React from 'react';
 
-const ChaussuresBottes = ({ color = "#fff", onPickColor }) => {
+const ChaussuresBottes = ({ color = "#fff" }) => {
 
     return (
-        <svg version="1.1" xmlns="http://www.w3.org/2000/svg"  
-           width="100%" viewBox="-344 -633 800 800" className="svg"
-           style={{ cursor: "pointer" }}
-      >
-
-          <g fill={color} onClick={(e) => onPickColor && onPickColor(e)} style={{ pointerEvents: "all" }}>
+        <g transform="translate(344 633)" className='svg'>
+          <g fill={color}>
             <path d="M30,75.3s3.5,19.6,5.2,27.6,6.8,23,6.8,23c0,0-.7,6.8-2,11.1s-5.6,12.6-2.9,17.7,8.2,7.7,15.3,7.8c7.1.2,14.1-1.4,14.5-6s-.9-14.3-2-19.3c-1.2-4.9-1.1-8.7-.8-12.6s1.6-49.7,1.6-49.7c0,0-3.2.8-13.6.9s-22.2-.6-22.2-.6h0Z"/>
             <path d="M104.4,75.2s-12.8.7-23.2.6-12.6-.9-12.6-.9c0,0,1.3,45.8,1.6,49.7s.4,7.7-.8,12.6c-1.2,5-2.5,14.7-2,19.3s7.5,6.2,14.5,6c7.1-.1,12.6-2.7,15.3-7.8s-1.6-13.4-2.9-17.7c-1.3-4.3-2-11.1-2-11.1,0,0,5.3-15.9,6.8-23,1.7-8,5.2-27.6,5.2-27.6h0Z"/>
           </g>
@@ -21,7 +17,7 @@ const ChaussuresBottes = ({ color = "#fff", onPickColor }) => {
           </g>
           <path className='relief' d="M37.5,144.9s.6,8.9,14.2,9.4,15-3.9,15-3.9c0,0,1.5,6-.6,8.3s-7.1,3.7-13.6,3.7-12.7-3-14.7-6.6-.2-10.9-.2-10.9Z"/>
           <path className='relief' d="M95.9,144.9s-.6,8.9-13.3,9.4c-12.7.5-14-3.9-14-3.9,0,0-1.4,6,.6,8.3s6.6,3.7,12.7,3.7,11.9-3,13.8-6.6.2-10.9.2-10.9Z"/>
-        </svg>
+        </g>
     );
 };
 export default React.memo(ChaussuresBottes);

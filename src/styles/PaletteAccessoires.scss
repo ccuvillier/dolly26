@@ -34,8 +34,9 @@
 .accessoires-wrapper {
     position: relative;
     z-index: 100;
+    pointer-events: fill;
 
-    &.selected{border: dashed 1px #000;}
+    
     
 
     .handle {
@@ -45,30 +46,29 @@
         border: 1px solid black;
         position: absolute;
     }
-    .top-left { top: -4px; left: -4px; cursor: nwse-resize; transform-origin: bottom right;}
-    .top-right { top: -4px; right: -4px; cursor: nesw-resize;}
-    .bottom-left { bottom: -4px; left: -4px;  cursor: nesw-resize;}
-    .bottom-right { bottom: -4px; right: -4px; cursor: nwse-resize;}
+    .scale-handle {fill: #fff;}
+    .top-left { cursor: nwse-resize; transform-origin: bottom right;}
+    .top-right { cursor: nesw-resize;}
+    .bottom-left { cursor: nesw-resize;}
+    .bottom-right { cursor: nwse-resize;}
 
-    .close {
-        top: -25px;
-        right: -25px;
+    .closeAcc {
+        fill: url('../components/images/picto-close.svg') 0 0;
     }
 }
 
 .rotate-handle {
     cursor: url('../components/images/picto-rotate.svg') 15 15, grab;
-
-    top: -25%;
+    stroke: transparent;
+    fill: transparent;
+    pointer-events: stroke;
+    transform-origin: center center;
+    /*top: -25%;
     left: -25%;
     right: -25%;
     width: 150% !important;
     height: 150% !important;
     z-index: -13;
     background: transparent !important;
-    border: none !important;
-}
-
-.accessoires-wrapper {
-    pointer-events: fill;
+    border: none !important;*/
 }

@@ -3,9 +3,15 @@ import React, { useState } from "react";
 import PoupeePreview from "./PoupeePreview";
 
 
-
-
-export default function PoupeesGrid({ poupees, creerPoupee, chargerPoupee, onAddPoupee, supprimerPoupee, renommerPoupee }) {
+export default function PoupeesGrid({ 
+  poupees, 
+  creerPoupee, 
+  chargerPoupee, 
+  onAddPoupee, 
+  supprimerPoupee, 
+  renommerPoupee 
+}) 
+{
   const [activeMenu, setActiveMenu] = useState(null);
 
   const openMenu = (id, button) => {
@@ -73,18 +79,6 @@ export default function PoupeesGrid({ poupees, creerPoupee, chargerPoupee, onAdd
 
                       <ul>
                         <li><button onClick={() => supprimerPoupee(p.id)}>Supprimer</button></li>
-                        {/*<li>
-                          <button
-                            onClick={() => {
-                              const nouveauPrenom = prompt("Nouveau prénom ?");
-                              if (nouveauPrenom) {
-                                renommerPoupee(p.id, nouveauPrenom);
-                              }
-                            }}
-                          >
-                            Renommer
-                          </button>
-                        </li>*/}
                       </ul>
                     </nav>
                   )}
