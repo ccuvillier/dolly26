@@ -7,7 +7,7 @@ const HautMonoBretelle = ({ tissuHaut }) => {
     const mergedTissu = { ...DEFAULT_TISSU, ...tissuHaut };
 
     return (
-      <g transform="translate(300 230)" className='svg'>
+      <g transform="translate(302 229)" className='svg'>
         <EnteteSvg tissu={tissuHaut} />
         
         <g>

@@ -2,7 +2,7 @@ import React from 'react';
 
 const CheveuxFrises = ({ color = "#fff" }) => {
     return (
-        <g transform="translate(242 5)" className='svg'>
+        <g transform="translate(241 5)" className='svg'>
 
             <path fill={color}
                 d="M114.3,266.5c3.4-10.2,5.4-14.6,10.6-15c5.1-0.3,22.5-0.7,31.7-5.8c9.2-5.1,5.8-26.8,5.8-26.8

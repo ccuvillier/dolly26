@@ -215,6 +215,11 @@ export default function App() {
     updateAccessoire(id, newProps);
   };
 
+  // dupliquer l'accessoire
+  const duplicateAccessoire = (clone) => {
+    console.log("Duplication : ajout du clone avec id", clone.id);
+    addAccessoire(clone);
+  };
 
 
   // ------------------- RENDER -------------------
@@ -301,6 +306,7 @@ export default function App() {
                 onUpdate={handleUpdateAccessoire}
                 onDelete={handleDeleteAccessoire}
                 showAccessoires={showAccessoires}
+                duplicateAccessoire={duplicateAccessoire}
               />
 
               {/* COLOR PICKER */}

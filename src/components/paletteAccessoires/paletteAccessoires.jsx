@@ -1,34 +1,57 @@
 import React from "react";
 import { accessoiresPalette } from "./data/accessoiresData";
+import { useDraggable } from "../../hooks/useDraggable";
 
 export default function PaletteAccessoires({ onAddAccessoire, onClose }) {
 
+    /* PALETTE TISSU DRAGGABLE */ 
+    const { position, dragging, bindHeader } = useDraggable({
+      x: window.innerWidth / 2,
+      y: window.innerHeight / 2
+    });
+
   return (
-    <div id="paletteAccessoires">
+    <div id="paletteAccessoires"
+      style={{ top: position.y, left: position.x }}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div className="palette-acc-header" 
+         {...bindHeader}
+          style={{
+            cursor: dragging ? "grabbing" : "grab",
+            userSelect: "none",
+            touchAction: "none",
+          }}
+        >
+        {/*<span>Déplacer la palette</span>*/}
+      </div>
+      
       <button className="close" onClick={onClose}>fermer</button>
 
-      {accessoiresPalette.map((item, index) => {
-        const Component = item.component;
+      <div className="palette-acc-body">
+        {accessoiresPalette.map((item, index) => {
+          const Component = item.component;
 
-        return (
-          <div
-            key={index}
-            title={item.type}
-            onClick={() => onAddAccessoire(item)}
-          >
-            <svg
-              width={50}
-              height={50}
-              viewBox="0 0 800 800"
-              className="svg"
+          return (
+            <div
+              key={index}
+              title={item.type}
+              onClick={() => onAddAccessoire(item)}
             >
-                <g transform="translate(-10 100) scale(12)">
-                  <Component />
-                </g>
-            </svg>
-          </div>
-        );
-      })}
+              <svg
+                width={50}
+                height={50}
+                viewBox="0 0 800 800"
+                className="svg"
+              >
+                  <g transform="scale(12)">
+                    <Component />
+                  </g>
+              </svg>
+            </div>
+          );
+        })}
+        </div>
     </div>
   );
 }

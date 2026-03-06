@@ -40,6 +40,7 @@ export default function PoupeeView({
   onUpdate,
   onMove,
   onDelete,
+  duplicateAccessoire,
 
   openPicker,
   closePicker,
@@ -104,21 +105,32 @@ export default function PoupeeView({
   };
 
   /* GESTION DES DRAG ET CLICK */
-  /*const handleHairClick = useDragOrClick((e) => {
-    openPicker(e, {
-      type: "color",
-      target: "cheveux",
-      value: cheveux,
-    });
-  });*/
-
+  const peauClick = usePickerClick(openPicker, "color", "peau", peau);
+  const levresClick = usePickerClick(openPicker, "color", "levres", levres);
+  const yeuxClick = usePickerClick(openPicker, "color", "yeux", yeux);
 
   const hairClick = usePickerClick(openPicker, "color", "cheveux", cheveux);
   const chaussuresClick = usePickerClick(openPicker, "color", "chaussures", chaussuresColor);
-
   const hautClick = usePickerClick(openPicker, "tissu", "haut", tissuHaut);
   const basClick = usePickerClick(openPicker, "tissu", "bas", tissuBas);
 
+
+  /* GESTION DU ZOOM AVEC INPUT TYPE RANGE */
+  const transformWrapperRef = useRef(null);
+  const [scale, setScale] = useState(1);
+  const RESET_ZOOM = 1;
+
+  const handleSliderChange = (e) => {
+    const targetScale = parseFloat(e.target.value);
+    const factor = Math.log(targetScale / scale);
+    const { zoomIn, zoomOut } = transformWrapperRef.current;
+
+    if (targetScale > scale) zoomIn(factor, 0);
+    else zoomOut(-factor, 0);
+
+    setScale(targetScale);
+  };
+  
 
   return (
     <div id="poupeeView" className="zoomIn">
@@ -134,6 +146,7 @@ export default function PoupeeView({
 
 
         <TransformWrapper
+          ref={transformWrapperRef}
           centerOnInit={true}
           defaultScale={1}
           defaultPositionX={0}
@@ -145,21 +158,56 @@ export default function PoupeeView({
           }}
           pinch={{ step: 5 }}
           doubleClick={{ disabled: true }}
+          onZoomStop={(ref) => {
+            setScale(ref.state.scale); // récupère l'échelle courante
+          }}
           minScale={0.5}  // limite du zoom arrière
           maxScale={3}    // limite du zoom avant
           onPanningStart={(e) => {document.getElementById("poupeeView").classList.add("dragging");}}
           onPanningStop={(e) => {document.getElementById("poupeeView").classList.remove("dragging");}}
         >
 
-        {({ zoomIn, zoomOut, resetTransform }) => (
+        {({ zoomIn, zoomOut, setTransform, resetTransform }) => (
+
+          
           <>
-            <div id="zoomButtons">
+            {/*<div id="zoomButtons">
               <button className="zoom" onMouseDown={(e) => e.stopPropagation()} onClick={(e) => { e.stopPropagation(); zoomIn();}}>Zoom In</button>
               <button className="dezoom" onMouseDown={(e) => e.stopPropagation()} onClick={(e) => { e.stopPropagation(); zoomOut();}}>Zoom Out</button>
               <button className="reset" onMouseDown={(e) => e.stopPropagation()} onClick={(e) => { e.stopPropagation(); resetTransform();}}>Reset</button>
+            </div>*/}
+
+            <div id="zoomSlider" onMouseDown={(e) => e.stopPropagation()} onTouchStart={(e) => e.stopPropagation()}>
+
+              <div className="rangeWrapper">
+                <input
+                  type="range"
+                  min="0.5"
+                  max="3"
+                  step="0.01"
+                  value={scale}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onTouchStart={(e) => e.stopPropagation()}
+                  onChange={handleSliderChange}
+                />
+              </div>
+
+              <span className="zoomValue">{Math.round(scale * 100)}%</span>
+
+              <button
+                className="reset"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  resetTransform();
+                  setScale(RESET_ZOOM);
+                }}
+              >
+                Reset
+              </button>
+
             </div>
 
-          {/* Contenu zoomable */}
+            {/* Contenu zoomable */}
             <TransformComponent>
               <div
                 onMouseDown={() => setSelected(null)}
@@ -184,7 +232,10 @@ export default function PoupeeView({
                     peau={peau}
                     yeux={yeux}
                     levres={levres}
-                    openPicker={openPicker}
+                    //openPicker={openPicker}
+                    onColorPeau={peauClick}
+                    onColorLevres={levresClick}
+                    onColorYeux={yeuxClick}
                   />
 
                   {/* CHEVEUX choisis (si carousel non actif) */}
@@ -257,6 +308,7 @@ export default function PoupeeView({
                       openPicker={openPicker}
                       tissuAccessoire={acc.tissu}
                       viewportRef={viewportRef}
+                      duplicateAccessoire={duplicateAccessoire}
                     />
                   ))}
 

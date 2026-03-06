@@ -2,7 +2,7 @@ import React from 'react';
 
 const CheveuxCouetteCote = ({ color = "#fff" }) => {
     return (
-        <g transform="translate(230 0)" className='svg'>
+        <g transform="translate(232 4)" className='svg'>
             <g fill={color}>
 
                 <path d="M110.3,158.2s-5.2-42-1.9-60.4c3.4-18.4,23-63.4,72.5-63.4,49.5,0,69.1,45,72.5,63.4s-1.9,60.4-1.9,60.4l-4.5,1.5s2.2-21.4,1.1-32.6-13.1-27-28.1-29.6-26.8.4-39.1.4c-12.4,0-24.1-3-39.1-.4-15,2.6-27,18.4-28.1,29.6-1.1,11.2.6,32.6.6,32.6l-4-1.5Z"/>

@@ -7,7 +7,7 @@ const BasJeanSlim = ({ tissuBas }) => {
   const mergedTissu = { ...DEFAULT_TISSU, ...tissuBas };
 
     return (
-      <g transform="translate(174 370)" className='svg'>
+      <g transform="translate(172 370)" className='svg'>
         <EnteteSvg tissu={tissuBas} />
 
         <g>

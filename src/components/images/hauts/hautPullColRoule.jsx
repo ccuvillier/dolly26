@@ -7,7 +7,7 @@ const HautPullColRoule = ({ tissuHaut }) => {
     const mergedTissu = { ...DEFAULT_TISSU, ...tissuHaut };
 
     return (
-      <g transform="translate(298 230)" className='svg'>
+      <g transform="translate(300 228)" className='svg'>
         <EnteteSvg tissu={tissuHaut} />
         <g fill={mergedTissu.isUni ? mergedTissu.color : `url(#tissu-${mergedTissu.instanceId})`}>
           <path

@@ -7,7 +7,7 @@ const HautTshirt = ({ tissuHaut }) => {
   const mergedTissu = { ...DEFAULT_TISSU, ...tissuHaut };
 
   return (
-    <g transform="translate(300 230)" className='svg'>
+    <g transform="translate(300 228)" className='svg'>
 
       <EnteteSvg tissu={tissuHaut} />
 

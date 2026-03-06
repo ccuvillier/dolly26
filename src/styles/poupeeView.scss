@@ -113,3 +113,71 @@ svg .dash {
         background: url(../components/images/picto-reset.svg) no-repeat #fff 80%;
     }
 }
+
+#zoomSlider {
+    pointer-events: all;
+    position:absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 500;
+    user-select: none;
+    width: 50px;
+    height: 300px;
+
+    .rangeWrapper {
+        position: absolute;
+        width: 200px;
+
+        input[type="range"] {
+            transform: rotate(90deg);
+            transform-origin: left;
+            appearance: none;
+            height: 6px;
+            background: #ddd;
+            border-radius: 5px;
+            width: 100%;
+        }
+        /* Track */
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #ff4d6d;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+    }
+    
+    .zoomValue {
+        display: block;
+        color: white;
+        font-size: 12px;
+        width: 40px;
+        background: #ff4d6d;
+        padding: 5px;
+        border-radius: 10px;
+        position: absolute;
+        bottom: 50px;
+        left: 5px;
+        transform: translateX(-50%);
+    }
+
+    .reset {
+        background: white;
+        border: none;
+        padding: 4px 8px;
+        border-radius: 8px;
+        cursor: pointer;
+        position: absolute;
+        bottom: 0;
+        left: 5px;
+        transform: translateX(-50%);
+        box-shadow: 0 0 20px #d4d4d4;
+    }
+    
+}
+
+
+
+

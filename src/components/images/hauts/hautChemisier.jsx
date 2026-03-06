@@ -7,7 +7,7 @@ const HautChemisier = ({ tissuHaut, onPickColor }) => {
   const mergedTissu = { ...DEFAULT_TISSU, ...tissuHaut };
 
     return (
-        <g transform="translate(298 230)" className='svg'>
+        <g transform="translate(298 228)" className='svg'>
             <EnteteSvg tissu={tissuHaut} />
 
             <g
