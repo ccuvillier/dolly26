@@ -6,43 +6,52 @@ import { useDraggable } from "../../hooks/useDraggable";
 
 export default function PaletteTissus({ x, y, target, tissu, onChange, onClose, openPicker, picker }) {
   // --- State local pour l'UI du picker ---
-  const [localTissu, setLocalTissu] = useState(tissu ? { ...DEFAULT_TISSU, ...tissu } : DEFAULT_TISSU);
+  const [localTissu, setLocalTissu] = useState(() => {
+    if (picker?.value) return { ...DEFAULT_TISSU, ...picker.value };
+    return DEFAULT_TISSU;
+  });
+
   const [selectedName, setSelectedName] = useState(localTissu.name);
 
   // Synchronisation si le parent change le tissu
+  const [currentId, setCurrentId] = useState(picker?.id || null);
   useEffect(() => {
-    if (tissu) setLocalTissu({ ...DEFAULT_TISSU, ...tissu });
-  }, [tissu]);
+    if (picker?.id !== currentId && picker?.value) {
+      setLocalTissu({ ...DEFAULT_TISSU, ...picker.value });
+      setSelectedName(picker.value.name || "uni");
+      setCurrentId(picker.id);
+    }
+  }, [picker?.id, picker?.value]);
+
 
   const selectedTissu = tissus.find(t => t.name === selectedName);
-
   const colorInputRef = useRef(null);
 
-  // --- Sélection d’un nouveau tissu ---
+  // --- Fonction centrale de changement de tissu ---
+  const handlePaletteChange = (newTissu) => {
+    setLocalTissu(newTissu);
+
+    if (picker?.onChange) {
+      picker.onChange(newTissu);
+    }
+  };
+
+  // --- Sélection d’un nouveau tissu dans la liste ---
   const handleSelectTissu = (t) => {
     const updated = { ...DEFAULT_TISSU, ...localTissu, ...t };
     setLocalTissu(updated);
     setSelectedName(t.name);
+    handlePaletteChange(updated);
 
-    if (picker?.zoneId) {
-      onChange(updated, picker.zoneId);
-    } else if (picker?.target) {
-      onChange(updated, picker.target);
-    }
     // ouvrir le color picker si tissu uni
     if (t.isUni && colorInputRef.current) colorInputRef.current.click();
   };
 
   // --- Modification d’un champ spécifique ---
   const updateField = (field, value) => {
-    const updated = { ...DEFAULT_TISSU, ...localTissu, [field]: value };
+    const updated = { ...localTissu, [field]: value };
     setLocalTissu(updated);
-
-    if (picker?.zoneId) {
-      onChange(updated, picker.zoneId);
-    } else if (picker?.target) {
-      onChange(updated, picker.target);
-    }
+    handlePaletteChange(updated);
   };
 
   // --- Draggable ---
@@ -50,6 +59,8 @@ export default function PaletteTissus({ x, y, target, tissu, onChange, onClose, 
     x: picker?.x ?? x,
     y: picker?.y ?? y,
   });
+
+
 
   return (
     <div
@@ -93,7 +104,7 @@ export default function PaletteTissus({ x, y, target, tissu, onChange, onClose, 
             </label>
             <label>
               Saturation
-              <input type="range" min="0" max="200" value={localTissu.saturation}
+              <input type="range" min="50" max="200" value={localTissu.saturation}
                      onChange={e => updateField("saturation", Number(e.target.value))} />
             </label>
             <label>

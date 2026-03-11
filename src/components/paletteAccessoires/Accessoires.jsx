@@ -16,6 +16,7 @@ export default function Accessoire({
   selectedAccessoireId,
   onDelete,
   duplicateAccessoire,
+  handleChangeAccessoireTissu,
   setSelected,
   openPicker,
   onClosePicker
@@ -135,9 +136,9 @@ export default function Accessoire({
 
 
 
-          {/* Local tissu pour le cicle */}
+          {/* Local tissu */}
           {/* Color button */}
-          {localTissu.color === "#ffffff" ? (
+          {acc.tissu.isUni && !acc.tissu.color === "#fff" ? (
             <image
               alt="Colorier"
               href={PictoColor}
@@ -145,7 +146,7 @@ export default function Accessoire({
               y={-35}
               onClick={(e) => {
                 e.stopPropagation();
-                openPicker(e, { type: "tissu", target: "accessoire", id: acc.id, value: localTissu });
+                openPicker(e, { type: "tissu", target: "accessoire", id: acc.id, value: acc.tissu, onChange: (newTissu) => handleChangeAccessoireTissu(acc.id, newTissu) });
               }}
             />
           ) : (
@@ -158,7 +159,7 @@ export default function Accessoire({
               }
               onClick={(e) => {
                 e.stopPropagation();
-                openPicker(e, { type: "tissu", target: "accessoire", id: acc.id, value: localTissu });
+                openPicker(e, { type: "tissu", target: "accessoire", id: acc.id, value: localTissu, onChange: (newTissu) => handleChangeAccessoireTissu(acc.id, newTissu) });
               }}
             />
           )}

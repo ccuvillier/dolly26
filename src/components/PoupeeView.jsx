@@ -44,6 +44,7 @@ export default function PoupeeView({
   onMove,
   onDelete,
   duplicateAccessoire,
+  handleChangeAccessoireTissu,
 
   openPicker,
   closePicker,
@@ -363,6 +364,7 @@ export default function PoupeeView({
                       tissuAccessoire={acc.tissu}
                       viewportRef={viewportRef}
                       duplicateAccessoire={duplicateAccessoire}
+                      handleChangeAccessoireTissu={handleChangeAccessoireTissu}
                     />
                   ))}
 
@@ -416,7 +418,7 @@ export default function PoupeeView({
                   </div>
                 )}
 
-                {/* CAROUSEL ACCESSOIRES */}
+                {/* CAROUSEL ACCESSOIRES 
                 {activeCarousel === "accessoires" && (
                   <div className="carouselWrapper">
                     <CarouselAccessoires
@@ -424,7 +426,7 @@ export default function PoupeeView({
                       onSelect={handleSelectAccessoire}
                     />
                   </div>
-                )}
+                )}*/}
               </div>
             </TransformComponent>
           </>

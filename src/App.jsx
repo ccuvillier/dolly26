@@ -81,15 +81,7 @@ export default function App() {
       case "chaussures": setChaussuresColor(color); break;
       case "haut": setNomHaut(prev => ({ ...prev, color })); break;
       case "bas": setNomBas(prev => ({ ...prev, color })); break;
-      case "accessoire":
-        setAccessoires(prev =>
-          prev.map(acc => acc.id === id ? { ...acc, 
-            tissu:
-              typeof color === "string"
-                ? { ...acc.tissu, color, isUni: true }
-                : color } : acc)
-        );
-      break;
+      case "accessoire": break;
       default: break;
     }
   };
@@ -202,7 +194,6 @@ export default function App() {
     else if (target === "accessoire") { updateAccessoireTissu(id, cleanPatch); }
   };
 
-  //const handleChangeTissu = (newTissu, id) => {applyTissu(picker.target, newTissu, id)}; 
   // State central pour toutes les zones
   const [tissusZones, setTissusZones] = useState({});
 
@@ -228,6 +219,15 @@ export default function App() {
     } else if (picker.target === "accessoire") {
       await updateAccessoireTissu(picker.zoneId, newTissu);
     }
+  };
+
+  const handleChangeAccessoireTissu = async (id, newTissu) => {
+    //console.log("💾 handleChangeAccessoireTissu", id, newTissu);
+    updateAccessoire(id, {
+      tissu: newTissu
+    });
+
+    await updateAccessoireTissu(id, newTissu);
   };
 
 
@@ -357,6 +357,7 @@ export default function App() {
                 onDelete={handleDeleteAccessoire}
                 showAccessoires={showAccessoires}
                 duplicateAccessoire={duplicateAccessoire}
+                handleChangeAccessoireTissu={handleChangeAccessoireTissu}
               />
 
               {/* COLOR PICKER */}

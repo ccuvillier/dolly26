@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function useStylePicker() {
+export default function useStylePicker(e, options) {
   const [picker, setPicker] = useState({
     visible: false,
     type: null,     // "color" | "tissu"
@@ -30,6 +30,7 @@ export default function useStylePicker() {
       zoneId: options.zoneId ?? null,
       id: options.id ?? null,
       value: options.value,
+      ...options,
       x: x + 100,
       y,
       positionClass
