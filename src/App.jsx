@@ -158,11 +158,24 @@ export default function App() {
     const p = poupees.find(p => p.data.prenom === prenom || p.id === idPoupee);
     if (!p) return;
 
-    const loadedTissuHaut = { ...DEFAULT_TISSU, ...p.data.tissuHaut };
-    const loadedTissuBas = { ...DEFAULT_TISSU, ...p.data.tissuBas };
+    const loadedTissuHaut = p.data.tissuHaut ?? {};
+    const loadedTissuBas = p.data.tissuBas ?? {};
 
     setTissuHaut(loadedTissuHaut);
     setTissuBas(loadedTissuBas);
+
+    const rebuiltZones = {};
+
+    Object.entries(loadedTissuBas).forEach(([zone, tissu]) => {
+      rebuiltZones[`bas-${zone}`] = tissu;
+    });
+
+    Object.entries(loadedTissuHaut).forEach(([zone, tissu]) => {
+      rebuiltZones[`haut-${zone}`] = tissu;
+    });
+
+    setTissusZones(rebuiltZones);
+
   }, [poupeeExiste, idPoupee, poupees, prenom]);
 
   // ------------------- GESTION PALETTE TISSUS -------------------
@@ -172,12 +185,50 @@ export default function App() {
       ref: patch.ref ?? patch.name.replace(/^tissu-/, "")
     };
 
-    if (target === "haut") {  updateTissuHaut(cleanPatch); } 
-    else if (target === "bas") { updateTissuBas(cleanPatch); } 
+    if (target === "haut") {
+      const zone = picker.target; // zone1 zone2 etc
+      updateTissuHaut({
+        [zone]: cleanPatch
+      });
+    } 
+
+    else if (target === "bas") {
+      const zone = picker.target; // zone1 zone2 etc
+      updateTissuBas({
+        [zone]: cleanPatch
+      });
+    } 
+
     else if (target === "accessoire") { updateAccessoireTissu(id, cleanPatch); }
   };
 
-  const handleChangeTissu = (newTissu, id) => {applyTissu(picker.target, newTissu, id)}; //,console.log("accessoire updated:", id, newTissu);
+  //const handleChangeTissu = (newTissu, id) => {applyTissu(picker.target, newTissu, id)}; 
+  // State central pour toutes les zones
+  const [tissusZones, setTissusZones] = useState({});
+
+  // Appliquer le tissu sélectionné depuis la palette
+  const handleChangeTissu = async (newTissu) => {
+    if (!picker?.zoneId) return;
+
+    const key = `${picker.target}-${picker.zoneId}`;
+
+    // Mise à jour locale pour le rendu
+    setTissusZones(prev => ({
+      ...prev,
+      [key]: { ...newTissu, instanceId: `${idPoupee}-${key}` }
+    }));
+
+    // Mise à jour Firestore selon le type
+    if (picker.target === "bas") {
+      const updated = { ...(tissuBas || {}), [picker.zoneId]: newTissu };
+      await updateTissuBas(updated);
+    } else if (picker.target === "haut") {
+      const updated = { ...(tissuHaut || {}), [picker.zoneId]: newTissu };
+      await updateTissuHaut(updated);
+    } else if (picker.target === "accessoire") {
+      await updateAccessoireTissu(picker.zoneId, newTissu);
+    }
+  };
 
 
   // ------------ GESTION DE LA PALETTE ACCESSOIRES ----------//
@@ -187,19 +238,16 @@ export default function App() {
   const documentRef = useRef(null);
 
   const handleAddAccessoire = (item) => {
-    const rect = documentRef.current.getBoundingClientRect(); // Placer les accessoires au centre de la page
-
     const newAcc = {
       id: crypto.randomUUID(),
       type: item.type,
       component: item.component,
-      x: 50,
-      y: 50,
+      x: 400,
+      y: 400,
       scale: 1,
       rotation: 0,
       tissu: { ...DEFAULT_TISSU, instanceId: crypto.randomUUID() }
     };
-
     addAccessoire(newAcc); 
     setSelectedAccessoireId(newAcc.id);
   };
@@ -217,7 +265,7 @@ export default function App() {
 
   // dupliquer l'accessoire
   const duplicateAccessoire = (clone) => {
-    console.log("Duplication : ajout du clone avec id", clone.id);
+    //console.log("Duplication : ajout du clone avec id", clone.id);
     addAccessoire(clone);
   };
 
@@ -296,6 +344,8 @@ export default function App() {
                 openPicker={openPicker}
                 closePicker={closePicker}
                 revoirGrille={revenirGrille}
+                tissusZones={tissusZones}
+                setTissusZones={setTissusZones}
                 tissuBas={{ ...tissuBas, instanceId: idPoupee }}
                 setTissuBas={updateTissuBas}
                 tissuHaut={tissuHaut}
@@ -328,7 +378,11 @@ export default function App() {
                   x={picker.x}
                   y={picker.y}
                   target={picker.target}
-                  tissu={picker.value}
+                 tissu={
+                    (picker.target === "bas" || picker.target === "haut")
+                      ? tissusZones[`${picker.target}-${picker.zoneId}`]
+                      : DEFAULT_TISSU
+                  }
                   onChange={handleChangeTissu}
                   onClose={closePicker}
                   openPicker={openPicker}

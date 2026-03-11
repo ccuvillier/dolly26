@@ -2,15 +2,23 @@ import React from 'react';
 import EnteteSvg from "../../EnteteSvg";
 import { DEFAULT_TISSU } from "../../../constants/defaultTissu";
 
-const HautManchesBouffantes = ({ tissuHaut }) => {
+const HautManchesBouffantes = ({ tissus = {}, onZoneClick = () => {} }) => {
 
-    const mergedTissu = { ...DEFAULT_TISSU, ...tissuHaut };
+    const getFill = (zone) => {
+        const tissu = tissus?.[zone]
+
+        if (!tissu) return "#fff"
+
+        return tissu.isUni
+            ? tissu.color
+            : `url(#tissu-${tissu.instanceId})`
+    }
 
     return (
       <g transform="translate(300 228)" className='svg'>
-            <EnteteSvg tissu={tissuHaut} />
+            <EnteteSvg tissus={tissus} />
 
-            <g fill={mergedTissu.isUni ? mergedTissu.color : `url(#tissu-${mergedTissu.instanceId})`}>
+            <g data-zone="zone1" fill={getFill("zone1")} onMouseDown={() => onZoneClick("zone1")}>
                 
                 <path d="M111.4,41.2c18.8,0,20.9-17.2,20.9-17.2l15.5,1.7s-2.3,4.2-2.5,14.3,4.5,18.6,4.5,18.6c0,0-3.7,35.2-4.2,49.2s0,36.6,0,36.6c0,0-22.3.2-34.2.2s-34.2-.2-34.2-.2c0,0,.6-22.5,0-36.6s-4.2-49.2-4.2-49.2c0,0,4.8-8.4,4.5-18.6-.3-10.1-2.5-14.3-2.5-14.3l15.5-1.7s2.1,17.2,20.9,17.2"/>
                 <g>
@@ -41,4 +49,5 @@ const HautManchesBouffantes = ({ tissuHaut }) => {
         </g>
     );
 };
+
 export default React.memo(HautManchesBouffantes);

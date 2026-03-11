@@ -48,6 +48,9 @@ svg g {
     fill: none;
     stroke: #000;
 }
+.svg .notstroke * {
+    stroke: none !important;
+}
 
 .svg path.relief,
 .svg > g.relief path {

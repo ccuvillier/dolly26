@@ -29,5 +29,6 @@ const NoeudPapillon = ({ accId, tissuAccessoire, onPickColor }) => {
         </g>
     );
 };
+NoeudPapillon.zones = ["main"];
 
 export default React.memo(NoeudPapillon);

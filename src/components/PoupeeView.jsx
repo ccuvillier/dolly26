@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import FilleNue from "./FilleNue";
 import { hairs } from "./carousels/data/coiffuresData";
 import CarouselCoiffures from "./carousels/CarouselCoiffures.jsx";
@@ -12,6 +12,7 @@ import Accessoire from "./paletteAccessoires/Accessoires.jsx";
 import Menu from "./Menu.jsx";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { usePickerClick } from "../hooks/usePickerClick.js";
+import { DEFAULT_TISSU } from "../constants/defaultTissu";
 
 export default function PoupeeView({
   id,
@@ -24,6 +25,8 @@ export default function PoupeeView({
   chaussuresColor,
   nomChaussures,
   setNomChaussures,
+  tissusZones,
+  setTissusZones,
   nomHaut,
   setNomHaut,
   tissuHaut,
@@ -74,45 +77,80 @@ export default function PoupeeView({
     setSelected(null);
   };
 
-  const showCarousel = () => {
-    closeAll();
-    setActiveCarousel("coiffure");
+  const showCarousel = () => { closeAll(); setActiveCarousel("coiffure"); };
+  const showHaut = () => { closeAll(); setActiveCarousel("haut"); };
+  const showBas = () => { closeAll(); setActiveCarousel("bas"); };
+  const showChaussures = () => { closeAll(); setActiveCarousel("chaussures"); };
+  const showAccessoiresMenu = () => { closeAll(); showAccessoires("accessoires"); };
+  const handleRevoirGrille = () => { closeAll(); revoirGrille(); };
+
+
+  /* CONSTRUIRE LES ZONES A COLORER */
+  useEffect(() => {
+  if (!basAAfficher?.zones && !hautAAfficher?.zones) return;
+
+  setTissusZones(prev => {
+    const newZones = {};
+
+    basAAfficher?.zones.forEach(zone => {
+      const key = `bas-${zone}`;
+      const tissuBDD = tissuBas?.[zone];
+      newZones[key] = {
+        ...DEFAULT_TISSU,
+        ...tissuBDD,
+        instanceId: `${id}-${key}`
+      };
+    });
+
+    hautAAfficher?.zones.forEach(zone => {
+      const key = `haut-${zone}`;
+      const tissuBDD = tissuHaut?.[zone];
+      newZones[key] = {
+        ...DEFAULT_TISSU,
+        ...tissuBDD,
+        instanceId: `${id}-${key}`
+      };
+    });
+
+    // Ne pas setter si rien n'a changé
+    const isEqual = Object.keys(newZones).every(
+      k => JSON.stringify(prev[k]) === JSON.stringify(newZones[k])
+    );
+
+    if (isEqual) return prev;
+    return newZones;
+  });
+
+}, [basAAfficher, hautAAfficher, tissuBas, tissuHaut, id]);
+
+  
+
+
+  const applyTissuToZone = (zoneId, newTissu) => {
+    const updatedZones = {
+      ...tissusZones,
+      [zoneId]: {
+        ...newTissu,
+        instanceId: `${id}-bas-${zoneId}`
+      }
+    };
+
+    setTissusZones(updatedZones);
+
+    // Firestore
+    setTissuBas(updatedZones);
   };
 
-  const showHaut = () => {
-    closeAll();
-    setActiveCarousel("haut");
-  };
 
-  const showBas = () => {
-    closeAll();
-    setActiveCarousel("bas");
-  };
-
-  const showChaussures = () => {
-    closeAll();
-    setActiveCarousel("chaussures");
-  };
-
-  const showAccessoiresMenu = () => {
-    closeAll();
-    showAccessoires("accessoires");
-  };
-
-  const handleRevoirGrille = () => {
-    closeAll();
-    revoirGrille();
-  };
 
   /* GESTION DES DRAG ET CLICK */
-  const peauClick = usePickerClick(openPicker, "color", "peau", peau);
-  const levresClick = usePickerClick(openPicker, "color", "levres", levres);
-  const yeuxClick = usePickerClick(openPicker, "color", "yeux", yeux);
-
-  const hairClick = usePickerClick(openPicker, "color", "cheveux", cheveux);
-  const chaussuresClick = usePickerClick(openPicker, "color", "chaussures", chaussuresColor);
-  const hautClick = usePickerClick(openPicker, "tissu", "haut", tissuHaut);
-  const basClick = usePickerClick(openPicker, "tissu", "bas", tissuBas);
+  const peauClick = usePickerClick(openPicker, "color", "peau", () => peau);
+  const levresClick = usePickerClick(openPicker, "color", "levres", () => levres);
+  const yeuxClick = usePickerClick(openPicker, "color", "yeux", () => yeux);
+  const hairClick = usePickerClick(openPicker, "color", "cheveux", () => cheveux);
+  const chaussuresClick = usePickerClick(openPicker, "color", "chaussures", () => chaussuresColor);
+  const basClick = usePickerClick(openPicker, "tissu", "bas");
+  const hautClick = usePickerClick(openPicker, "tissu", "haut");
 
 
   /* GESTION DU ZOOM AVEC INPUT TYPE RANGE */
@@ -130,7 +168,8 @@ export default function PoupeeView({
 
     setScale(targetScale);
   };
-  
+
+
 
   return (
     <div id="poupeeView" className="zoomIn">
@@ -232,7 +271,6 @@ export default function PoupeeView({
                     peau={peau}
                     yeux={yeux}
                     levres={levres}
-                    //openPicker={openPicker}
                     onColorPeau={peauClick}
                     onColorLevres={levresClick}
                     onColorYeux={yeuxClick}
@@ -253,31 +291,47 @@ export default function PoupeeView({
                     )
                   ) : null}
 
-                  {/* BAS */}
+                  {/* BAS dynamique */}
                   {!activeCarousel || activeCarousel !== "bas" ? (
-                    basAAfficher &&(
-                      <g id="basChoisi" 
-                        style={{ cursor: "pointer", pointerEvents: "all" }}
-                        onMouseDown={basClick}
-                        >
-                        {React.createElement(basAAfficher.component, {
-                          tissuBas: { ...tissuBas, instanceId: `${id}-bas` }
-                        })}
-                      </g>
+                    basAAfficher && (
+                     <g
+                      id="basChoisi"
+                      style={{ cursor: "pointer", pointerEvents: "all" }}
+                      onMouseDown={(e) => {
+                        const zone = e.target.closest("[data-zone]")?.dataset.zone;
+                        if (!zone) return;
+                        basClick(e, zone);
+                      }}
+                    >
+                      {React.createElement(basAAfficher.component, {
+                        tissus: basAAfficher.zones.reduce((tissusVet, zone) => {
+                          tissusVet[zone] = tissusZones[`bas-${zone}`] ?? null;
+                          return tissusVet;
+                        }, {})
+                      })}
+                    </g>
                     )
                   ) : null}
 
-                  {/* HAUT */}
+                  {/* HAUT dynamique */}
                   {!activeCarousel || activeCarousel !== "haut" ? (
-                    hautAAfficher &&(
-                      <g id="hautChoisi"
-                        style={{ cursor: "pointer", pointerEvents: "all" }}
-                        onMouseDown={hautClick}
-                      >
-                        {React.createElement(hautAAfficher.component, {
-                          tissuHaut: { ...tissuHaut, instanceId: `${id}-haut` }
-                        })}
-                      </g>
+                    hautAAfficher && (
+                      <g
+                      id="hautChoisi"
+                      style={{ cursor: "pointer", pointerEvents: "all" }}
+                      onMouseDown={(e) => {
+                        const zone = e.target.closest("[data-zone]")?.dataset.zone;
+                        if (!zone) return;
+                        hautClick(e, zone);
+                      }}
+                    >
+                      {React.createElement(hautAAfficher.component, {
+                        tissus: hautAAfficher.zones.reduce((tissusVet, zone) => {
+                          tissusVet[zone] = tissusZones[`haut-${zone}`] ?? null;
+                          return tissusVet;
+                        }, {})
+                      })}
+                    </g>
                     )
                   ) : null}
 

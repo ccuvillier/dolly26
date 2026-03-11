@@ -2,17 +2,23 @@ import React from 'react';
 import EnteteSvg from "../../EnteteSvg";
 import { DEFAULT_TISSU } from "../../../constants/defaultTissu";
 
-const HautChemisier = ({ tissuHaut, onPickColor }) => {
+const HautChemisier = ({ tissus = {}, onZoneClick = () => {} }) => {
 
-  const mergedTissu = { ...DEFAULT_TISSU, ...tissuHaut };
+  const getFill = (zone) => {
+        const tissu = tissus?.[zone]
+
+        if (!tissu) return "#fff"
+
+        return tissu.isUni
+            ? tissu.color
+            : `url(#tissu-${tissu.instanceId})`
+    }
 
     return (
         <g transform="translate(298 228)" className='svg'>
-            <EnteteSvg tissu={tissuHaut} />
+            <EnteteSvg tissus={tissus} />
 
-            <g
-                fill={mergedTissu.isUni ? mergedTissu.color : `url(#tissu-${mergedTissu.instanceId})`}   
-            >
+            <g data-zone="zone1" fill={getFill("zone1")} onMouseDown={() => onZoneClick("zone1")} >
                 <polygon points="113.4 34.1 99.6 13.8 87.6 18.9 99.6 48.7 113.4 34.1"/>
                 <path d="M88.4,21.5l-21.8,6.6s4.2,12.3,4,28.6-3.5,29.5-3.5,29.5c0,0,.5,10.6,2.9,19.2s8.9,39.6,8.9,39.6l69.9-.2s7-33.7,8.4-40.9,4-17.7,3.2-23.5-4.2-20.9-2.9-30.3c1.3-9.4,4.2-22,4.2-22l-22.6-8-11.7,28.3-14.1-14.3-13.5,13.7-11.4-26.3Z"/>
                 <polygon points="113.4 34.1 128.8 12.9 139.9 18.3 127.4 48.4 113.4 34.1"/>
@@ -45,4 +51,5 @@ const HautChemisier = ({ tissuHaut, onPickColor }) => {
       </g>
     );
 };
+
 export default React.memo(HautChemisier);

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { ACCESSOIRES_COMPONENTS } from "./data/componentsRegistry";
 import PictoColor from "../images/picto-color.svg";
 import PictoClose from "../images/picto-close.svg";
+import PictoClone from "../images/picto-clone.svg";
 import useSVGDrag from "../../hooks/useSVGdrag";
 import useSVGScale from "../../hooks/useSVGscale";
 import useSVGRotate from "../../hooks/useSVGrotate";
@@ -68,7 +69,6 @@ export default function Accessoire({
       20 // offset pixels
     );
 
-    console.log("ok");
 
     // Optionnel : sélectionner automatiquement le clone
     setSelected(clone.id);
@@ -164,12 +164,13 @@ export default function Accessoire({
           )}
 
 
-
-          <circle 
-            cx={20} cy={-35} r={10}
-            fill="#fff"
-            onClick={handleDuplicate}
-          />
+          <image
+              alt="Cloner"
+              href={PictoClone}
+              x={35} width={20} height={20}
+              y={-35}
+              onClick={handleDuplicate}
+            />
         </>
       )}
     </g>

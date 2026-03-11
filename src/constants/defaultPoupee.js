@@ -1,4 +1,3 @@
-import { DEFAULT_TISSU } from "./defaultTissu";
 
 export const DEFAULT_POUPEE = {
   peau: "#FFE4D9",
@@ -9,8 +8,8 @@ export const DEFAULT_POUPEE = {
   prenom: "",
   nomHaut: "",
   nomBas: "",
-  tissuHaut: DEFAULT_TISSU,
-  tissuBas: DEFAULT_TISSU
+  tissuHaut: {},
+  tissuBas: {}
 };
 export const createDefaultPoupee = () => ({
   peau: "#FFE4D9",

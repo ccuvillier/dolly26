@@ -2,17 +2,24 @@ import React from 'react';
 import EnteteSvg from "../../enteteSvg";
 import { DEFAULT_TISSU } from "../../../constants/defaultTissu";
 
-const BasJeanSlim = ({ tissuBas }) => {
+const BasJeanSlim = ({ tissus = {}, onZoneClick = () => {} }) => {
     
-  const mergedTissu = { ...DEFAULT_TISSU, ...tissuBas };
+    const getFill = (zone) => {
+        const tissu = tissus?.[zone]
+
+        if (!tissu) return "#fff"
+
+        return tissu.isUni
+            ? tissu.color
+            : `url(#tissu-${tissu.instanceId})`
+    }
 
     return (
       <g transform="translate(172 370)" className='svg'>
-        <EnteteSvg tissu={tissuBas} />
+        <EnteteSvg tissus={tissus} />
 
         <g>
-          <path fill={mergedTissu.isUni ? mergedTissu.color : `url(#tissu-${mergedTissu.instanceId})`} 
-          
+          <path data-zone="zone1" fill={getFill("zone1")} onMouseDown={() => onZoneClick("zone1")} 
           d="M238.1,94.8s-.7,42.2,2.3,77.9c3,35.7-.6,51.4-.6,51.4l.2,4.4.9,8s-1.3,5.6-.5,8.1-2.9,24.1-2,45.7c.9,21.6,2.6,75.9,2.6,75.9,0,0,5.4,3,12.3,3s9.2-2.5,9.2-2.5c0,0,1.5-5.7,3.4-19.1,2.6-18.7,5.7-35.6,8.3-55.2s.7-53.9.7-53.9l-1.8-4.4,1.5-6s-.2-1.1-1-8.6c-.9-7.5,20.2-88.8,19.7-134.1-.4-45.2-17-74.3-17-74.3l-2.2-10.3-69.9.2-2.5,11.3s-16.8,24.9-17.2,70.2,18.8,129.5,18,137.1c-.9,7.5-1,8.6-1,8.6l1.5,6-1.8,4.4s-1.8,34.3.7,53.9c2.6,19.6,5.6,36.5,8.3,55.2s3.4,19.1,3.4,19.1c0,0,2.3,2.5,9.2,2.5s12.3-3,12.3-3c0,0,1.7-54.3,2.6-75.9s-2.9-43.2-2-45.7-.5-8.1-.5-8.1l.9-8,.2-4.4s-3.6-15.7-.6-51.4,2.3-77.9,2.3-77.9Z"/>
         </g>
         <g className='notfill'>
@@ -44,4 +51,5 @@ const BasJeanSlim = ({ tissuBas }) => {
       </g>
     );
 };
+
 export default React.memo(BasJeanSlim);

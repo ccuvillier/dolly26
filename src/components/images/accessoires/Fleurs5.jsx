@@ -23,5 +23,6 @@ const Fleurs5 = ({ accId, tissuAccessoire, onPickColor }) => {
           </g>
     );
 };
+Fleurs5.zones = ["main"];
 
 export default React.memo(Fleurs5);

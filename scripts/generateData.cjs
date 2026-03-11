@@ -20,19 +20,31 @@ function generateComponentData({ imagesFolder, outputFile, exportName }) {
   const arrayItems = files.map(f => {
     const rawName = path.basename(f, ".jsx");
     const name = rawName.charAt(0).toUpperCase() + rawName.slice(1);
-    return `  { name: "${name}", component: ${name} }`;
+
+    const filePath = path.join(imagesFolder, f);
+    const content = fs.readFileSync(filePath, "utf8");
+
+    // chercher data-zone="..."
+    const matches = [...content.matchAll(/data-zone="([^"]+)"/g)];
+    const zones = [...new Set(matches.map(m => m[1]))];
+
+    const zonesArray = zones.length
+      ? `["${zones.join('","')}"]`
+      : `["zone1"]`;
+
+    return `  { name: "${name}", component: ${name}, zones: ${zonesArray} }`;
   });
 
   const content = `
-${imports}
+    ${imports}
 
-export const ${exportName} = [
-${arrayItems.join(",\n")}
-];
-`;
+    export const ${exportName} = [
+    ${arrayItems.join(",\n")}
+    ];
+  `;
 
   fs.writeFileSync(outputFile, content, "utf8");
-  console.log(`Component data generated: ${outputFile}`);
+  //console.log(`Component data generated: ${outputFile}`);
 }
 
 /**

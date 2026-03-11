@@ -2,18 +2,28 @@ import React from 'react';
 import EnteteSvg from "../../enteteSvg";
 import { DEFAULT_TISSU } from "../../../constants/defaultTissu";
 
-const BasJupeAmpleAvecVolant = ({ tissuBas }) => {
 
-      const mergedTissu = { ...DEFAULT_TISSU, ...tissuBas };
+const BasJupeAmpleAvecVolant = ({ tissus = {}, onZoneClick = () => {} }) => {
+
+
+    const getFill = (zone) => {
+        const tissu = tissus?.[zone]
+
+        if (!tissu) return "#fff"
+
+        return tissu.isUni
+            ? tissu.color
+            : `url(#tissu-${tissu.instanceId})`
+    }
 
     return (
         <g transform="translate(174 370)" className='svg'>
-         <EnteteSvg tissu={tissuBas} />
+         <EnteteSvg tissus={tissus} />
 
-            <g fill={mergedTissu.isUni ? mergedTissu.color : `url(#tissu-${mergedTissu.instanceId})`}>
-                <path d="M202.3,8.4L204.3,0s15.5.4,32.1.4,36.3.1,36.3.1l1.7,7.7h-72.1Z"/>
-                <path d="M109.2,151.3s-23.6,49.8-29.5,57.4-11.8,11-11.8,11c0,0,7.6,13.5,30.4,16s21.9-5.1,38,0c16,5.1,27,16.9,27,16.9,0,0,29.5,16.9,86.1,6.8s65.8-16,65.8-16c0,0,21.1.8,43.9-7.6,22.8-8.4,24.5-12.7,24.5-12.7l-3.4-7.6s14.3-1.7,22.8-7.6l8.4-5.9s-21.1-43-42.2-75.1-38-48.9-38-48.9l-182.2,4.2-39.7,69.2h0Z"/>
-                <path d="M202.3,8.4s-27.3,9.6-52.6,44.2c-25.3,34.6-59.9,81-59.9,81,0,0,48.1,54,119.8,43,71.7-11-5.9-40.5,39.7-49.8s59.9-15.2,70-21.1,15.2-10.1,15.2-10.1l-12.7-15.2s.8,2.5,9.3-2.5,7.6-7.6,7.6-7.6c0,0-16-28.7-36.3-43s-28.1-18.8-28.1-18.8h-72,0Z"/>
+            <g>
+                <path data-zone="zone1" fill={getFill("zone1")} onMouseDown={() => onZoneClick("zone1")} d="M202.3,8.4L204.3,0s15.5.4,32.1.4,36.3.1,36.3.1l1.7,7.7h-72.1Z"/>
+                <path data-zone="zone2" fill={getFill("zone2")} onMouseDown={() => onZoneClick("zone2")} d="M109.2,151.3s-23.6,49.8-29.5,57.4-11.8,11-11.8,11c0,0,7.6,13.5,30.4,16s21.9-5.1,38,0c16,5.1,27,16.9,27,16.9,0,0,29.5,16.9,86.1,6.8s65.8-16,65.8-16c0,0,21.1.8,43.9-7.6,22.8-8.4,24.5-12.7,24.5-12.7l-3.4-7.6s14.3-1.7,22.8-7.6l8.4-5.9s-21.1-43-42.2-75.1-38-48.9-38-48.9l-182.2,4.2-39.7,69.2h0Z"/>
+                <path data-zone="zone3" fill={getFill("zone3")} onMouseDown={() => onZoneClick("zone3")} d="M202.3,8.4s-27.3,9.6-52.6,44.2c-25.3,34.6-59.9,81-59.9,81,0,0,48.1,54,119.8,43,71.7-11-5.9-40.5,39.7-49.8s59.9-15.2,70-21.1,15.2-10.1,15.2-10.1l-12.7-15.2s.8,2.5,9.3-2.5,7.6-7.6,7.6-7.6c0,0-16-28.7-36.3-43s-28.1-18.8-28.1-18.8h-72,0Z"/>
             </g>
             <g className='relief'>
                 <path d="M234.7,142.1s-11.6-19.9-7.9-46.1,6.8-59.2,6.8-59.2c0,0-15.8,53.6-12.8,70.9s1.1,19.9,13.9,34.5h0Z"/>
@@ -26,4 +36,5 @@ const BasJupeAmpleAvecVolant = ({ tissuBas }) => {
         </g>
     );
 };
+
 export default React.memo(BasJupeAmpleAvecVolant);

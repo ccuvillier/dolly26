@@ -12,7 +12,6 @@ export default function useCreationPoupee() {
     setIsCreating(true);
     setShowModalPrenom(true);
     setNouveauPrenom("");
-    console.log("startCreation appelé");
 
   };
 

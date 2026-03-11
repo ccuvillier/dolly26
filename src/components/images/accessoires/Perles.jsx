@@ -29,4 +29,5 @@ const Perles = ({ accId, tissuAccessoire, onPickColor }) => {
     );
 };
 
+Perles.zones = ["main"];
 export default React.memo(Perles);

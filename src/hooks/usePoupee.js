@@ -15,8 +15,8 @@ export default function usePoupee(pseudo) {
   const [data, setData] = useState({ ...DEFAULT_POUPEE, accessoires: [] }); // données UI de la poupée active
   const [poupeeExiste, setPoupeeExiste] = useState(false);
 
-  const [tissuHaut, setTissuHaut] = useState(DEFAULT_TISSU);
-  const [tissuBas, setTissuBas] = useState(DEFAULT_TISSU);
+  const [tissuHaut, setTissuHaut] = useState();
+  const [tissuBas, setTissuBas] = useState();
 
   // ---------------- UTILS ----------------
   // Convertit un accessoire pour Firestore (supprime component)
@@ -52,8 +52,8 @@ export default function usePoupee(pseudo) {
     const newData = { 
       ...DEFAULT_POUPEE, 
       prenom,
-      tissuBas: DEFAULT_TISSU,
-      tissuHaut: DEFAULT_TISSU,
+      tissuBas: {},
+      tissuHaut: {},
       accessoires: []
     };
 
@@ -117,8 +117,8 @@ export default function usePoupee(pseudo) {
     const loaded = snap.data();
 
     // Assure les tissus existants
-    setTissuHaut(loaded.tissuHaut ?? DEFAULT_TISSU);
-    setTissuBas(loaded.tissuBas ?? DEFAULT_TISSU);
+    setTissuHaut(loaded.tissuHaut ?? {});
+    setTissuBas(loaded.tissuBas ?? {});
 
     // Ajouter les champs manquants
     const missing = {};
