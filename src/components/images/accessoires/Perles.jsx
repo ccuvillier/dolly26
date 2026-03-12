@@ -1,25 +1,20 @@
 import React from 'react';
 import EnteteSvg from "../../enteteSvg";
-import { DEFAULT_TISSU } from "../../../constants/defaultTissu";
 
 const Perles = ({ accId, tissuAccessoire, onPickColor }) => {
 
-    const mergedTissu = { ...DEFAULT_TISSU, ...tissuAccessoire };
+    const getFill = (tissu) => {
+        if (!tissu) return "#fff"
+        return tissu.isUni
+            ? tissu.color
+            : `url(#tissu-${tissu.instanceId})`
+    }
 
     return (
         <g transform="translate(-6 0)">
             <EnteteSvg tissu={tissuAccessoire} />
 
-            <g fill={mergedTissu.isUni ? mergedTissu.color : `url(#tissu-${mergedTissu.instanceId})`}
-                onClick={(e) => 
-                    onPickColor && onPickColor(e, {
-                        type:"tissu",
-                        target: "accessoire",
-                        id: accId,
-                        value: tissuAccessoire
-                    })
-                }
-            >
+            <g fill={getFill(tissuAccessoire)} onClick={(e) => onPickColor?.(e, accId)}>
             <circle cx="33.2" cy="7.3" r="6"/>
             <circle cx="33.2" cy="19.4" r="6"/>
             <circle cx="33.2" cy="40.7" r="15.1"/>
@@ -29,5 +24,4 @@ const Perles = ({ accId, tissuAccessoire, onPickColor }) => {
     );
 };
 
-Perles.zones = ["main"];
 export default React.memo(Perles);

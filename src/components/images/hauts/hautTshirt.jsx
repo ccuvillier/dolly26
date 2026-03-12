@@ -1,6 +1,5 @@
 import React from 'react';
 import EnteteSvg from "../../EnteteSvg";
-import { DEFAULT_TISSU } from "../../../constants/defaultTissu";
 
 const HautTshirt = ({ tissus = {}, onZoneClick = () => {} }) => {
 

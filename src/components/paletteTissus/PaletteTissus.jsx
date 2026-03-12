@@ -8,7 +8,7 @@ export default function PaletteTissus({ x, y, target, tissu, onChange, onClose, 
   // --- State local pour l'UI du picker ---
   const [localTissu, setLocalTissu] = useState(() => {
     if (picker?.value) return { ...DEFAULT_TISSU, ...picker.value };
-    return DEFAULT_TISSU;
+    return tissu ?? DEFAULT_TISSU; // <-- utiliser la prop
   });
 
   const [selectedName, setSelectedName] = useState(localTissu.name);
@@ -16,12 +16,18 @@ export default function PaletteTissus({ x, y, target, tissu, onChange, onClose, 
   // Synchronisation si le parent change le tissu
   const [currentId, setCurrentId] = useState(picker?.id || null);
   useEffect(() => {
-    if (picker?.id !== currentId && picker?.value) {
-      setLocalTissu({ ...DEFAULT_TISSU, ...picker.value });
-      setSelectedName(picker.value.name || "uni");
-      setCurrentId(picker.id);
+    let baseTissu = DEFAULT_TISSU;
+
+    if (picker?.value) {
+      baseTissu = { ...DEFAULT_TISSU, ...picker.value };
+    } else if (tissu) {
+      baseTissu = { ...DEFAULT_TISSU, ...tissu };
     }
-  }, [picker?.id, picker?.value]);
+
+    setLocalTissu(baseTissu);
+    setSelectedName(baseTissu.name || "uni");
+    setCurrentId(picker?.id ?? null);
+  }, [picker, tissu]);
 
 
   const selectedTissu = tissus.find(t => t.name === selectedName);
