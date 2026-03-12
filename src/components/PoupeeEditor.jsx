@@ -1,0 +1,101 @@
+import React from "react";
+import PoupeeView from "./PoupeeView";
+import ColorfulPicker from "../ColorfulPicker.jsx";
+import PaletteTissus from "./paletteTissus/PaletteTissus";
+import PaletteAccessoires from "./paletteAccessoires/PaletteAccessoires.jsx";
+
+export default function PoupeeEditor({
+  poupeeActive,
+  idPoupee,
+  isCreating,
+  tissusZones,
+  setTissusZones,
+  openPicker,
+  closePicker,
+  picker,
+  applyColor,
+  handleChangeTissu,
+  activePalette,
+  showAccessoires,
+  selectedAccessoireId,
+  setSelectedAccessoireId,
+  handleAddAccessoire,
+  handleDeleteAccessoire,
+  handleUpdateAccessoire,
+  duplicateAccessoire,
+  handleChangeAccessoireTissu,
+  revoirGrille
+}) {
+
+  return (
+    <>
+      <PoupeeView
+        id={idPoupee}
+        {...poupeeActive}
+        openPicker={openPicker}
+        closePicker={closePicker}
+        revoirGrille={revoirGrille}
+        tissusZones={tissusZones}
+        setTissusZones={setTissusZones}
+        accessoires={poupeeActive.accessoires}
+        selectedAccessoireId={selectedAccessoireId}
+        setSelected={setSelectedAccessoireId}
+        onUpdate={handleUpdateAccessoire}
+        onDelete={handleDeleteAccessoire}
+        showAccessoires={showAccessoires}
+        duplicateAccessoire={duplicateAccessoire}
+        handleChangeAccessoireTissu={handleChangeAccessoireTissu}
+      />
+
+      {/* COLOR PICKER */}
+      {picker.visible && picker.type === "color" && (
+        <ColorfulPicker
+          x={picker.x}
+          y={picker.y}
+          currentColor={picker.value}
+          target={picker.target}
+          onChange={applyColor}
+          onClose={closePicker}
+          picker={picker}
+        />
+      )}
+
+      {/* PALETTE TISSUS */}
+      {picker.visible && picker.type === "tissu" && (
+        <PaletteTissus
+          x={picker.x}
+          y={picker.y}
+          target={picker.target}
+          tissu={tissusZones[`${picker.target}-${picker.zoneId}`]}
+          onChange={handleChangeTissu}
+          onClose={closePicker}
+          openPicker={openPicker}
+          picker={picker}
+        />
+      )}
+
+      {/* PALETTE ACCESSOIRES */}
+      {activePalette === "accessoires" && (
+        <PaletteAccessoires
+          onAddAccessoire={handleAddAccessoire}
+          onClose={() => showAccessoires(null)}
+        />
+      )}
+
+      {/* PALETTE TISSUS POUR ACCESSOIRE */}
+      {picker.visible && picker.type === "accessoire" && (
+        <PaletteTissus
+          x={picker.x}
+          y={picker.y}
+          target={picker.target}
+          id={picker.id} 
+          tissu={picker.value}
+          onChange={handleChangeTissu}
+          onClose={closePicker}
+          openPicker={openPicker}
+          picker={picker}
+        />
+      )}
+    </>
+  );
+}
