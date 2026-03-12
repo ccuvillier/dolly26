@@ -166,6 +166,15 @@ export default function App() {
 
   // ------------------- CHANGEMENT DE TISSU -------------------
   const handleChangeTissu = async (newTissu) => {
+    console.log("🎨 change tissu", {
+    picker,
+    newTissu
+  });
+
+  if (!picker?.zoneId) {
+    console.warn("⚠️ zoneId manquant");
+    return;
+  }
     if (!picker?.zoneId) return;
 
     const key = `${picker.target}-${picker.zoneId}`;

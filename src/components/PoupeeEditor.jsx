@@ -27,6 +27,7 @@ export default function PoupeeEditor({
   revoirGrille
 }) {
 
+
   return (
     <>
       <PoupeeView
@@ -66,7 +67,11 @@ export default function PoupeeEditor({
           x={picker.x}
           y={picker.y}
           target={picker.target}
-          tissu={tissusZones[`${picker.target}-${picker.zoneId}`]}
+          tissu={
+                (picker.target === "bas" || picker.target === "haut")
+                ? tissusZones[`${picker.target}-${picker.zoneId}`]
+                : null
+            }
           onChange={handleChangeTissu}
           onClose={closePicker}
           openPicker={openPicker}

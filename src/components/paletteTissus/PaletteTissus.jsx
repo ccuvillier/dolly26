@@ -37,8 +37,14 @@ export default function PaletteTissus({ x, y, target, tissu, onChange, onClose, 
   const handlePaletteChange = (newTissu) => {
     setLocalTissu(newTissu);
 
+    // priorité au picker si présent
     if (picker?.onChange) {
       picker.onChange(newTissu);
+    }
+
+    // sinon utiliser la prop
+    else if (onChange) {
+      onChange(newTissu);
     }
   };
 
