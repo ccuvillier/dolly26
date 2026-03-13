@@ -20,9 +20,9 @@ export default function PoupeeEditor({
   selectedAccessoireId,
   setSelectedAccessoireId,
   handleAddAccessoire,
-  handleDeleteAccessoire,
-  handleUpdateAccessoire,
-  duplicateAccessoire,
+  onUpdate,
+  onDelete,
+  onDuplicate,
   handleChangeAccessoireTissu,
   revoirGrille
 }) {
@@ -41,10 +41,10 @@ export default function PoupeeEditor({
         accessoires={poupeeActive.accessoires}
         selectedAccessoireId={selectedAccessoireId}
         setSelected={setSelectedAccessoireId}
-        onUpdate={handleUpdateAccessoire}
-        onDelete={handleDeleteAccessoire}
+        onUpdate={onUpdate}
+        onDelete={onDelete}
         showAccessoires={showAccessoires}
-        duplicateAccessoire={duplicateAccessoire}
+        duplicateAccessoire={onDuplicate}
         handleChangeAccessoireTissu={handleChangeAccessoireTissu}
       />
 

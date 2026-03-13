@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useUser } from "./context/UserContext";
 import ModalPseudo from "./components/ModalPseudo";
 import ModalPrenom from "./components/ModalPrenom";
 import PoupeesGrid from "./components/PoupeesGrid";
@@ -7,14 +8,13 @@ import usePoupee from "./hooks/usePoupee";
 import useCreationPoupee from "./hooks/useCreationPoupee";
 import useStylePicker from "./hooks/useStylePicker";
 import { DEFAULT_TISSU } from "./constants/defaultTissu";
-import { pseudoExiste, creerUtilisateurSiAbsent } from "./firebase/firestoreFunctions";
 
 import './App.scss';
 
 export default function App() {
   // ------------------- USER -------------------
-  const [pseudo, setPseudo] = useState("");
-  const [pseudoError, setPseudoError] = useState("");
+  
+  const { pseudo } = useUser();
   const hasPseudo = pseudo.trim() !== "";
 
   // ------------------- HOOK POUPEE -------------------
@@ -71,71 +71,80 @@ export default function App() {
   const [tissusZones, setTissusZones] = useState({});
   const [activePalette, setActivePalette] = useState(null);
   const [selectedAccessoireId, setSelectedAccessoireId] = useState(null);
+  const showAccessoires = (state = "accessoires") => setActivePalette(state);
 
-  // ------------------- FONCTIONS UTILES -------------------
+  // ------------------ COULEURS ACTIONS ----------------
+  const couleurActions = {
+    peau: setPeau,
+    yeux: setYeux,
+    levres: setLevres,
+    cheveux: setCheveux,
+    chaussures: setChaussuresColor
+  };
   const applyColor = (target, color) => {
-    switch (target) {
-      case "peau": setPeau(color); break;
-      case "yeux": setYeux(color); break;
-      case "levres": setLevres(color); break;
-      case "cheveux": setCheveux(color); break;
-      case "chaussures": setChaussuresColor(color); break;
-      default: break;
+    couleurActions[target]?.(color);
+  };
+
+  /*--------- DRAG D'UN ACCESSOIRE --------*/
+  const handleMoveAccessoire = (id, x, y) => {
+    updateAccessoire(id, { x, y });
+  };
+
+  /*--------- SUPPRIMER --------*/
+  const handleDeleteAccessoire = (id) => {
+    deleteAccessoire(id);
+  };
+
+  /*--------- UPDATE --------*/
+  const handleUpdateAccessoire = (id, newProps) => {
+    updateAccessoire(id, newProps);
+  };
+
+  // ------------------ ACCESSOIRES ACTIONS -------------
+  const accessoireActions = {
+    add: (item) => {
+      const newAcc = {
+        id: crypto.randomUUID(),
+        type: item.type,
+        component: item.component,
+        x: 400,
+        y: 400,
+        scale: 1,
+        rotation: 0,
+        tissu: { ...DEFAULT_TISSU, instanceId: crypto.randomUUID() }
+      };
+      addAccessoire(newAcc);
+      setSelectedAccessoireId(newAcc.id);
+    },
+
+    onMove: handleMoveAccessoire,
+    onDelete: handleDeleteAccessoire,
+    onUpdate: handleUpdateAccessoire,
+
+    onDuplicate: (clone) => addAccessoire(clone),
+
+    handleChangeAccessoireTissu: async (id, newTissu) => {
+      updateAccessoire(id, { tissu: newTissu });
+      await updateAccessoireTissu(id, newTissu);
     }
   };
 
-  const showAccessoires = (state = "accessoires") => setActivePalette(state);
 
-  const handleAddAccessoire = (item) => {
-    const newAcc = {
-      id: crypto.randomUUID(),
-      type: item.type,
-      component: item.component,
-      x: 400,
-      y: 400,
-      scale: 1,
-      rotation: 0,
-      tissu: { ...DEFAULT_TISSU, instanceId: crypto.randomUUID() }
-    };
-    addAccessoire(newAcc);
-    setSelectedAccessoireId(newAcc.id);
-  };
 
-  const handleDeleteAccessoire = (id) => deleteAccessoire(id);
-  const handleUpdateAccessoire = (id, newProps) => updateAccessoire(id, newProps);
-  const duplicateAccessoire = (clone) => addAccessoire(clone);
 
-  const handleChangeAccessoireTissu = async (id, newTissu) => {
-    updateAccessoire(id, { tissu: newTissu });
-    await updateAccessoireTissu(id, newTissu);
-  };
-
-  const revenirGrille = () => {
+  const annulerPoupee = () => {
+    cancelCreation();
     setPoupeeExiste(false);
     setIdPoupee("");
-    cancelCreation();
   };
+
 
   const poupeeAffichee = isCreating
     ? creationData
     : { peau, yeux, levres, cheveux, nomCoiffure, chaussuresColor, nomChaussures, nomHaut, nomBas, prenom, tissuHaut, tissuBas, accessoires };
 
-  // ------------------- MODALES PSEUDO -------------------
-  const handlePseudoSubmit = async (pseudo, mode) => {
-    const existed = await pseudoExiste(pseudo);
-    if (mode === "create" && existed) return setPseudoError("Ce pseudo est déjà utilisé.");
-    if (mode === "login" && !existed) return setPseudoError("Cet utilisateur n'existe pas.");
-    if (mode === "create") await creerUtilisateurSiAbsent(pseudo);
-    setPseudo(pseudo);
-  };
-
-  // ------------------- MODALES POUPEE -------------------
-  const handleCancelPoupee = () => {
-    cancelCreation();
-    setPoupeeExiste(false);
-    setIdPoupee("");
-  };
-
+  
+  // ------------------- MODALES POUPEE ------------------
   const handleCreer = async () => {
     if (!nouveauPrenom) return;
     const id = await creerPoupee(nouveauPrenom);
@@ -144,6 +153,7 @@ export default function App() {
     setPoupeeExiste(true);
     cancelCreation();
   };
+  
 
   // ------------------- CHARGEMENT TISSUS -------------------
   useEffect(() => {
@@ -164,47 +174,58 @@ export default function App() {
     setTissusZones(rebuiltZones);
   }, [poupeeExiste, idPoupee, poupees, prenom]);
 
-  // ------------------- CHANGEMENT DE TISSU -------------------
-  const handleChangeTissu = async (newTissu) => {
-    console.log("🎨 change tissu", {
-    picker,
-    newTissu
-  });
 
-  if (!picker?.zoneId) {
-    console.warn("⚠️ zoneId manquant");
-    return;
-  }
-    if (!picker?.zoneId) return;
-
-    const key = `${picker.target}-${picker.zoneId}`;
-    setTissusZones(prev => ({
-      ...prev,
-      [key]: { ...newTissu, instanceId: `${idPoupee}-${key}` }
-    }));
-
-    if (picker.target === "bas") {
-      const updated = { ...(tissuBas || {}), [picker.zoneId]: newTissu };
-      await updateTissuBas(updated);
-    } else if (picker.target === "haut") {
-      const updated = { ...(tissuHaut || {}), [picker.zoneId]: newTissu };
+  // ------------------- TISSU ACTIONS -------------------
+  const tissuActions = {
+    haut: async (zoneId, newTissu) => {
+      const updated = { ...(tissuHaut || {}), [zoneId]: newTissu };
+      setTissuHaut(updated);
       await updateTissuHaut(updated);
-    } else if (picker.target === "accessoire") {
-      await updateAccessoireTissu(picker.zoneId, newTissu);
+      setTissusZones(prev => ({
+        ...prev,
+        [`haut-${zoneId}`]: { ...newTissu, instanceId: `${idPoupee}-haut-${zoneId}` }
+      }));
+    },
+
+    bas: async (zoneId, newTissu) => {
+      const updated = { ...(tissuBas || {}), [zoneId]: newTissu };
+      setTissuBas(updated);
+      await updateTissuBas(updated);
+      setTissusZones(prev => ({
+        ...prev,
+        [`bas-${zoneId}`]: { ...newTissu, instanceId: `${idPoupee}-bas-${zoneId}` }
+      }));
+    },
+
+    accessoire: async (id, newTissu) => {
+      updateAccessoire(id, { tissu: newTissu });
+      await updateAccessoireTissu(id, newTissu);
     }
   };
+
+
+  const handleChangeTissu = async (newTissu) => {
+    if (!picker?.zoneId) {
+      console.warn("⚠️ zoneId manquant");
+      return;
+    }
+
+    const target = picker.target;
+    const zoneId = picker.zoneId;
+
+    if (tissuActions[target]) {
+      await tissuActions[target](zoneId, newTissu);
+    } else {
+      console.warn(`⚠️ target inconnu pour tissuActions: ${target}`);
+    }
+  };
+
+ 
 
   // ------------------- RENDER -------------------
   return (
     <div className="App zoomIn">
-      {!hasPseudo && (
-        <ModalPseudo
-          visible={!hasPseudo}
-          onSubmit={handlePseudoSubmit}
-          error={pseudoError}
-          setError={setPseudoError}
-        />
-      )}
+      {!hasPseudo && <ModalPseudo />}
 
       {hasPseudo && (
         <>
@@ -225,7 +246,7 @@ export default function App() {
               setPrenom={setNouveauPrenom}
               exists={false}
               creer={handleCreer}
-              onAnnuler={handleCancelPoupee}
+              onAnnuler={annulerPoupee}
             >
               <input
                 type="text"
@@ -242,6 +263,8 @@ export default function App() {
               <h1>{isCreating ? "Ma nouvelle amie" : idPoupee ? `Mon amie ${idPoupee}` : "Ma meilleure amie"}</h1>
 
               <PoupeeEditor
+                {...accessoireActions}
+                revoirGrille={annulerPoupee}
                 poupeeActive={poupeeAffichee}
                 idPoupee={idPoupee}
                 isCreating={isCreating}
@@ -256,12 +279,6 @@ export default function App() {
                 showAccessoires={showAccessoires}
                 selectedAccessoireId={selectedAccessoireId}
                 setSelectedAccessoireId={setSelectedAccessoireId}
-                handleAddAccessoire={handleAddAccessoire}
-                handleDeleteAccessoire={handleDeleteAccessoire}
-                handleUpdateAccessoire={handleUpdateAccessoire}
-                duplicateAccessoire={duplicateAccessoire}
-                handleChangeAccessoireTissu={handleChangeAccessoireTissu}
-                revoirGrille={revenirGrille}
               />
             </>
           )}

@@ -1,40 +1,45 @@
 import React, { useState } from "react";
+import { useUser } from "../context/UserContext";
 
-export default function ModalPseudo({ visible, pseudo,  onSubmit, error, setError }) {
-  const [input, setInput] = useState(pseudo || "");
+export default function ModalPseudo() {
+  const { pseudo, login, error, setError } = useUser();
+  const [input, setInput] = useState("");
   const [mode, setMode] = useState("login"); // "login" | "create"
 
+  // Fonction de soumission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!input.trim()) return;
 
-  if (!visible) return null;
+    const success = await login(input.trim(), mode);
+    if (!success) return;
+
+    // Réinitialise l'input après login
+    setInput("");
+  };
+
+  // Si le pseudo existe déjà, on n'affiche pas la modale
+  if (pseudo) return null;
 
   return (
     <div className="modal modalPseudo">
       <div>
-        <h2>{mode === "login"
-          ? "Retrouve tes poupées"
-          : "Créer un nouveau pseudo"}</h2>
-          
-        <input
-            type="text"
-            value={input || ""}
-            onChange={e => setInput(e.target.value)}
-            placeholder={
-              mode === "login"
-                ? "Ecris ton pseudo ici"
-                : "Choisis ton pseudo"
-            }
-        />
-        <button
-            onClick={() => {
-              onSubmit(input.trim(),mode);
-            }}
-        >
-            {mode === "login"
-            ? "Continuer"
-            : "Créer"}
-        </button>
+        <h2>{mode === "login" ? "Retrouve tes poupées" : "Créer un nouveau pseudo"}</h2>
 
-        {error && <p>{error}</p>}
+        {error && <p className="error">{error}</p>}
+
+        <form onSubmit={handleSubmit}>
+          <input
+            autoFocus
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder={mode === "login" ? "Ecris ton pseudo ici" : "Choisis ton pseudo"}
+          />
+          <button type="submit">
+            {mode === "login" ? "Continuer" : "Créer"}
+          </button>
+        </form>
 
         <p>
           <a
@@ -50,11 +55,7 @@ export default function ModalPseudo({ visible, pseudo,  onSubmit, error, setErro
               : "Déjà un compte ? Connecte-toi ici"}
           </a>
         </p>
-
-
       </div>
     </div>
   );
-
 }
-
