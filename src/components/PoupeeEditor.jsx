@@ -5,7 +5,7 @@ import PaletteTissus from "./paletteTissus/PaletteTissus";
 import PaletteAccessoires from "./paletteAccessoires/PaletteAccessoires.jsx";
 
 export default function PoupeeEditor({
-  poupeeActive,
+  poupeeAffichee,
   idPoupee,
   isCreating,
   tissusZones,
@@ -19,7 +19,7 @@ export default function PoupeeEditor({
   showAccessoires,
   selectedAccessoireId,
   setSelectedAccessoireId,
-  handleAddAccessoire,
+  onAddAccessoire,
   onUpdate,
   onDelete,
   onDuplicate,
@@ -32,13 +32,13 @@ export default function PoupeeEditor({
     <>
       <PoupeeView
         id={idPoupee}
-        {...poupeeActive}
+        {...poupeeAffichee}
         openPicker={openPicker}
         closePicker={closePicker}
         revoirGrille={revoirGrille}
         tissusZones={tissusZones}
         setTissusZones={setTissusZones}
-        accessoires={poupeeActive.accessoires}
+        accessoires={poupeeAffichee.accessoires}
         selectedAccessoireId={selectedAccessoireId}
         setSelected={setSelectedAccessoireId}
         onUpdate={onUpdate}
@@ -82,7 +82,7 @@ export default function PoupeeEditor({
       {/* PALETTE ACCESSOIRES */}
       {activePalette === "accessoires" && (
         <PaletteAccessoires
-          onAddAccessoire={handleAddAccessoire}
+          onAddAccessoire={onAddAccessoire}
           onClose={() => showAccessoires(null)}
         />
       )}

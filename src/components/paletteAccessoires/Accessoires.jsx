@@ -12,15 +12,12 @@ import duplicateAccessoireSVG from "../../utils/duplicateAccessoireSVG"
 export default function Accessoire({
   acc,
   viewportRef,
-  onUpdate,
   selectedAccessoireId,
-  onDelete,
-  duplicateAccessoire,
-  handleChangeAccessoireTissu,
-  setSelected,
+  accessoireActions,
   openPicker,
   onClosePicker
 }) {
+  const { onUpdate, onDelete, setSelected, duplicateAccessoire, handleChangeAccessoireTissu, onMove } = accessoireActions ?? {};
   const Component = ACCESSOIRES_COMPONENTS[acc.type];
   
    // ================= SIZE =================

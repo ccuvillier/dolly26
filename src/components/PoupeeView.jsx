@@ -10,6 +10,7 @@ import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { usePickerClick } from "../hooks/usePickerClick.js";
 import { DEFAULT_TISSU } from "../constants/defaultTissu";
 import { ComposantsPoupee } from "../utils/composantsPoupee.js";
+import SVGPart from "./SVGPart";
 
 export default function PoupeeView({
   id,
@@ -47,6 +48,19 @@ export default function PoupeeView({
   showAccessoires,
   revoirGrille
 }) {
+  const accessoireActions = {
+    onUpdate: onUpdate,
+    onDelete: onDelete,
+    setSelected: setSelected,
+    duplicateAccessoire: duplicateAccessoire,
+    handleChangeAccessoireTissu: handleChangeAccessoireTissu,
+    onMove: onMove
+  };
+  const zonesTissus = {
+    haut: { data: tissuHaut, set: setTissuHaut },
+    bas: { data: tissuBas, set: setTissuBas }
+  };
+  
 
   const viewportRef = useRef(null);
   const [activeCarousel, setActiveCarousel] = useState(null); // "coiffure" | "haut" | "bas" | "chaussures" | null
@@ -78,38 +92,27 @@ export default function PoupeeView({
 
   // ----------------- CONSTRUIRE LES ZONES A COLORER -----------------
   useEffect(() => {
-    if (!basAAfficher?.zones && !hautAAfficher?.zones) return;
+    const newZones = {};
+    ["haut", "bas"].forEach(part => {
+      const zones = (part === "haut" ? hautAAfficher : basAAfficher)?.zones ?? [];
+      const tissuData = zonesTissus[part]?.data ?? {};
+      zones.forEach(zone => {
+        const key = `${part}-${zone}`;
+        newZones[key] = {
+          ...DEFAULT_TISSU,
+          ...tissuData[zone],
+          instanceId: `${id}-${key}`
+        };
+      });
+    });
 
     setTissusZones(prev => {
-      const newZones = {};
-
-      basAAfficher?.zones.forEach(zone => {
-        const key = `bas-${zone}`;
-        const tissuBDD = tissuBas?.[zone];
-        newZones[key] = {
-          ...DEFAULT_TISSU,
-          ...tissuBDD,
-          instanceId: `${id}-${key}`
-        };
-      });
-
-      hautAAfficher?.zones.forEach(zone => {
-        const key = `haut-${zone}`;
-        const tissuBDD = tissuHaut?.[zone];
-        newZones[key] = {
-          ...DEFAULT_TISSU,
-          ...tissuBDD,
-          instanceId: `${id}-${key}`
-        };
-      });
-
       const isEqual = Object.keys(newZones).every(
         k => JSON.stringify(prev[k]) === JSON.stringify(newZones[k])
       );
-      if (isEqual) return prev;
-      return newZones;
+      return isEqual ? prev : newZones;
     });
-  }, [basAAfficher, hautAAfficher, tissuBas, tissuHaut, id, setTissusZones]);
+  }, [basAAfficher, hautAAfficher, zonesTissus, id, setTissusZones]);
 
   // ----------------- GESTION DU ZOOM -----------------
   const transformWrapperRef = useRef(null);
@@ -194,53 +197,23 @@ export default function PoupeeView({
                   <FilleNue peau={peau} yeux={yeux} levres={levres} onColorPeau={peauClick} onColorLevres={levresClick} onColorYeux={yeuxClick} />
 
                   {/* CHEVEUX */}
-                  {!activeCarousel || activeCarousel !== "coiffure" ? coiffureAAfficher?.component && (
-                    <g id="coiffureChoisie" style={{ cursor: "pointer", pointerEvents: "all" }} onMouseDown={hairClick}>
-                      {React.createElement(coiffureAAfficher.component, { color: cheveux })}
-                    </g>
+                  {activeCarousel !== "coiffure" ? (
+                    <SVGPart type="cheveux" component={coiffureAAfficher?.component} color={cheveux} onClickColor={hairClick} />
                   ) : null}
 
                   {/* BAS */}
-                  {!activeCarousel || activeCarousel !== "bas" ? basAAfficher?.component && (
-                    <g id="basChoisi" style={{ cursor: "pointer", pointerEvents: "all" }}
-                       onMouseDown={(e) => {
-                         const zone = e.target.closest("[data-zone]")?.dataset.zone;
-                         if (!zone) return;
-                         basClick(e, zone);
-                       }}
-                    >
-                      {React.createElement(basAAfficher.component, {
-                        tissus: basAAfficher.zones?.reduce((acc, zone) => {
-                          acc[zone] = tissusZones[`bas-${zone}`] ?? null;
-                          return acc;
-                        }, {}) || {}
-                      })}
-                    </g>
+                  {activeCarousel !== "bas" ? (
+                    <SVGPart type="bas" component={basAAfficher?.component} zones={basAAfficher?.zones} tissusZones={tissusZones} onClickTissu={basClick} />
                   ) : null}
 
                   {/* HAUT */}
-                  {!activeCarousel || activeCarousel !== "haut" ? hautAAfficher?.component && (
-                    <g id="hautChoisi" style={{ cursor: "pointer", pointerEvents: "all" }}
-                       onMouseDown={(e) => {
-                         const zone = e.target.closest("[data-zone]")?.dataset.zone;
-                         if (!zone) return;
-                         hautClick(e, zone);
-                       }}
-                    >
-                      {React.createElement(hautAAfficher.component, {
-                        tissus: hautAAfficher.zones?.reduce((acc, zone) => {
-                          acc[zone] = tissusZones[`haut-${zone}`] ?? null;
-                          return acc;
-                        }, {}) || {}
-                      })}
-                    </g>
+                  {activeCarousel !== "haut" ? (
+                    <SVGPart type="haut" component={hautAAfficher?.component} zones={hautAAfficher?.zones} tissusZones={tissusZones} onClickTissu={hautClick} />
                   ) : null}
 
                   {/* CHAUSSURES */}
-                  {!activeCarousel || activeCarousel !== "chaussures" ? chaussuresAAfficher?.component && (
-                    <g id="chaussuresChoisies" style={{ cursor: "pointer", pointerEvents: "all" }} onMouseDown={chaussuresClick}>
-                      {React.createElement(chaussuresAAfficher.component, { color: chaussuresColor })}
-                    </g>
+                  {activeCarousel !== "chaussures" ? (
+                    <SVGPart type="chaussures" component={chaussuresAAfficher?.component} color={chaussuresColor} onClickColor={chaussuresClick} />
                   ) : null}
 
                   {/* ACCESSOIRES */}
@@ -249,15 +222,11 @@ export default function PoupeeView({
                       key={acc.id}
                       acc={acc}
                       selectedAccessoireId={selectedAccessoireId}
-                      onUpdate={onUpdate}
-                      onDelete={onDelete}
-                      setSelected={setSelected}
+                      accessoireActions={accessoireActions}
                       onClosePicker={closePicker}
                       openPicker={openPicker}
                       tissuAccessoire={acc.tissu}
                       viewportRef={viewportRef}
-                      duplicateAccessoire={duplicateAccessoire}
-                      handleChangeAccessoireTissu={handleChangeAccessoireTissu}
                     />
                   ))}
                 </svg>

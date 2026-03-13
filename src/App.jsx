@@ -102,7 +102,7 @@ export default function App() {
 
   // ------------------ ACCESSOIRES ACTIONS -------------
   const accessoireActions = {
-    add: (item) => {
+    onAddAccessoire: (item) => {
       const newAcc = {
         id: crypto.randomUUID(),
         type: item.type,
@@ -111,7 +111,8 @@ export default function App() {
         y: 400,
         scale: 1,
         rotation: 0,
-        tissu: { ...DEFAULT_TISSU, instanceId: crypto.randomUUID() }
+        tissu: { ...DEFAULT_TISSU, instanceId: crypto.randomUUID() },
+        zoneId: crypto.randomUUID()
       };
       addAccessoire(newAcc);
       setSelectedAccessoireId(newAcc.id);
@@ -121,7 +122,7 @@ export default function App() {
     onDelete: handleDeleteAccessoire,
     onUpdate: handleUpdateAccessoire,
 
-    onDuplicate: (clone) => addAccessoire(clone),
+    onDuplicate: (clone) => onAddAccessoire(clone),
 
     handleChangeAccessoireTissu: async (id, newTissu) => {
       updateAccessoire(id, { tissu: newTissu });
@@ -141,7 +142,7 @@ export default function App() {
 
   const poupeeAffichee = isCreating
     ? creationData
-    : { peau, yeux, levres, cheveux, nomCoiffure, chaussuresColor, nomChaussures, nomHaut, nomBas, prenom, tissuHaut, tissuBas, accessoires };
+    : { peau, yeux, levres, cheveux, nomCoiffure, setNomCoiffure, chaussuresColor, nomChaussures, setNomChaussures, nomHaut, setNomHaut, nomBas, setNomBas, prenom, tissuHaut, tissuBas, accessoires };
 
   
   // ------------------- MODALES POUPEE ------------------
@@ -265,7 +266,7 @@ export default function App() {
               <PoupeeEditor
                 {...accessoireActions}
                 revoirGrille={annulerPoupee}
-                poupeeActive={poupeeAffichee}
+                poupeeAffichee={poupeeAffichee}
                 idPoupee={idPoupee}
                 isCreating={isCreating}
                 tissusZones={tissusZones}
