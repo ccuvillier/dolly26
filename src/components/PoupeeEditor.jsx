@@ -44,7 +44,7 @@ export default function PoupeeEditor({
         onUpdate={onUpdate}
         onDelete={onDelete}
         showAccessoires={showAccessoires}
-        duplicateAccessoire={onDuplicate}
+        addClonedAccessoire={onDuplicate}
         handleChangeAccessoireTissu={handleChangeAccessoireTissu}
       />
 

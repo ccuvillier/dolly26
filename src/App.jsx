@@ -101,29 +101,33 @@ export default function App() {
   };
 
   // ------------------ ACCESSOIRES ACTIONS -------------
-  const accessoireActions = {
-    onAddAccessoire: (item) => {
-      const newAcc = {
-        id: crypto.randomUUID(),
-        type: item.type,
-        component: item.component,
-        x: 400,
-        y: 400,
-        scale: 1,
-        rotation: 0,
-        tissu: { ...DEFAULT_TISSU, instanceId: crypto.randomUUID() },
-        zoneId: crypto.randomUUID()
-      };
-      addAccessoire(newAcc);
-      setSelectedAccessoireId(newAcc.id);
-    },
+  const onAddAccessoire = (item) => {
+    const newAcc = {
+      id: crypto.randomUUID(),
+      type: item.type,
+      component: item.component,
+      x: 400,
+      y: 400,
+      scale: 1,
+      rotation: 0,
+      tissu: { ...DEFAULT_TISSU, instanceId: crypto.randomUUID() },
+      zoneId: crypto.randomUUID()
+    };
+    addAccessoire(newAcc);
+    setSelectedAccessoireId(newAcc.id);
+  };
 
+  const onDuplicate = (clone) => {
+    addAccessoire(clone);
+    setSelectedAccessoireId(clone.id);
+  };
+  
+  const accessoireActions = {
+    onAddAccessoire,
     onMove: handleMoveAccessoire,
     onDelete: handleDeleteAccessoire,
     onUpdate: handleUpdateAccessoire,
-
-    onDuplicate: (clone) => onAddAccessoire(clone),
-
+    onDuplicate,
     handleChangeAccessoireTissu: async (id, newTissu) => {
       updateAccessoire(id, { tissu: newTissu });
       await updateAccessoireTissu(id, newTissu);

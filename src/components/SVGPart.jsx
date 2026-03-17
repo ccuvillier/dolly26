@@ -6,36 +6,28 @@ export default function SVGPart({
   zones = [],       // tableau des zones à colorer (pour haut/bas)
   tissusZones = {}, // objet global des tissus { "haut-zone1": { ... }, "bas-zone2": { ... } }
   color,            // couleur pour cheveux ou chaussures
-  onClickTissu,     // callback quand on clique sur une zone
-  onClickColor      // callback quand on clique sur la couleur simple
+  onMouseDown
 }) {
   if (!component) return null; // rien à rendre si pas de composant
 
-  const handleClick = (zone) => {
-    if (onClickTissu && zone) onClickTissu(zone);
-    else if (onClickColor) onClickColor();
-  };
-
   // Construire les props selon type
-  let props = {};
+  const props = {};
+
   if (zones.length) {
-    // c'est un vêtement avec zones à colorer
     props.tissus = zones.reduce((acc, zone) => {
       acc[zone] = tissusZones[`${type}-${zone}`] ?? null;
       return acc;
     }, {});
-  } else if (color) {
-    props.color = color;
   }
+
+  if (color) props.color = color;
+
+  //const clickHandler = onClickTissu || onClickColor;
 
   return (
     <g
       style={{ cursor: "pointer", pointerEvents: "all" }}
-      onMouseDown={(e) => {
-        e.stopPropagation();
-        const zone = e.target.closest("[data-zone]")?.dataset.zone;
-        handleClick(zone);
-      }}
+      onMouseDown={onMouseDown}
     >
       {React.createElement(component, props)}
     </g>

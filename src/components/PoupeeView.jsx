@@ -40,7 +40,7 @@ export default function PoupeeView({
   onUpdate,
   onMove,
   onDelete,
-  duplicateAccessoire,
+  addClonedAccessoire,
   handleChangeAccessoireTissu,
 
   openPicker,
@@ -52,7 +52,7 @@ export default function PoupeeView({
     onUpdate: onUpdate,
     onDelete: onDelete,
     setSelected: setSelected,
-    duplicateAccessoire: duplicateAccessoire,
+    addClonedAccessoire: addClonedAccessoire,
     handleChangeAccessoireTissu: handleChangeAccessoireTissu,
     onMove: onMove
   };
@@ -63,6 +63,7 @@ export default function PoupeeView({
   
 
   const viewportRef = useRef(null);
+  const [globalScale, setGlobalScale] = useState(1);
   const [activeCarousel, setActiveCarousel] = useState(null); // "coiffure" | "haut" | "bas" | "chaussures" | null
 
   // ----------------- AFFICHAGE DES ÉLÉMENTS -----------------
@@ -131,6 +132,17 @@ export default function PoupeeView({
   };
 
   // ----------------- GESTION DES DRAG ET CLICK -----------------
+  const pickers = {
+    peau: usePickerClick(openPicker, "color", "peau", () => peau),
+    levres: usePickerClick(openPicker, "color", "levres", () => levres),
+    yeux: usePickerClick(openPicker, "color", "yeux", () => yeux),
+    cheveux: usePickerClick(openPicker, "color", "cheveux", () => cheveux),
+    chaussures: usePickerClick(openPicker, "color", "chaussures", () => chaussuresColor),
+
+    bas: usePickerClick(openPicker, "tissu", "bas"),
+    haut: usePickerClick(openPicker, "tissu", "haut")
+  };
+
   const peauClick = usePickerClick(openPicker, "color", "peau", () => peau);
   const levresClick = usePickerClick(openPicker, "color", "levres", () => levres);
   const yeuxClick = usePickerClick(openPicker, "color", "yeux", () => yeux);
@@ -162,6 +174,7 @@ export default function PoupeeView({
         pinch={{ step: 5 }}
         doubleClick={{ disabled: true }}
         onZoomStop={(ref) => setScale(ref.state.scale)}
+        onTransformed={(instance) => setGlobalScale(instance.state.scale)}
         minScale={0.5}
         maxScale={3}
         onPanningStart={() => document.getElementById("poupeeView").classList.add("dragging")}
@@ -194,26 +207,26 @@ export default function PoupeeView({
               >
                 <svg ref={viewportRef} id="poupee" viewBox="0 0 800 800" width="100%" height="100%" preserveAspectRatio="xMinYMin meet">
                   {/* CORPS */}
-                  <FilleNue peau={peau} yeux={yeux} levres={levres} onColorPeau={peauClick} onColorLevres={levresClick} onColorYeux={yeuxClick} />
+                  <FilleNue peau={peau} yeux={yeux} levres={levres} onColorPeau={pickers.peau} onColorLevres={pickers.levres} onColorYeux={pickers.yeux} />
 
                   {/* CHEVEUX */}
                   {activeCarousel !== "coiffure" ? (
-                    <SVGPart type="cheveux" component={coiffureAAfficher?.component} color={cheveux} onClickColor={hairClick} />
+                    <SVGPart type="cheveux" component={coiffureAAfficher?.component} color={cheveux} onMouseDown={pickers.cheveux} />
                   ) : null}
 
                   {/* BAS */}
                   {activeCarousel !== "bas" ? (
-                    <SVGPart type="bas" component={basAAfficher?.component} zones={basAAfficher?.zones} tissusZones={tissusZones} onClickTissu={basClick} />
+                    <SVGPart type="bas" component={basAAfficher?.component} zones={basAAfficher?.zones} tissusZones={tissusZones} onMouseDown={pickers.bas} />
                   ) : null}
 
                   {/* HAUT */}
                   {activeCarousel !== "haut" ? (
-                    <SVGPart type="haut" component={hautAAfficher?.component} zones={hautAAfficher?.zones} tissusZones={tissusZones} onClickTissu={hautClick} />
+                    <SVGPart type="haut" component={hautAAfficher?.component} zones={hautAAfficher?.zones} tissusZones={tissusZones} onMouseDown={pickers.haut} />
                   ) : null}
 
                   {/* CHAUSSURES */}
                   {activeCarousel !== "chaussures" ? (
-                    <SVGPart type="chaussures" component={chaussuresAAfficher?.component} color={chaussuresColor} onClickColor={chaussuresClick} />
+                    <SVGPart type="chaussures" component={chaussuresAAfficher?.component} color={chaussuresColor} onMouseDown={pickers.chaussures} />
                   ) : null}
 
                   {/* ACCESSOIRES */}
@@ -227,6 +240,7 @@ export default function PoupeeView({
                       openPicker={openPicker}
                       tissuAccessoire={acc.tissu}
                       viewportRef={viewportRef}
+                      globalScale={globalScale} 
                     />
                   ))}
                 </svg>
@@ -241,6 +255,7 @@ export default function PoupeeView({
           </>
         )}
       </TransformWrapper>
+      
     </div>
   );
 }

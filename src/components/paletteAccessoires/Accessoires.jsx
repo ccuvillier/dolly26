@@ -15,9 +15,10 @@ export default function Accessoire({
   selectedAccessoireId,
   accessoireActions,
   openPicker,
-  onClosePicker
+  onClosePicker,
+  globalScale
 }) {
-  const { onUpdate, onDelete, setSelected, duplicateAccessoire, handleChangeAccessoireTissu, onMove } = accessoireActions ?? {};
+  const { onUpdate, onDelete, setSelected, addClonedAccessoire, handleChangeAccessoireTissu, onMove } = accessoireActions ?? {};
   const Component = ACCESSOIRES_COMPONENTS[acc.type];
   
    // ================= SIZE =================
@@ -63,7 +64,7 @@ export default function Accessoire({
       scale,
       rotation,
       localTissu,
-      duplicateAccessoire, // fonction passée depuis App.jsx
+      addClonedAccessoire, // fonction passée depuis App.jsx
       20 // offset pixels
     );
 
@@ -93,13 +94,14 @@ export default function Accessoire({
       </g>
 
       {selectedAccessoireId === acc.id && (
-        <>
+        <g> 
+
           {/* Rotate handle */}
           <circle
             className="rotate-handle"
             cx={30 * scale}
             cy={30 * scale}
-            r={baseWidth * scale}
+            r={(baseWidth * scale)}
             onMouseDown={startRotate}
             style={{ strokeWidth: scale * 30 }}
           />
@@ -107,8 +109,8 @@ export default function Accessoire({
 
           {/* Scale handles */}
           {["top-left","top-right","bottom-left","bottom-right"].map((corner, i) => {
-            const handleSize = 10;
-            const offset = baseWidth * scale;
+            const handleSize = 10 / globalScale;
+            const offset = (baseWidth * scale) ;
             return (
               <rect
                 key={i}
@@ -118,6 +120,7 @@ export default function Accessoire({
                 width={handleSize}
                 height={handleSize}
                 onMouseDown={(e) => startScale(e)}
+                strokeWidth={1 / globalScale}
               />
             );
           })}
@@ -126,8 +129,8 @@ export default function Accessoire({
           <image
             alt="Supprimer l'objet"
             href={PictoClose}
-            x={-15} width={20} height={20}
-            y={-35}
+            x={-15 / globalScale} width={20 / globalScale} height={20 / globalScale}
+            y={-35 / globalScale}
             onClick={(e) => { e.stopPropagation(); onDelete(acc.id); }}
           />
 
@@ -139,8 +142,8 @@ export default function Accessoire({
             <image
               alt="Colorier"
               href={PictoColor}
-              x={10} width={20} height={20}
-              y={-35}
+              x={10 / globalScale} width={20 / globalScale} height={20 / globalScale}
+              y={-35 / globalScale}
               onClick={(e) => {
                 e.stopPropagation();
                 openPicker(e, { type: "tissu", target: "accessoire", id: acc.id, value: acc.tissu, onChange: (newTissu) => handleChangeAccessoireTissu(acc.id, newTissu) });
@@ -148,12 +151,13 @@ export default function Accessoire({
             />
           ) : (
             <circle
-              cx={20} cy={-25} r={10}
+              cx={20 / globalScale} cy={-25 / globalScale} r={10 / globalScale}
               fill={
                 localTissu?.isUni
                   ? localTissu.color
                   : `url(#tissu-${localTissu.instanceId})`
               }
+              strokeWidth={1 / globalScale}
               onClick={(e) => {
                 e.stopPropagation();
                 openPicker(e, { type: "tissu", target: "accessoire", id: acc.id, value: localTissu, onChange: (newTissu) => handleChangeAccessoireTissu(acc.id, newTissu) });
@@ -165,11 +169,11 @@ export default function Accessoire({
           <image
               alt="Cloner"
               href={PictoClone}
-              x={35} width={20} height={20}
-              y={-35}
+              x={35 / globalScale} width={20 / globalScale} height={20 / globalScale}
+              y={-35 / globalScale}
               onClick={handleDuplicate}
             />
-        </>
+        </g>
       )}
     </g>
   );

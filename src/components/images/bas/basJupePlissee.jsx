@@ -1,0 +1,36 @@
+import React from 'react';
+import EnteteSvg from "../../enteteSvg";
+
+const BasJupePlissee = ({ tissus = {}, onZoneClick = () => {} }) => {
+
+     const getFill = (zone) => {
+        const tissu = tissus?.[zone]
+
+        if (!tissu) return "#fff"
+
+        return tissu.isUni
+            ? tissu.color
+            : `url(#tissu-${tissu.instanceId})`
+    }
+
+    return (
+        <g transform="translate(171 372)" className='svg'>
+            <EnteteSvg tissus={tissus} />
+
+            <g data-zone="zone1" fill={getFill("zone1")} onMouseDown={() => onZoneClick("zone1")}>
+                <path d="M281.1,23.1s18,23.5,29.4,67.2c10.2,38.9,20.9,88.4,19.6,87.3l-16,2.1-.3-3.7-10.8.9.3,4.9-31.1,4.3-.7-4-15,1.5-.3,4h-32s-.3-4-.3-4l-15-1.5-.7,4-31.1-4.3.3-4.9-10.8-.9-.3,3.7-16-2.1c-1.3,1.1,9.4-48.5,19.6-87.3,11.4-43.7,29.4-67.2,29.4-67.2,0,0,14.1,1.8,41.2,1.5,27.1-.3,40.5-1.5,40.5-1.5Z"/>
+            </g>
+            <g className="relief">
+                <path d="M166.7,176.1s11.1-55.6,17-81.8c5.9-26.3,15.4-56.8,17.7-61.1s4.9-9.8,4.9-9.8c0,0-11.1,31.5-17.3,71.8-6.2,40.3-11.4,81.8-11.4,81.8l-10.8-.9Z"/>
+                <path d="M313.5,177.3s-11.1-55.6-17-81.8-15.4-56.8-17.7-61.1-4.9-9.8-4.9-9.8c0,0,11.1,31.5,17.3,71.8,6.2,40.3,11.4,81.8,11.4,81.8l10.8-.9Z"/>
+                <path d="M208.9,182.2s3.9-47.3,7.5-82.8,10.1-73.6,10.1-73.6c0,0-2.3,52.2-2.3,74.2s-.3,83.7-.3,83.7l-15-1.5Z"/>
+                <path d="M271.6,181.9s-3.9-47.3-7.5-82.8c-3.6-35.4-10.1-73.6-10.1-73.6,0,0,2.3,52.2,2.3,74.2,0,22,.3,83.7.3,83.7l15-1.5Z"/>
+            </g>
+            <path data-zone="zone2" fill={getFill("zone2")} onMouseDown={() => onZoneClick("zone2")} 
+                d="M199.4,23.1L206.3.5h67.1l7.7,22.6s-26.5,1.5-42.5,1.5-39.2-1.5-39.2-1.5Z"/>
+
+        </g>
+    );
+};
+
+export default React.memo(BasJupePlissee);

@@ -52,7 +52,8 @@ svg g {
     stroke: none !important;
 }
 
-.svg path.relief,
+.svg path.relief, 
+.svg g.relief path,
 .svg > g.relief path {
     fill: black;
     fill-opacity: 20%;
