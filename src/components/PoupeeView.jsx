@@ -36,8 +36,8 @@ export default function PoupeeView({
   
   accessoires,
   accessoireActions,
-  setSelectedAccessoireId,
-  selectedAccessoireId,
+  //setSelectedAccessoireId,
+  //selectedAccessoireId,
 
   selectedIds,
   setSelectedIds,
@@ -232,8 +232,8 @@ export default function PoupeeView({
                       key={acc.id}
                       acc={acc}
 
-                      setSelectedAccessoireId={setSelectedAccessoireId}
-                      selectedAccessoireId={selectedAccessoireId}
+                      //setSelectedAccessoireId={setSelectedAccessoireId}
+                      //selectedAccessoireId={selectedAccessoireId}
 
                       selectedIds={selectedIds}
                       setSelectedIds={setSelectedIds}

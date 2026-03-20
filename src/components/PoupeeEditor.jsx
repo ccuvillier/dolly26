@@ -19,8 +19,8 @@ export default function PoupeeEditor({
   showAccessoires,
   accessoireActions,
 
-  selectedAccessoireId,
-  setSelectedAccessoireId,
+  //selectedAccessoireId,
+  //setSelectedAccessoireId,
 
   selectedIds,
   setSelectedIds,
@@ -43,8 +43,8 @@ export default function PoupeeEditor({
         accessoires={poupeeAffichee.accessoires}
         accessoireActions={accessoireActions}
 
-        selectedAccessoireId={selectedAccessoireId}
-        setSelectedAccessoireId={setSelectedAccessoireId}
+        //selectedAccessoireId={selectedAccessoireId}
+        //setSelectedAccessoireId={setSelectedAccessoireId}
 
         selectedIds={selectedIds}
         setSelectedIds={setSelectedIds}

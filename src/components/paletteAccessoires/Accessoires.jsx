@@ -27,6 +27,9 @@ export default function Accessoire({
   const { onUpdate, onDelete, onClone, handleChangeAccessoireTissu, onMove } = accessoireActions ?? {};
   const Component = ACCESSOIRES_COMPONENTS[acc.type];
 
+  const isSelected =
+    Array.isArray(selectedIds) && selectedIds.includes(acc.id);
+
   //============ HELPER POUR TOUCHES CLAVIER ========
   const handleSelect = (e, id) => {
     if (e.shiftKey) {
@@ -81,6 +84,7 @@ export default function Accessoire({
   };
  
   //console.log("accessoireActions:", accessoireActions);
+  //console.log("selectedIds in Accessoire:", selectedIds);
 
 
   // ================= RENDER =================
@@ -89,7 +93,7 @@ export default function Accessoire({
 
   return (
     <g
-      className={`svg accessoires-wrapper ${selectedIds.includes(acc.id) ? "selected" : ""}`}
+      className={`svg accessoires-wrapper ${isSelected ? "selected" : ""}`}
       transform={`translate(${pos.x}, ${pos.y})`}
       onMouseDown={(e) => { 
         e.stopPropagation(); 
@@ -105,7 +109,7 @@ export default function Accessoire({
         )}
       </g>
 
-      {selectedIds.includes(acc.id) && (
+      {isSelected && (
         <g> 
           <rect
             className="rotate-handle"

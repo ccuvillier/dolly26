@@ -72,7 +72,7 @@ export default function App() {
   // ------------------- STATE LOCAUX -------------------
   const [tissusZones, setTissusZones] = useState({});
   const [activePalette, setActivePalette] = useState(null);
-  const [selectedAccessoireId, setSelectedAccessoireId] = useState(null);
+  //const [selectedAccessoireId, setSelectedAccessoireId] = useState(null);
   const showAccessoires = (state = "accessoires") => setActivePalette(state);
 
   // ------------------ COULEURS ACTIONS ----------------
@@ -297,9 +297,9 @@ export default function App() {
                 activePalette={activePalette}
                 showAccessoires={showAccessoires}
 
-                selectedAccessoireId={selectedAccessoireId}
-                setSelectedAccessoireId={setSelectedAccessoireId}
-                
+                //selectedAccessoireId={selectedAccessoireId}
+                //setSelectedAccessoireId={setSelectedAccessoireId}
+
                 selectedIds={selectedIds}
                 setSelectedIds={setSelectedIds}
               />
