@@ -64,6 +64,8 @@ export default function App() {
     cancelCreation
   } = useCreationPoupee();
 
+  const [selectedIds, setSelectedIds] = useState([]);
+
   // ------------------- PICKERS -------------------
   const { picker, openPicker, closePicker } = useStylePicker();
 
@@ -294,8 +296,12 @@ export default function App() {
                 handleChangeTissu={handleChangeTissu}
                 activePalette={activePalette}
                 showAccessoires={showAccessoires}
+
                 selectedAccessoireId={selectedAccessoireId}
                 setSelectedAccessoireId={setSelectedAccessoireId}
+                
+                selectedIds={selectedIds}
+                setSelectedIds={setSelectedIds}
               />
             </>
           )}

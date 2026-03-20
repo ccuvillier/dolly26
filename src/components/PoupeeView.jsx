@@ -38,7 +38,11 @@ export default function PoupeeView({
   accessoireActions,
   setSelectedAccessoireId,
   selectedAccessoireId,
-  addClonedAccessoire,
+
+  selectedIds,
+  setSelectedIds,
+
+  //addClonedAccessoire,
   handleChangeAccessoireTissu,
 
   openPicker,
@@ -195,7 +199,7 @@ export default function PoupeeView({
 
             <TransformComponent>
               <div
-                onMouseDown={() => setSelectedAccessoireId(null)}
+                onMouseDown={() => setSelectedIds([])}
                 style={{ position: "absolute", width: "100vw", height: "100vh", pointerEvents: "all" }}
               >
                 <svg ref={viewportRef} id="poupee" viewBox="0 0 800 800" width="100%" height="100%" preserveAspectRatio="xMinYMin meet">
@@ -227,8 +231,13 @@ export default function PoupeeView({
                     <Accessoire
                       key={acc.id}
                       acc={acc}
+
                       setSelectedAccessoireId={setSelectedAccessoireId}
                       selectedAccessoireId={selectedAccessoireId}
+
+                      selectedIds={selectedIds}
+                      setSelectedIds={setSelectedIds}
+
                       accessoireActions={accessoireActions}
                       onClosePicker={closePicker}
                       openPicker={openPicker}

@@ -18,8 +18,13 @@ export default function PoupeeEditor({
   activePalette,
   showAccessoires,
   accessoireActions,
+
   selectedAccessoireId,
   setSelectedAccessoireId,
+
+  selectedIds,
+  setSelectedIds,
+
   handleChangeAccessoireTissu,
   revoirGrille
 }) {
@@ -37,8 +42,13 @@ export default function PoupeeEditor({
         setTissusZones={setTissusZones}
         accessoires={poupeeAffichee.accessoires}
         accessoireActions={accessoireActions}
+
         selectedAccessoireId={selectedAccessoireId}
         setSelectedAccessoireId={setSelectedAccessoireId}
+
+        selectedIds={selectedIds}
+        setSelectedIds={setSelectedIds}
+
         showAccessoires={showAccessoires}
         //addClonedAccessoire={onDuplicate}
         handleChangeAccessoireTissu={handleChangeAccessoireTissu}

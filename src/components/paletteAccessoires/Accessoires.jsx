@@ -12,8 +12,13 @@ import duplicateAccessoireSVG from "../../utils/duplicateAccessoireSVG"
 export default function Accessoire({
   acc,
   viewportRef,
-  selectedAccessoireId,
-  setSelectedAccessoireId,
+
+  //selectedAccessoireId,
+  //setSelectedAccessoireId,
+
+  selectedIds,
+  setSelectedIds,
+
   accessoireActions,
   openPicker,
   onClosePicker,
@@ -21,6 +26,19 @@ export default function Accessoire({
 }) {
   const { onUpdate, onDelete, onClone, handleChangeAccessoireTissu, onMove } = accessoireActions ?? {};
   const Component = ACCESSOIRES_COMPONENTS[acc.type];
+
+  //============ HELPER POUR TOUCHES CLAVIER ========
+  const handleSelect = (e, id) => {
+    if (e.shiftKey) {
+      setSelectedIds(prev =>
+        prev.includes(id) ? prev : [...prev, id]
+      );
+    } else {
+      setSelectedIds([id]);
+    }
+  };
+
+
   
    // ================= SIZE =================
   const contentRef = useRef(null);
@@ -71,9 +89,13 @@ export default function Accessoire({
 
   return (
     <g
-      className={`svg accessoires-wrapper ${selectedAccessoireId === acc.id ? "selected" : ""}`}
+      className={`svg accessoires-wrapper ${selectedIds.includes(acc.id) ? "selected" : ""}`}
       transform={`translate(${pos.x}, ${pos.y})`}
-      onMouseDown={(e) => { e.stopPropagation(); startDrag(e); setSelectedAccessoireId(acc.id); }}
+      onMouseDown={(e) => { 
+        e.stopPropagation(); 
+        startDrag(e); 
+        //setSelectedAccessoireId(acc.id);
+        handleSelect(e, acc.id) }}
     >
       <g ref={contentRef} transform={`scale(${scale}) rotate(${rotation}, ${cx}, ${cy})`}>
         {Component ? (
@@ -83,7 +105,7 @@ export default function Accessoire({
         )}
       </g>
 
-      {selectedAccessoireId === acc.id && (
+      {selectedIds.includes(acc.id) && (
         <g> 
           <rect
             className="rotate-handle"
