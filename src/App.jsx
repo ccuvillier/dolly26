@@ -100,24 +100,36 @@ export default function App() {
     updateAccessoire(id, newProps);
   };
 
+  // ---------------- ACCESSOIRES HELPERS ----------------
+  const createAccessoire = (item) => ({
+    id: crypto.randomUUID(),
+    type: item.type,
+    x: 400,
+    y: 400,
+    scale: 1,
+    rotation: 0,
+    tissu: { ...DEFAULT_TISSU, instanceId: crypto.randomUUID() },
+    zoneId: crypto.randomUUID()
+  });
+
+  const cloneAccessoire = (acc) => ({
+    ...acc,
+    id: crypto.randomUUID(),
+    x: acc.x + 20,
+    y: acc.y + 20,
+    tissu: { ...acc.tissu, instanceId: crypto.randomUUID() }
+  });
+
+
   // ------------------ ACCESSOIRES ACTIONS -------------
   const onAddAccessoire = (item) => {
-    const newAcc = {
-      id: crypto.randomUUID(),
-      type: item.type,
-      component: item.component,
-      x: 400,
-      y: 400,
-      scale: 1,
-      rotation: 0,
-      tissu: { ...DEFAULT_TISSU, instanceId: crypto.randomUUID() },
-      zoneId: crypto.randomUUID()
-    };
+    const newAcc = createAccessoire(item);
     addAccessoire(newAcc);
     setSelectedAccessoireId(newAcc.id);
   };
 
-  const onDuplicate = (clone) => {
+  const onClone = (acc) => {
+    const clone = cloneAccessoire(acc);
     addAccessoire(clone);
     setSelectedAccessoireId(clone.id);
   };
@@ -127,7 +139,7 @@ export default function App() {
     onMove: handleMoveAccessoire,
     onDelete: handleDeleteAccessoire,
     onUpdate: handleUpdateAccessoire,
-    onDuplicate,
+    onClone,
     handleChangeAccessoireTissu: async (id, newTissu) => {
       updateAccessoire(id, { tissu: newTissu });
       await updateAccessoireTissu(id, newTissu);
@@ -268,7 +280,7 @@ export default function App() {
               <h1>{isCreating ? "Ma nouvelle amie" : idPoupee ? `Mon amie ${idPoupee}` : "Ma meilleure amie"}</h1>
 
               <PoupeeEditor
-                {...accessoireActions}
+                accessoireActions={accessoireActions}
                 revoirGrille={annulerPoupee}
                 poupeeAffichee={poupeeAffichee}
                 idPoupee={idPoupee}

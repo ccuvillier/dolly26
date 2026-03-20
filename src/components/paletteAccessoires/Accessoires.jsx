@@ -13,12 +13,13 @@ export default function Accessoire({
   acc,
   viewportRef,
   selectedAccessoireId,
+  setSelectedAccessoireId,
   accessoireActions,
   openPicker,
   onClosePicker,
   globalScale
 }) {
-  const { onUpdate, onDelete, setSelected, addClonedAccessoire, handleChangeAccessoireTissu, onMove } = accessoireActions ?? {};
+  const { onUpdate, onDelete, onClone, handleChangeAccessoireTissu, onMove } = accessoireActions ?? {};
   const Component = ACCESSOIRES_COMPONENTS[acc.type];
   
    // ================= SIZE =================
@@ -58,21 +59,10 @@ export default function Accessoire({
   
   const handleDuplicate = (e) => {
     e.stopPropagation();
-
-    const clone = duplicateAccessoireSVG(
-      acc,
-      scale,
-      rotation,
-      localTissu,
-      addClonedAccessoire, // fonction passée depuis App.jsx
-      20 // offset pixels
-    );
-
-
-    // Optionnel : sélectionner automatiquement le clone
-    setSelected(clone.id);
+    onClone(acc);
   };
  
+  //console.log("accessoireActions:", accessoireActions);
 
 
   // ================= RENDER =================
@@ -83,7 +73,7 @@ export default function Accessoire({
     <g
       className={`svg accessoires-wrapper ${selectedAccessoireId === acc.id ? "selected" : ""}`}
       transform={`translate(${pos.x}, ${pos.y})`}
-      onMouseDown={(e) => { e.stopPropagation(); startDrag(e); setSelected(acc.id); }}
+      onMouseDown={(e) => { e.stopPropagation(); startDrag(e); setSelectedAccessoireId(acc.id); }}
     >
       <g ref={contentRef} transform={`scale(${scale}) rotate(${rotation}, ${cx}, ${cy})`}>
         {Component ? (
@@ -95,15 +85,14 @@ export default function Accessoire({
 
       {selectedAccessoireId === acc.id && (
         <g> 
-
-          {/* Rotate handle */}
-          <circle
+          <rect
             className="rotate-handle"
-            cx={30 * scale}
-            cy={30 * scale}
-            r={(baseWidth * scale)}
+            y={-20  / globalScale }
+            x={-20  / globalScale}
+            width={(baseWidth * scale) + (30 / globalScale)}
+            height={(baseWidth * scale) + (30 / globalScale)}
             onMouseDown={startRotate}
-            style={{ strokeWidth: scale * 30 }}
+            style={{ strokeWidth: 20 / globalScale, stroke: "transparent" }}
           />
 
 

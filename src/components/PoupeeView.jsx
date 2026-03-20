@@ -35,11 +35,9 @@ export default function PoupeeView({
   setTissuBas,
   
   accessoires,
+  accessoireActions,
+  setSelectedAccessoireId,
   selectedAccessoireId,
-  setSelected,
-  onUpdate,
-  onMove,
-  onDelete,
   addClonedAccessoire,
   handleChangeAccessoireTissu,
 
@@ -48,14 +46,7 @@ export default function PoupeeView({
   showAccessoires,
   revoirGrille
 }) {
-  const accessoireActions = {
-    onUpdate: onUpdate,
-    onDelete: onDelete,
-    setSelected: setSelected,
-    addClonedAccessoire: addClonedAccessoire,
-    handleChangeAccessoireTissu: handleChangeAccessoireTissu,
-    onMove: onMove
-  };
+
   const zonesTissus = {
     haut: { data: tissuHaut, set: setTissuHaut },
     bas: { data: tissuBas, set: setTissuBas }
@@ -82,7 +73,7 @@ export default function PoupeeView({
     setActiveCarousel(null);
     showAccessoires(null);
     closePicker();
-    setSelected(null);
+    setSelectedAccessoireId(null);
   };
   const showCarousel = () => { closeAll(); setActiveCarousel("coiffure"); };
   const showHaut = () => { closeAll(); setActiveCarousel("haut"); };
@@ -108,10 +99,12 @@ export default function PoupeeView({
     });
 
     setTissusZones(prev => {
-      const isEqual = Object.keys(newZones).every(
-        k => JSON.stringify(prev[k]) === JSON.stringify(newZones[k])
-      );
-      return isEqual ? prev : newZones;
+      const prevStr = JSON.stringify(prev);
+      const newStr = JSON.stringify(newZones);
+
+      if (prevStr === newStr) return prev;
+
+      return newZones;
     });
   }, [basAAfficher, hautAAfficher, zonesTissus, id, setTissusZones]);
 
@@ -202,7 +195,7 @@ export default function PoupeeView({
 
             <TransformComponent>
               <div
-                onMouseDown={() => setSelected(null)}
+                onMouseDown={() => setSelectedAccessoireId(null)}
                 style={{ position: "absolute", width: "100vw", height: "100vh", pointerEvents: "all" }}
               >
                 <svg ref={viewportRef} id="poupee" viewBox="0 0 800 800" width="100%" height="100%" preserveAspectRatio="xMinYMin meet">
@@ -234,6 +227,7 @@ export default function PoupeeView({
                     <Accessoire
                       key={acc.id}
                       acc={acc}
+                      setSelectedAccessoireId={setSelectedAccessoireId}
                       selectedAccessoireId={selectedAccessoireId}
                       accessoireActions={accessoireActions}
                       onClosePicker={closePicker}
