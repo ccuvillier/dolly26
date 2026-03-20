@@ -22,8 +22,12 @@ export const SHORTCUTS = {
 
 
 // clavierActions.js
-export function createKeyboardHandler({ selectedIds, setSelectedIds, actions }) {
+export function createKeyboardHandler({ getSelectedIds, actions }) {
   return (e) => {
+    const selectedIds = getSelectedIds();
+
+    //console.log("KEYBOARD selectedIds:", selectedIds);
+
     if (!selectedIds || selectedIds.length === 0) return;
 
     const isCtrl = e.ctrlKey || e.metaKey; // support Mac Command

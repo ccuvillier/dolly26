@@ -77,8 +77,9 @@ export default function PoupeeView({
     setActiveCarousel(null);
     showAccessoires(null);
     closePicker();
-    setSelectedAccessoireId(null);
+    setSelectedIds([]);;
   };
+  
   const showCarousel = () => { closeAll(); setActiveCarousel("coiffure"); };
   const showHaut = () => { closeAll(); setActiveCarousel("haut"); };
   const showBas = () => { closeAll(); setActiveCarousel("bas"); };

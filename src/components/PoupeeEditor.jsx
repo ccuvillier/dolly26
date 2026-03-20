@@ -28,6 +28,7 @@ export default function PoupeeEditor({
   handleChangeAccessoireTissu,
   revoirGrille
 }) {
+  const { onAddAccessoire } = accessoireActions ?? {};
 
 
   return (

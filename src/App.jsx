@@ -21,6 +21,8 @@ export default function App() {
   const {
     poupees,
     idPoupee,
+    data,
+    setData,
     setIdPoupee,
     prenom,
     peau, setPeau,
@@ -93,8 +95,9 @@ export default function App() {
   };
 
   /*--------- SUPPRIMER --------*/
-  const handleDeleteAccessoire = (id) => {
-    deleteAccessoire(id);
+  const handleDeleteAccessoire = (ids) => {
+    deleteAccessoire(ids);
+    setSelectedIds([]);
   };
 
   /*--------- UPDATE --------*/
@@ -124,16 +127,77 @@ export default function App() {
 
 
   // ------------------ ACCESSOIRES ACTIONS -------------
+  const dataRef = useRef(null);
+
+  useEffect(() => {
+    if (data) {
+      dataRef.current = data;
+      //console.log("DATA REF UPDATE:", data); // debug
+    }
+  }, [data]);
+
+  // copier/coller CTRL+C - CTRL+V
+    const [clipboard, setClipboard] = useState([]);
+
+    const safeData = data ?? { accessoires: [] };
+    
+   const onCopy = (ids) => {
+    const currentData = dataRef.current;
+
+    if (!currentData?.accessoires) {
+      //console.log("❌ NO DATA IN REF");
+      return;
+    }
+
+    if (!Array.isArray(ids) || ids.length === 0) return;
+
+    const selected = currentData.accessoires.filter(acc =>
+      ids.includes(acc.id)
+    );
+
+    //console.log("COPIED:", selected);
+
+    setClipboard(JSON.parse(JSON.stringify(selected)));
+  };
+
+  const onPaste = () => {
+    const currentData = dataRef.current;
+
+    if (!currentData?.accessoires || !clipboard.length) return;
+
+    const clones = clipboard.map(acc => ({
+      ...acc,
+      id: crypto.randomUUID(),
+      x: acc.x + 20,
+      y: acc.y + 20,
+      tissu: {
+        ...acc.tissu,
+        instanceId: crypto.randomUUID()
+      }
+    }));
+
+    const newData = {
+      ...currentData,
+      accessoires: [...currentData.accessoires, ...clones]
+    };
+
+    //console.log("PASTE:", clones);
+
+    setData(newData);
+    setSelectedIds(clones.map(c => c.id));
+  };
+
+
   const onAddAccessoire = (item) => {
     const newAcc = createAccessoire(item);
     addAccessoire(newAcc);
-    setSelectedAccessoireId(newAcc.id);
+    setSelectedIds([newAcc.id]);
   };
 
   const onClone = (acc) => {
     const clone = cloneAccessoire(acc);
     addAccessoire(clone);
-    setSelectedAccessoireId(clone.id);
+    setSelectedIds([clone.id]);
   };
   
   const accessoireActions = {
@@ -142,6 +206,8 @@ export default function App() {
     onDelete: handleDeleteAccessoire,
     onUpdate: handleUpdateAccessoire,
     onClone,
+    onCopy,
+    onPaste,
     handleChangeAccessoireTissu: async (id, newTissu) => {
       updateAccessoire(id, { tissu: newTissu });
       await updateAccessoireTissu(id, newTissu);
@@ -238,8 +304,6 @@ export default function App() {
       console.warn(`⚠️ target inconnu pour tissuActions: ${target}`);
     }
   };
-
- 
 
   // ------------------- RENDER -------------------
   return (

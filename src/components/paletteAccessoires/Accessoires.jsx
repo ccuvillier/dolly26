@@ -7,7 +7,7 @@ import useSVGDrag from "../../hooks/useSVGdrag";
 import useSVGScale from "../../hooks/useSVGscale";
 import useSVGRotate from "../../hooks/useSVGrotate";
 import useSVGBBox from "../../hooks/useSVGBox";
-import duplicateAccessoireSVG from "../../utils/duplicateAccessoireSVG"
+import { createKeyboardHandler } from "../../utils/clavierActions"
 
 export default function Accessoire({
   acc,
@@ -31,6 +31,18 @@ export default function Accessoire({
     Array.isArray(selectedIds) && selectedIds.includes(acc.id);
 
   //============ HELPER POUR TOUCHES CLAVIER ========
+  useEffect(() => {
+    const handler = createKeyboardHandler({
+      getSelectedIds: () => selectedIds,
+      actions: accessoireActions
+    });
+
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [selectedIds, accessoireActions]); 
+ 
+
+  // sélection de plusieurs accessoires SHIFT+click
   const handleSelect = (e, id) => {
     if (e.shiftKey) {
       setSelectedIds(prev =>
@@ -40,7 +52,6 @@ export default function Accessoire({
       setSelectedIds([id]);
     }
   };
-
 
   
    // ================= SIZE =================

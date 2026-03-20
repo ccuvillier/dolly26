@@ -204,11 +204,26 @@ export default function usePoupee(pseudo) {
     await updateField("accessoires", updatedUI.map(toFirestoreAcc));
   };
 
-  const deleteAccessoire = async (id) => {
+  /*const deleteAccessoire = async (id) => {
     const updatedUI = data.accessoires.filter(acc => acc.id !== id);
     setData({ ...data, accessoires: updatedUI });
 
     await updateField("accessoires", updatedUI.map(toFirestoreAcc));
+  };*/
+
+  const deleteAccessoire = async (ids) => {
+    const idsArray = Array.isArray(ids) ? ids : [ids];
+
+    const updatedUI = data.accessoires.filter(
+      acc => !idsArray.includes(acc.id)
+    );
+
+    setData({ ...data, accessoires: updatedUI });
+
+    await updateField(
+      "accessoires",
+      updatedUI.map(toFirestoreAcc)
+    );
   };
 
   // ---------------- SPECIFIC METHODS ----------------
@@ -233,6 +248,8 @@ export default function usePoupee(pseudo) {
     poupeeExiste,
     setPoupeeExiste,
     ...data,
+    data,
+    setData,
     setPeau,
     setYeux,
     setLevres,
