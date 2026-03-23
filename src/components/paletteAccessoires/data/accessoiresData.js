@@ -5,6 +5,7 @@ import NoeudPapillon from "../../images/accessoires/NoeudPapillon.jsx";
 import Perles from "../../images/accessoires/Perles.jsx";
 import Plume from "../../images/accessoires/Plume.jsx";
 import Volant from "../../images/accessoires/Volant.jsx";
+import Sequin from "../../images/accessoires/Sequin.jsx";
 
 export const accessoiresPalette = [
   { type: "DentelleAnglaise", component: DentelleAnglaise },
@@ -13,7 +14,8 @@ export const accessoiresPalette = [
   { type: "NoeudPapillon", component: NoeudPapillon },
   { type: "Perles", component: Perles },
   { type: "Plume", component: Plume },
-  { type: "Volant", component: Volant }
+  { type: "Volant", component: Volant },
+  { type: "Sequin", component: Sequin }
 ];
 
 // accessoires placés sur la poupée

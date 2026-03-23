@@ -11,19 +11,37 @@ export default function useSVGScale({
     setScale(initialScale);
   }, [initialScale]);
 
-  const startScale = (event) => {
+  const startScale = (event, corner) => {
     event.stopPropagation();
 
     const startX = event.clientX;
+    const startY = event.clientY;
     const startScale = scale;
 
-    let lastDeltaX = 0;
+    let delta = 0;
 
     const move = (e) => {
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
 
-      lastDeltaX = e.clientX - startX;
+      // logique selon coin
+      if (corner === "bottom-right") {
+        delta = dx + dy;
+      }
 
-      const factor = 1 + lastDeltaX / 200;
+      if (corner === "top-left") {
+        delta = -(dx + dy); // inversion
+      }
+
+      if (corner === "top-right") {
+        delta = dx - dy;
+      }
+
+      if (corner === "bottom-left") {
+        delta = -dx + dy;
+      }
+
+      const factor = 1 + delta / 200;
 
       setScale(Math.max(0.05, startScale * factor));
     };
@@ -33,7 +51,7 @@ export default function useSVGScale({
       document.removeEventListener("mousemove", move);
       document.removeEventListener("mouseup", up);
 
-      const finalScale = Math.max(0.05, startScale * (1 + lastDeltaX / 200));
+      const finalScale = Math.max(0.05, startScale * (1 + delta / 200));
 
       onScaleEnd?.(finalScale);
     };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ACCESSOIRES_COMPONENTS } from "./data/componentsRegistry";
 import PictoColor from "../images/picto-color.svg";
-import PictoClose from "../images/picto-close.svg";
+import PictoTrash from "../images/picto-trash.svg";
 import PictoClone from "../images/picto-clone.svg";
 import useSVGDrag from "../../hooks/useSVGdrag";
 import useSVGScale from "../../hooks/useSVGscale";
@@ -145,60 +145,62 @@ export default function Accessoire({
                 y={corner.includes("bottom") ? offset - handleSize : -handleSize}
                 width={handleSize}
                 height={handleSize}
-                onMouseDown={(e) => startScale(e)}
+                onMouseDown={(e) => startScale(e, corner)}
                 strokeWidth={1 / globalScale}
               />
             );
           })}
 
-          {/* Close button */}
-          <image
-            alt="Supprimer l'objet"
-            href={PictoClose}
-            x={-15 / globalScale} width={20 / globalScale} height={20 / globalScale}
-            y={-35 / globalScale}
-            onClick={(e) => { e.stopPropagation(); onDelete(acc.id); }}
-          />
+          {/* encart pictos */}
+          <g>
+            <rect x={-15 / globalScale} y={-37 / globalScale} width={75 / globalScale} height={25 / globalScale} fill="white" style={{stroke: '#fff'}} rx="3" ry="3" />
 
-
-
-          {/* Local tissu */}
-          {/* Color button */}
-          {acc.tissu.isUni && !acc.tissu.color === "#fff" ? (
+            {/* Trash button */}
             <image
-              alt="Colorier"
-              href={PictoColor}
-              x={10 / globalScale} width={20 / globalScale} height={20 / globalScale}
+              alt="Supprimer l'objet"
+              href={PictoTrash}
+              x={-15 / globalScale} width={20 / globalScale} height={20 / globalScale}
               y={-35 / globalScale}
-              onClick={(e) => {
-                e.stopPropagation();
-                openPicker(e, { type: "tissu", target: "accessoire", id: acc.id, value: acc.tissu, onChange: (newTissu) => handleChangeAccessoireTissu(acc.id, newTissu) });
-              }}
+              onClick={(e) => { e.stopPropagation(); onDelete(acc.id); }}
             />
-          ) : (
-            <circle
-              cx={20 / globalScale} cy={-25 / globalScale} r={10 / globalScale}
-              fill={
-                localTissu?.isUni
-                  ? localTissu.color
-                  : `url(#tissu-${localTissu.instanceId})`
-              }
-              strokeWidth={1 / globalScale}
-              onClick={(e) => {
-                e.stopPropagation();
-                openPicker(e, { type: "tissu", target: "accessoire", id: acc.id, value: localTissu, onChange: (newTissu) => handleChangeAccessoireTissu(acc.id, newTissu) });
-              }}
-            />
-          )}
 
+            {/* Local tissu */}
+            {/* Color button */}
+            {acc.tissu.isUni && !acc.tissu.color === "#fff" ? (
+              <image
+                alt="Colorier"
+                href={PictoColor}
+                x={10 / globalScale} width={20 / globalScale} height={20 / globalScale}
+                y={-35 / globalScale}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openPicker(e, { type: "tissu", target: "accessoire", id: acc.id, value: acc.tissu, onChange: (newTissu) => handleChangeAccessoireTissu(acc.id, newTissu) });
+                }}
+              />
+            ) : (
+              <circle
+                cx={20 / globalScale} cy={-25 / globalScale} r={10 / globalScale}
+                fill={
+                  localTissu?.isUni
+                    ? localTissu.color
+                    : `url(#tissu-${localTissu.instanceId})`
+                }
+                strokeWidth={1 / globalScale}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openPicker(e, { type: "tissu", target: "accessoire", id: acc.id, value: localTissu, onChange: (newTissu) => handleChangeAccessoireTissu(acc.id, newTissu) });
+                }}
+              />
+            )}
 
-          <image
-              alt="Cloner"
-              href={PictoClone}
-              x={35 / globalScale} width={20 / globalScale} height={20 / globalScale}
-              y={-35 / globalScale}
-              onClick={handleDuplicate}
-            />
+              <image
+                alt="Cloner"
+                href={PictoClone}
+                x={35 / globalScale} width={20 / globalScale} height={20 / globalScale}
+                y={-35 / globalScale}
+                onClick={handleDuplicate}
+              />
+            </g>
         </g>
       )}
     </g>

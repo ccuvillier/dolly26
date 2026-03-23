@@ -174,7 +174,7 @@ export default function PoupeeView({
         onZoomStop={(ref) => setScale(ref.state.scale)}
         onTransformed={(instance) => setGlobalScale(instance.state.scale)}
         minScale={0.5}
-        maxScale={3}
+        maxScale={4}
         onPanningStart={() => document.getElementById("poupeeView").classList.add("dragging")}
         onPanningStop={() => document.getElementById("poupeeView").classList.remove("dragging")}
       >
@@ -186,7 +186,7 @@ export default function PoupeeView({
                 <input
                   type="range"
                   min="0.5"
-                  max="3"
+                  max="4"
                   step="0.01"
                   value={scale}
                   onChange={handleSliderChange}

@@ -4,7 +4,7 @@ export const SHORTCUTS = {
   copy: { key: "c", ctrl: true },
   paste: { key: "v", ctrl: true },
 
-  move: {
+  onMove: {
     up: "ArrowUp",
     down: "ArrowDown",
     left: "ArrowLeft",
@@ -40,7 +40,7 @@ export function createKeyboardHandler({ getSelectedIds, actions }) {
     if (e.key === "Delete" || e.key === "Backspace") {
       e.preventDefault();
       actions.onDelete(selectedIds);
-      setSelectedIds([]);
+      //setSelectedIds([]);
       return;
     }
 
@@ -82,7 +82,7 @@ export function createKeyboardHandler({ getSelectedIds, actions }) {
     let moved = false;
     let dx = 0, dy = 0;
     switch (e.key) {
-      case "ArrowUp": dy = -moveStep; moved = true; break;
+      case "ArrowUp": dy = -moveStep; moved = true;  break;
       case "ArrowDown": dy = moveStep; moved = true; break;
       case "ArrowLeft": dx = -moveStep; moved = true; break;
       case "ArrowRight": dx = moveStep; moved = true; break;

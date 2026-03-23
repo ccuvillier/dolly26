@@ -90,8 +90,21 @@ export default function App() {
   };
 
   /*--------- DRAG D'UN ACCESSOIRE --------*/
-  const handleMoveAccessoire = (id, x, y) => {
-    updateAccessoire(id, { x, y });
+  const handleMoveAccessoire = ({ ids, dx, dy }) => {
+    const currentData = dataRef.current;
+
+    if (!currentData?.accessoires) return;
+
+    const newData = {
+      ...currentData,
+      accessoires: currentData.accessoires.map(acc =>
+        ids.includes(acc.id)
+          ? { ...acc, x: acc.x + dx, y: acc.y + dy }
+          : acc
+      )
+    };
+
+    setData(newData);
   };
 
   /*--------- SUPPRIMER --------*/
