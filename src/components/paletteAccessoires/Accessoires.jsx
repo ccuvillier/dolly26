@@ -72,18 +72,22 @@ export default function Accessoire({
   });
 
    // ================= SCALE =================
-  const { scale, startScale } = useSVGScale({
-    initialScale: acc.scale || 1,
-    onScaleEnd: (s) => onUpdate(acc.id, { scale: s })
+  const { tempScale, startScale } = useSVGScale({
+    initialScale: acc.scale,
+    onScaleEnd: (finalScale) => {
+      accessoireActions.onUpdate(acc.id, { scale: finalScale });
+    }
   });
 
   // ================= ROTATION =================
-  const { rotation, startRotate } = useSVGRotate({
+  const { tempRotation, startRotate } = useSVGRotate({
     initialRotation: acc.rotation || 0,
     pos,
-    scale,
+    tempScale,
     contentRef,
-    onRotateEnd: (r) => onUpdate(acc.id, { rotation: r })
+    onRotateEnd: (r) => {
+      accessoireActions.onUpdate(acc.id, { rotation: r });
+    }
   });
 
  
@@ -91,7 +95,7 @@ export default function Accessoire({
   const [localTissu, setLocalTissu] = useState(acc.tissu);
   useEffect(() => setLocalTissu(acc.tissu), [acc.tissu]);
 
-  const bbox = useSVGBBox(contentRef, [scale, rotation, localTissu]);
+  const bbox = useSVGBBox(contentRef, [tempScale, tempRotation, localTissu]);
 
   
   const handleDuplicate = (e) => {
@@ -102,7 +106,6 @@ export default function Accessoire({
   //console.log("accessoireActions:", accessoireActions);
   //console.log("selectedIds in Accessoire:", selectedIds);
 
-
   // ================= RENDER =================
   const cx = bbox ? bbox.width / 2 : baseWidth / 2;
   const cy = bbox ? bbox.height / 2 : baseWidth / 2;
@@ -110,14 +113,14 @@ export default function Accessoire({
   return (
     <g
       className={`svg accessoires-wrapper ${isSelected ? "selected" : ""}`}
-      //transform={`translate(${pos.x}, ${pos.y})`}
-      transform={`translate(${accessoireHook.pos.x}, ${accessoireHook.pos.y})`}
+      transform={`translate(${pos.x}, ${pos.y})`}
+      //transform={`translate(${accessoireHook.pos.x}, ${accessoireHook.pos.y})`}
       onMouseDown={(e) => { 
         e.stopPropagation(); 
-        accessoireHook.startDrag(e); 
+        startDrag(e); 
         handleSelect(e, acc.id) }}
     >
-      <g ref={contentRef} transform={`scale(${scale}) rotate(${rotation}, ${cx}, ${cy})`}>
+      <g ref={contentRef} transform={`scale(${tempScale}) rotate(${Number.isFinite(tempRotation) ? tempRotation : 0}, ${cx}, ${cy})`}>
         {Component ? (
           <Component accId={acc.id} tissuAccessoire={localTissu} />
         ) : (
@@ -131,8 +134,8 @@ export default function Accessoire({
             className="rotate-handle"
             y={-20  / globalScale }
             x={-20  / globalScale}
-            width={(baseWidth * scale) + (30 / globalScale)}
-            height={(baseWidth * scale) + (30 / globalScale)}
+            width={(baseWidth * tempScale) + (30 / globalScale)}
+            height={(baseWidth * tempScale) + (30 / globalScale)}
             onMouseDown={startRotate}
             style={{ strokeWidth: 20 / globalScale, stroke: "transparent" }}
           />
@@ -141,7 +144,7 @@ export default function Accessoire({
           {/* Scale handles */}
           {["top-left","top-right","bottom-left","bottom-right"].map((corner, i) => {
             const handleSize = 10 / globalScale;
-            const offset = (baseWidth * scale) ;
+            const offset = (baseWidth * tempScale) ;
             return (
               <rect
                 key={i}

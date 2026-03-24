@@ -10,12 +10,11 @@ const ColorfulPickerBase = ({ color, onChange }) => {
 
   const handleChange = (color) => {
     setTempColor(color); // preview local uniquement
-    onChange?.(color);
   };
 
   const handleMouseUp = () => {
     if (tempColor !== color) {
-      onCommit?.(tempColor);
+      onChange?.(tempColor);
     }
   };
   
