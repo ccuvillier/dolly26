@@ -60,6 +60,11 @@ export default function Accessoire({
   
 
   // ================= DRAG =================
+  const accessoireHook = useSVGDrag({
+    viewportRef,
+    initialPos: { x: acc.x, y: acc.y },
+    onDragEnd: ({ x, y }) => onUpdate(acc.id, { x, y }) // commit seulement après drag
+  });
   const { pos, startDrag } = useSVGDrag({
     viewportRef,
     initialPos: { x: acc.x, y: acc.y },
@@ -105,11 +110,11 @@ export default function Accessoire({
   return (
     <g
       className={`svg accessoires-wrapper ${isSelected ? "selected" : ""}`}
-      transform={`translate(${pos.x}, ${pos.y})`}
+      //transform={`translate(${pos.x}, ${pos.y})`}
+      transform={`translate(${accessoireHook.pos.x}, ${accessoireHook.pos.y})`}
       onMouseDown={(e) => { 
         e.stopPropagation(); 
-        startDrag(e); 
-        //setSelectedAccessoireId(acc.id);
+        accessoireHook.startDrag(e); 
         handleSelect(e, acc.id) }}
     >
       <g ref={contentRef} transform={`scale(${scale}) rotate(${rotation}, ${cx}, ${cy})`}>
@@ -172,9 +177,10 @@ export default function Accessoire({
                 href={PictoColor}
                 x={10 / globalScale} width={20 / globalScale} height={20 / globalScale}
                 y={-35 / globalScale}
+                onMouseDown={(e) => e.stopPropagation()}
                 onClick={(e) => {
                   e.stopPropagation();
-                  openPicker(e, { type: "tissu", target: "accessoire", id: acc.id, value: acc.tissu, onChange: (newTissu) => handleChangeAccessoireTissu(acc.id, newTissu) });
+                  openPicker(e, { type: "tissu", target: "accessoire", id: acc.id, value: acc.tissu });
                 }}
               />
             ) : (
@@ -186,9 +192,10 @@ export default function Accessoire({
                     : `url(#tissu-${localTissu.instanceId})`
                 }
                 strokeWidth={1 / globalScale}
+                onMouseDown={(e) => e.stopPropagation()}
                 onClick={(e) => {
                   e.stopPropagation();
-                  openPicker(e, { type: "tissu", target: "accessoire", id: acc.id, value: localTissu, onChange: (newTissu) => handleChangeAccessoireTissu(acc.id, newTissu) });
+                  openPicker(e, { type: "tissu", target: "accessoire", id: acc.id, value: localTissu});
                 }}
               />
             )}

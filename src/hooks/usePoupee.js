@@ -8,7 +8,7 @@ import { savePoupeeField, supprimerPoupeeFirestore, renommerPoupeeFirestore } fr
 // Registry des composants accessoires pour recréer le Component côté UI
 import { ACCESSOIRES_COMPONENTS } from "../components/paletteAccessoires/data/componentsRegistry";
 
-export default function usePoupee(pseudo) {
+export default function usePoupee(pseudo, updateData) {
   // ---------------- STATES ----------------
   const [poupees, setPoupees] = useState([]); // liste des poupées {id, data}
   const [idPoupee, setIdPoupee] = useState(""); // id de la poupée active
@@ -170,8 +170,8 @@ export default function usePoupee(pseudo) {
     const current = Array.isArray(data.accessoires) ? data.accessoires : [];
     const updated = [...current, newAcc];
 
-    // UI
-    setData({ ...data, accessoires: updated });
+    // UI + undo
+    updateData({ ...data, accessoires: updated });
 
     // BDD
     await updateField("accessoires", updated.map(toFirestoreAcc));
@@ -188,7 +188,8 @@ export default function usePoupee(pseudo) {
         : acc
     );
 
-    setData({ ...data, accessoires: updatedUI });
+    // UI + undo
+    updateData({ ...data, accessoires: updatedUI });
     await updateField("accessoires", updatedUI.map(toFirestoreAcc));
   };
 
@@ -200,16 +201,11 @@ export default function usePoupee(pseudo) {
       acc.id === id ? { ...acc, tissu: { ...acc.tissu, ...patch } } : acc
     );
 
-    setData({ ...data, accessoires: updatedUI });
+    updateData({ ...data, accessoires: updatedUI });
     await updateField("accessoires", updatedUI.map(toFirestoreAcc));
   };
 
-  /*const deleteAccessoire = async (id) => {
-    const updatedUI = data.accessoires.filter(acc => acc.id !== id);
-    setData({ ...data, accessoires: updatedUI });
 
-    await updateField("accessoires", updatedUI.map(toFirestoreAcc));
-  };*/
 
   const deleteAccessoire = async (ids) => {
     const idsArray = Array.isArray(ids) ? ids : [ids];
@@ -218,7 +214,7 @@ export default function usePoupee(pseudo) {
       acc => !idsArray.includes(acc.id)
     );
 
-    setData({ ...data, accessoires: updatedUI });
+    updateData({ ...data, accessoires: updatedUI });
 
     await updateField(
       "accessoires",

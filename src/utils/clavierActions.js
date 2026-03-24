@@ -24,11 +24,7 @@ export const SHORTCUTS = {
 // clavierActions.js
 export function createKeyboardHandler({ getSelectedIds, actions }) {
   return (e) => {
-    const selectedIds = getSelectedIds();
-
-    //console.log("KEYBOARD selectedIds:", selectedIds);
-
-    if (!selectedIds || selectedIds.length === 0) return;
+    const selectedIds = getSelectedIds(); // ids sélectionnés
 
     const isCtrl = e.ctrlKey || e.metaKey; // support Mac Command
 
@@ -36,60 +32,67 @@ export function createKeyboardHandler({ getSelectedIds, actions }) {
     const tag = e.target.tagName;
     if (tag === "INPUT" || tag === "TEXTAREA") return;
 
-    // DELETE / BACKSPACE
-    if (e.key === "Delete" || e.key === "Backspace") {
+    // ------------------ UNDO / REDO ------------------
+    if (isCtrl && e.key.toLowerCase() === "z") {
       e.preventDefault();
-      actions.onDelete(selectedIds);
-      //setSelectedIds([]);
+      actions.onUndo?.();
       return;
     }
 
-    // COPY / PASTE
+    if (isCtrl && e.key.toLowerCase() === "y") {
+      e.preventDefault();
+      actions.onRedo?.();
+      return;
+    }
+
+    // ------------------ COPY / PASTE ------------------
     if (isCtrl && e.key.toLowerCase() === "c") {
       e.preventDefault();
-      actions.onCopy(selectedIds);
+      if (selectedIds?.length) actions.onCopy?.(selectedIds);
       return;
     }
 
     if (isCtrl && e.key.toLowerCase() === "v") {
       e.preventDefault();
-      actions.onPaste();
+      actions.onPaste?.();
       return;
     }
 
-    // UNDO
-    if (isCtrl && e.key.toLowerCase() === "z") {
+    // ------------------ DELETE ------------------
+    if (e.key === "Delete" || e.key === "Backspace") {
       e.preventDefault();
-      actions.onUndo();
+      if (selectedIds?.length) actions.onDelete?.(selectedIds);
       return;
     }
 
-    // GROUP / UNGROUP
+    // ------------------ GROUP / UNGROUP ------------------
     if (isCtrl && e.key.toLowerCase() === "g") {
       e.preventDefault();
-      actions.onGroup(selectedIds);
+      if (selectedIds?.length) actions.onGroup?.(selectedIds);
       return;
     }
 
     if (isCtrl && e.key.toLowerCase() === "u") {
       e.preventDefault();
-      actions.onUngroup(selectedIds);
+      if (selectedIds?.length) actions.onUngroup?.(selectedIds);
       return;
     }
 
-    // Déplacement avec flèches
+    // ------------------ DEPLACEMENT AVEC FLÈCHES ------------------
+    if (!selectedIds?.length) return; // pas d'ids → pas de déplacement
+
     const moveStep = 1; // pixels ou unité SVG
-    let moved = false;
     let dx = 0, dy = 0;
     switch (e.key) {
-      case "ArrowUp": dy = -moveStep; moved = true;  break;
-      case "ArrowDown": dy = moveStep; moved = true; break;
-      case "ArrowLeft": dx = -moveStep; moved = true; break;
-      case "ArrowRight": dx = moveStep; moved = true; break;
+      case "ArrowUp": dy = -moveStep; break;
+      case "ArrowDown": dy = moveStep; break;
+      case "ArrowLeft": dx = -moveStep; break;
+      case "ArrowRight": dx = moveStep; break;
     }
-    if (moved) {
+
+    if (dx !== 0 || dy !== 0) {
       e.preventDefault();
-      actions.onMove({ ids: selectedIds, dx, dy });
+      actions.onMove?.({ ids: selectedIds, dx, dy });
     }
   };
 }

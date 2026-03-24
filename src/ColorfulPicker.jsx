@@ -11,9 +11,11 @@ const ColorfulPicker = ({ x, y, currentColor, target, onChange, onClose, picker 
   }, [currentColor]);
 
   const handleChange = (color) => {
-    //console.log(color, typeof color);
     setTempColor(color);
-    onChange?.(target, color); // <-- important : target + color
+  };
+  
+  const handleMouseUp = () => {
+    onChange?.(target, tempColor); 
   };
 
   /* PALETTE COULEUR DRAGGABLE */ 
@@ -49,7 +51,12 @@ const ColorfulPicker = ({ x, y, currentColor, target, onChange, onClose, picker 
         <span>Déplacer la palette</span>
       </div>
 
-      <HexColorPicker color={tempColor} onChange={handleChange} />
+      <div onMouseUp={handleMouseUp}>
+        <HexColorPicker
+          color={tempColor}
+          onChange={handleChange}
+        />
+      </div>
       <button onClick={onClose} className="close">Fermer</button>
     </div>
   );

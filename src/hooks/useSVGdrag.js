@@ -1,48 +1,57 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
-export default function useSVGdrag({
-  viewportRef,
-  initialPos,
-  onDragEnd
-}) {
-
-  const [pos, setPos] = useState(initialPos);
+export default function useSVGdrag({ viewportRef, initialPos, onDragEnd }) {
+  const [pos, setPos] = useState(initialPos); // position actuelle de l'accessoire
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
+  const startPosRef = useRef({ x: 0, y: 0 });
+  const hasMovedRef = useRef(false);
+  const threshold = 2; // pixels pour déclencher le drag
+
   useEffect(() => {
-    setPos(initialPos);
+    setPos(initialPos); // synchroniser la position si elle change depuis le parent
   }, [initialPos.x, initialPos.y]);
 
   const getSVGPoint = (event) => {
+    if (!viewportRef.current) return { x: 0, y: 0 };
     const svg = viewportRef.current;
     const point = svg.createSVGPoint();
-
     point.x = event.clientX;
     point.y = event.clientY;
-
     return point.matrixTransform(svg.getScreenCTM().inverse());
   };
 
   const startDrag = (event) => {
     event.stopPropagation();
-
     const svgPoint = getSVGPoint(event);
 
-    setIsDragging(true);
+    startPosRef.current = { x: event.clientX, y: event.clientY };
+    hasMovedRef.current = false;
+
     setDragOffset({
       x: svgPoint.x - pos.x,
       y: svgPoint.y - pos.y
     });
+
+    setIsDragging(true); // seul flag local à cet accessoire
   };
 
   useEffect(() => {
+    if (!isDragging) return;
 
     const handleMove = (event) => {
-      if (!isDragging) return;
+      const dx = event.clientX - startPosRef.current.x;
+      const dy = event.clientY - startPosRef.current.y;
+
+      // ne déclenche le drag réel qu'après le threshold
+      if (!hasMovedRef.current && Math.abs(dx) + Math.abs(dy) > threshold) {
+        hasMovedRef.current = true;
+      }
+
+      if (!hasMovedRef.current) return;
 
       const svgPoint = getSVGPoint(event);
-
       setPos({
         x: svgPoint.x - dragOffset.x,
         y: svgPoint.y - dragOffset.y
@@ -50,11 +59,11 @@ export default function useSVGdrag({
     };
 
     const handleUp = () => {
-      if (!isDragging) return;
-
+      if (hasMovedRef.current) {
+        onDragEnd?.(pos); // commit une seule fois
+      }
+      hasMovedRef.current = false;
       setIsDragging(false);
-
-      onDragEnd?.(pos);
     };
 
     window.addEventListener("mousemove", handleMove);
@@ -64,12 +73,7 @@ export default function useSVGdrag({
       window.removeEventListener("mousemove", handleMove);
       window.removeEventListener("mouseup", handleUp);
     };
+  }, [isDragging, dragOffset, pos, onDragEnd]);
 
-  }, [isDragging, dragOffset, pos]);
-
-  return {
-    pos,
-    setPos,
-    startDrag
-  };
+  return { pos, startDrag };
 }

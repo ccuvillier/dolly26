@@ -1,12 +1,34 @@
+import React, { useEffect, useState } from "react";
 import { HexColorPicker } from "react-colorful";
 
 const ColorfulPickerBase = ({ color, onChange }) => {
+  
+  const [tempColor, setTempColor] = useState(color);
+  useEffect(() => {
+    setTempColor(color);
+  }, [color]);
+
+  const handleChange = (color) => {
+    setTempColor(color); // preview local uniquement
+    onChange?.(color);
+  };
+
+  const handleMouseUp = () => {
+    if (tempColor !== color) {
+      onCommit?.(tempColor);
+    }
+  };
+  
   return (
-    <HexColorPicker
-      color={color || "#ffffff"}
-      className="Color-ful-picker-base"
-      onChange={onChange}
-    />
+
+    <div onMouseUp={handleMouseUp}>
+      <HexColorPicker
+        className="Color-ful-picker-base"
+        color={tempColor || "#ffffff"}
+        onChange={handleChange}
+      />
+    </div>
+
   );
 };
 

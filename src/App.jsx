@@ -17,6 +17,32 @@ export default function App() {
   const { pseudo } = useUser();
   const hasPseudo = pseudo.trim() !== "";
 
+  //-------------------------
+  const [history, setHistory] = useState([]);
+  const [redoStack, setRedoStack] = useState([]);
+  const isEqual = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+
+  const updateData = (newData) => {
+    //console.trace("🔥 updateData appelé");
+    
+    const current = dataRef.current;
+
+    if (isEqual(current, newData)) {
+      console.log("ignoré : aucune modification réelle");
+      return;
+    }
+
+    setHistory(prev => {
+      const snapshot = JSON.parse(JSON.stringify(current));
+      console.log("✅ HISTORY +1");
+      return [...prev, snapshot];
+    });
+
+    setRedoStack([]);
+    setData(newData);
+    dataRef.current = newData;
+  };
+
   // ------------------- HOOK POUPEE -------------------
   const {
     poupees,
@@ -52,7 +78,7 @@ export default function App() {
     updateAccessoire,
     deleteAccessoire,
     updateAccessoireTissu
-  } = usePoupee(pseudo);
+  } = usePoupee(pseudo, updateData);
 
   // ------------------- HOOK CREATION -------------------
   const {
@@ -76,6 +102,8 @@ export default function App() {
   const [activePalette, setActivePalette] = useState(null);
   //const [selectedAccessoireId, setSelectedAccessoireId] = useState(null);
   const showAccessoires = (state = "accessoires") => setActivePalette(state);
+
+  
 
   // ------------------ COULEURS ACTIONS ----------------
   const couleurActions = {
@@ -104,12 +132,12 @@ export default function App() {
       )
     };
 
-    setData(newData);
+    updateData(newData);
   };
 
   /*--------- SUPPRIMER --------*/
-  const handleDeleteAccessoire = (ids) => {
-    deleteAccessoire(ids);
+  const handleDeleteAccessoire = async (ids) => {
+    await deleteAccessoire(ids);  // attendre que l'updateData soit fait
     setSelectedIds([]);
   };
 
@@ -150,11 +178,11 @@ export default function App() {
   }, [data]);
 
   // copier/coller CTRL+C - CTRL+V
-    const [clipboard, setClipboard] = useState([]);
+  const [clipboard, setClipboard] = useState([]);
 
-    const safeData = data ?? { accessoires: [] };
+  const safeData = data ?? { accessoires: [] };
     
-   const onCopy = (ids) => {
+  const onCopy = (ids) => {
     const currentData = dataRef.current;
 
     if (!currentData?.accessoires) {
@@ -167,8 +195,6 @@ export default function App() {
     const selected = currentData.accessoires.filter(acc =>
       ids.includes(acc.id)
     );
-
-    //console.log("COPIED:", selected);
 
     setClipboard(JSON.parse(JSON.stringify(selected)));
   };
@@ -194,10 +220,27 @@ export default function App() {
       accessoires: [...currentData.accessoires, ...clones]
     };
 
-    //console.log("PASTE:", clones);
-
-    setData(newData);
+    updateData(newData);
     setSelectedIds(clones.map(c => c.id));
+  };
+
+
+  const onUndo = () => {
+    setHistory(prev => {
+      if (prev.length === 0) return prev;
+
+      const last = prev[prev.length - 1];
+
+      /*console.log("↩️ UNDO:");
+    console.log("➡️ état restauré:", last);
+    console.log("📦 history restante:", prev.length - 1);*/
+
+      setRedoStack(rs => [...rs, JSON.parse(JSON.stringify(dataRef.current))]);
+      setData(last);
+      dataRef.current = last;
+
+      return prev.slice(0, -1);
+    });
   };
 
 
@@ -221,8 +264,8 @@ export default function App() {
     onClone,
     onCopy,
     onPaste,
+    onUndo,
     handleChangeAccessoireTissu: async (id, newTissu) => {
-      updateAccessoire(id, { tissu: newTissu });
       await updateAccessoireTissu(id, newTissu);
     }
   };
@@ -274,47 +317,96 @@ export default function App() {
 
 
   // ------------------- TISSU ACTIONS -------------------
-  const tissuActions = {
-    haut: async (zoneId, newTissu) => {
-      const updated = { ...(tissuHaut || {}), [zoneId]: newTissu };
-      setTissuHaut(updated);
-      await updateTissuHaut(updated);
-      setTissusZones(prev => ({
-        ...prev,
-        [`haut-${zoneId}`]: { ...newTissu, instanceId: `${idPoupee}-haut-${zoneId}` }
-      }));
-    },
+const tissuActions = {
+  // Tissu haut
+  haut: (zoneId, newTissu, commit = false) => {
+    // Update instantané UI
+    const updated = { ...(tissuHaut || {}), [zoneId]: newTissu };
+    setTissuHaut(updated);
+    setTissusZones(prev => ({
+      ...prev,
+      [`haut-${zoneId}`]: { ...newTissu, instanceId: `${idPoupee}-haut-${zoneId}` }
+    }));
 
-    bas: async (zoneId, newTissu) => {
-      const updated = { ...(tissuBas || {}), [zoneId]: newTissu };
-      setTissuBas(updated);
-      await updateTissuBas(updated);
-      setTissusZones(prev => ({
-        ...prev,
-        [`bas-${zoneId}`]: { ...newTissu, instanceId: `${idPoupee}-bas-${zoneId}` }
-      }));
-    },
-
-    accessoire: async (id, newTissu) => {
-      updateAccessoire(id, { tissu: newTissu });
-      await updateAccessoireTissu(id, newTissu);
+    // Commit uniquement si demandé (ex: mouseup)
+    if (commit) {
+      updateTissuHaut(updated);            // Firestore
+      updateData({ ...data, tissuHaut: updated }); // history + undo
     }
-  };
+  },
+
+  // Tissu bas
+  bas: (zoneId, newTissu, commit = false) => {
+    const updated = { ...(tissuBas || {}), [zoneId]: newTissu };
+    setTissuBas(updated);
+    setTissusZones(prev => ({
+      ...prev,
+      [`bas-${zoneId}`]: { ...newTissu, instanceId: `${idPoupee}-bas-${zoneId}` }
+    }));
+
+    if (commit) {
+      updateTissuBas(updated);
+      updateData({ ...data, tissuBas: updated });
+    }
+  },
+
+  // Accessoires
+  accessoire: (id, newTissu, commit = false) => {
+    const currentData = dataRef.current;
+
+    if (!currentData?.accessoires) return;
+
+    const updatedAccessoires = currentData.accessoires.map(acc =>
+      acc.id === id
+        ? { ...acc, tissu: newTissu }
+        : acc
+    );
+
+    // PREVIEW (pas d'historique)
+    setData({
+      ...currentData,
+      accessoires: updatedAccessoires
+    });
+
+    // ✅ COMMIT (history + firestore)
+    if (commit) {
+      updateData({
+        ...currentData,
+        accessoires: updatedAccessoires
+      });
+
+      updateAccessoireTissu(id, newTissu); // Firestore
+    }
+  }
+};
 
 
   const handleChangeTissu = async (newTissu) => {
-    if (!picker?.zoneId) {
+    if (!picker) return;
+
+    const { target, zoneId, id } = picker;
+
+    // ✅ CAS ACCESSOIRE
+    if (target === "accessoire") {
+      if (!id) {
+        console.warn("⚠️ id accessoire manquant");
+        return;
+      }
+
+      await updateAccessoireTissu(id, newTissu);
+      return;
+    }
+
+    // ✅ CAS HAUT / BAS
+    if (!zoneId) {
       console.warn("⚠️ zoneId manquant");
       return;
     }
 
-    const target = picker.target;
-    const zoneId = picker.zoneId;
-
     if (tissuActions[target]) {
       await tissuActions[target](zoneId, newTissu);
     } else {
-      console.warn(`⚠️ target inconnu pour tissuActions: ${target}`);
+      console.warn(`⚠️ target inconnu: ${target}`);
     }
   };
 
