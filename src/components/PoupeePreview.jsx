@@ -19,9 +19,9 @@ export default function PoupeePreview({ id, data, renommerPoupee }) {
     nomBas,
     tissuHaut,
     tissuBas,
-    accessoires,
+    accessoires = [],
     prenom
-  } = data;
+  } = data || {};
 
   const [editing, setEditing] = useState(false);
   const [nouveauPrenom, setNouveauPrenom] = useState(prenom);
@@ -55,6 +55,33 @@ export default function PoupeePreview({ id, data, renommerPoupee }) {
     setEditing(false);
   };
 
+  const renderNode = (node) => {
+    if (!node) return null;
+
+    if (node.type === "group") {
+      return (
+        <g
+          key={node.id}
+          transform={`translate(${node.pos?.x || 0}, ${node.pos?.y || 0}) scale(${node.scale || 1})`}
+        >
+          {node.childrenIds
+            .map(id => accessoires.find(acc => acc.id === id))
+            .map(renderNode)}
+        </g>
+      );
+    }
+
+    return (
+      <Accessoire
+        key={node.id}
+        acc={node}
+        tissuAccessoire={node.tissu}
+        preview={true}
+      />
+    );
+  };
+  const rootNodes = accessoires.filter(acc => !acc.parentGroupId);
+
   return (
     <div>
       <svg viewBox="0 0 800 800" width="100%" height="100%">
@@ -74,9 +101,9 @@ export default function PoupeePreview({ id, data, renommerPoupee }) {
         {ChaussuresComponent && <ChaussuresComponent color={chaussuresColor} />}
 
         {/* Accessoires */}
-        {accessoires?.map(acc => (
-          <Accessoire key={acc.id} acc={acc} tissuAccessoire={acc.tissu} preview={true} />
-        ))}
+        <g className="accessoires-layer">
+          {rootNodes.map(node => renderNode(node))}
+        </g>
       </svg>
 
       {/* Nom de la poupée */}

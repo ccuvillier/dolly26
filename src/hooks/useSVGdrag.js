@@ -15,7 +15,7 @@ export default function useSVGdrag({ viewportRef, initialPos, onDragEnd }) {
 
   const getSVGPoint = (event) => {
     if (!viewportRef.current) return { x: 0, y: 0 };
-    const svg = viewportRef.current;
+    const svg = viewportRef?.current;
     const point = svg.createSVGPoint();
     point.x = event.clientX;
     point.y = event.clientY;
@@ -24,6 +24,11 @@ export default function useSVGdrag({ viewportRef, initialPos, onDragEnd }) {
 
   const startDrag = (event) => {
     event.stopPropagation();
+    const svg = viewportRef?.current;
+     if (!svg) {
+      console.warn("SVG non monté, drag annulé");
+      return; // ne fait rien si svg pas prêt
+    }
     const svgPoint = getSVGPoint(event);
 
     startPosRef.current = { x: event.clientX, y: event.clientY };

@@ -27,6 +27,7 @@ export default function App() {
     
     const current = dataRef.current;
 
+
     if (isEqual(current, newData)) {
       console.log("ignoré : aucune modification réelle");
       return;
@@ -34,7 +35,7 @@ export default function App() {
 
     setHistory(prev => {
       const snapshot = JSON.parse(JSON.stringify(current));
-      console.log("✅ HISTORY +1");
+      //console.log("✅ HISTORY +1");
       return [...prev, snapshot];
     });
 
@@ -77,7 +78,9 @@ export default function App() {
     addAccessoire,
     updateAccessoire,
     deleteAccessoire,
-    updateAccessoireTissu
+    updateAccessoireTissu,
+    onGroup,
+    onUngroup
   } = usePoupee(pseudo, updateData);
 
   // ------------------- HOOK CREATION -------------------
@@ -171,10 +174,7 @@ export default function App() {
   const dataRef = useRef(null);
 
   useEffect(() => {
-    if (data) {
-      dataRef.current = data;
-      //console.log("DATA REF UPDATE:", data); // debug
-    }
+    if (data) { dataRef.current = data; }
   }, [data]);
 
   // copier/coller CTRL+C - CTRL+V
@@ -185,10 +185,7 @@ export default function App() {
   const onCopy = (ids) => {
     const currentData = dataRef.current;
 
-    if (!currentData?.accessoires) {
-      //console.log("❌ NO DATA IN REF");
-      return;
-    }
+    if (!currentData?.accessoires) { return; }
 
     if (!Array.isArray(ids) || ids.length === 0) return;
 
@@ -224,22 +221,35 @@ export default function App() {
     setSelectedIds(clones.map(c => c.id));
   };
 
-
+  // Annuler / rétablir
   const onUndo = () => {
     setHistory(prev => {
       if (prev.length === 0) return prev;
 
       const last = prev[prev.length - 1];
 
-      /*console.log("↩️ UNDO:");
-    console.log("➡️ état restauré:", last);
-    console.log("📦 history restante:", prev.length - 1);*/
-
       setRedoStack(rs => [...rs, JSON.parse(JSON.stringify(dataRef.current))]);
       setData(last);
       dataRef.current = last;
 
       return prev.slice(0, -1);
+    });
+  };
+  const onRedo = () => {
+    setRedoStack(prevRedo => {
+      if (prevRedo.length === 0) return prevRedo;
+
+      const next = prevRedo[prevRedo.length - 1];
+
+      setHistory(prevHistory => [
+        ...prevHistory,
+        JSON.parse(JSON.stringify(dataRef.current))
+      ]);
+
+      setData(next);
+      dataRef.current = next;
+
+      return prevRedo.slice(0, -1);
     });
   };
 
@@ -257,6 +267,8 @@ export default function App() {
   };
   
   const accessoireActions = {
+    data,
+    setData,
     onAddAccessoire,
     onMove: handleMoveAccessoire,
     onDelete: handleDeleteAccessoire,
@@ -265,12 +277,13 @@ export default function App() {
     onCopy,
     onPaste,
     onUndo,
+    onRedo,
+    onGroup,
+    onUngroup,
     handleChangeAccessoireTissu: async (id, newTissu) => {
       await updateAccessoireTissu(id, newTissu);
     }
   };
-
-
 
 
   const annulerPoupee = () => {
@@ -317,71 +330,80 @@ export default function App() {
 
 
   // ------------------- TISSU ACTIONS -------------------
-const tissuActions = {
-  // Tissu haut
-  haut: (zoneId, newTissu, commit = false) => {
-    // Update instantané UI
-    const updated = { ...(tissuHaut || {}), [zoneId]: newTissu };
-    setTissuHaut(updated);
-    setTissusZones(prev => ({
-      ...prev,
-      [`haut-${zoneId}`]: { ...newTissu, instanceId: `${idPoupee}-haut-${zoneId}` }
-    }));
+  const tissuActions = {
+    // Tissu haut
+    haut: (zoneId, newTissu, commit = false) => {
+      // Update instantané UI
+      const updated = { ...(tissuHaut || {}), [zoneId]: newTissu };
+      setTissuHaut(updated);
+      setTissusZones(prev => ({
+        ...prev,
+        [`haut-${zoneId}`]: { ...newTissu, instanceId: `${idPoupee}-haut-${zoneId}` }
+      }));
 
-    // Commit uniquement si demandé (ex: mouseup)
-    if (commit) {
-      updateTissuHaut(updated);            // Firestore
-      updateData({ ...data, tissuHaut: updated }); // history + undo
-    }
-  },
+      const newData = {
+        ...dataRef.current,
+        tissuHaut: updated
+      };
 
-  // Tissu bas
-  bas: (zoneId, newTissu, commit = false) => {
-    const updated = { ...(tissuBas || {}), [zoneId]: newTissu };
-    setTissuBas(updated);
-    setTissusZones(prev => ({
-      ...prev,
-      [`bas-${zoneId}`]: { ...newTissu, instanceId: `${idPoupee}-bas-${zoneId}` }
-    }));
+      updateTissuHaut(updated);
+      updateData(newData);
+      dataRef.current = newData;
+    },
 
-    if (commit) {
+    // Tissu bas
+    bas: (zoneId, newTissu, commit = false) => {
+      //console.log("COMMIT ?", commit);
+      const updated = { ...(tissuBas || {}), [zoneId]: newTissu };
+      setTissuBas(updated);
+      setTissusZones(prev => ({
+        ...prev,
+        [`bas-${zoneId}`]: { ...newTissu, instanceId: `${idPoupee}-bas-${zoneId}` }
+      }));
+
+      const newData = {
+        ...dataRef.current,
+        tissuBas: updated
+      };
+
       updateTissuBas(updated);
-      updateData({ ...data, tissuBas: updated });
-    }
-  },
+      updateData(newData);
+      dataRef.current = newData;
 
-  // Accessoires
-  accessoire: (id, newTissu, commit = false) => {
-    const currentData = dataRef.current;
+    },
 
-    if (!currentData?.accessoires) return;
+    // Accessoires
+    accessoire: (id, newTissu, commit = false) => {
+      const currentData = dataRef.current;
 
-    const updatedAccessoires = currentData.accessoires.map(acc =>
-      acc.id === id
-        ? { ...acc, tissu: newTissu }
-        : acc
-    );
+      if (!currentData?.accessoires) return;
 
-    // PREVIEW (pas d'historique)
-    setData({
-      ...currentData,
-      accessoires: updatedAccessoires
-    });
+      const updatedAccessoires = currentData.accessoires.map(acc =>
+        acc.id === id
+          ? { ...acc, tissu: newTissu }
+          : acc
+      );
 
-    // ✅ COMMIT (history + firestore)
-    if (commit) {
-      updateData({
+      // PREVIEW (pas d'historique)
+      setData({
         ...currentData,
         accessoires: updatedAccessoires
       });
 
-      updateAccessoireTissu(id, newTissu); // Firestore
+      // ✅ COMMIT (history + firestore)
+      if (commit) {
+        updateData({
+          ...currentData,
+          accessoires: updatedAccessoires
+        });
+
+        updateAccessoireTissu(id, newTissu); // Firestore
+      }
     }
-  }
-};
+  };
 
 
-  const handleChangeTissu = async (newTissu) => {
+  const handleChangeTissu = async (newTissu, commit) => {
     if (!picker) return;
 
     const { target, zoneId, id } = picker;
@@ -465,10 +487,6 @@ const tissuActions = {
                 handleChangeTissu={handleChangeTissu}
                 activePalette={activePalette}
                 showAccessoires={showAccessoires}
-
-                //selectedAccessoireId={selectedAccessoireId}
-                //setSelectedAccessoireId={setSelectedAccessoireId}
-
                 selectedIds={selectedIds}
                 setSelectedIds={setSelectedIds}
               />

@@ -11,15 +11,15 @@ const Perles = ({ accId, tissuAccessoire, onPickColor }) => {
     }
 
     return (
-        <g transform="translate(-6 0)">
+        <g>
             <EnteteSvg tissu={tissuAccessoire} />
 
             <g fill={getFill(tissuAccessoire)} onClick={(e) => onPickColor?.(e, accId)}>
-            <circle cx="33.2" cy="7.3" r="6"/>
-            <circle cx="33.2" cy="19.4" r="6"/>
-            <circle cx="33.2" cy="40.7" r="15.1"/>
+                <circle cx="16.3" cy="7.3" r="6"/>
+                <circle cx="16.3" cy="19.4" r="6"/>
+                <circle cx="16.3" cy="40.7" r="15.1"/>
             </g>
-            <path className="relief" d="M43.6,34.5s-1.8,7.5-5.9,11.2-11.1,4.8-11.1,4.8c0,0,6.9,5.4,14.6-1.1,7.1-5.9,2.5-15,2.5-15Z"/>
+            <path className="relief" d="M26.7,34.5s-1.8,7.5-5.9,11.2-11.1,4.8-11.1,4.8c0,0,6.9,5.4,14.6-1.1,7.1-5.9,2.5-15,2.5-15h0Z"/>
       </g> 
     );
 };

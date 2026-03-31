@@ -136,14 +136,8 @@ export default function PaletteTissus({ x, y, target, tissu, onChange, onClose, 
           <div className="tissu-options">
             <ColorfulPickerBase
               color={localTissu.color}
-              onChange={(color) => updateField("color", color)}
-              
-              /*onChange={(color) => {
-  setLocalTissu(prev => ({ ...prev, color }));
-}}
-onCommit={(color) => {
-  handleChangeTissu({ ...localTissu, color });
-}}*/
+              onChange={(color) => updateField("color", color, true)}
+              onMouseUp={() => updateField("color", localTissu.color, true)}
             />
           </div>
         )}

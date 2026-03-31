@@ -68,12 +68,14 @@ export function createKeyboardHandler({ getSelectedIds, actions }) {
     // ------------------ GROUP / UNGROUP ------------------
     if (isCtrl && e.key.toLowerCase() === "g") {
       e.preventDefault();
+      if (selectedIds.length < 2) return;
       if (selectedIds?.length) actions.onGroup?.(selectedIds);
       return;
     }
 
     if (isCtrl && e.key.toLowerCase() === "u") {
       e.preventDefault();
+      if (selectedIds.length < 2) return;
       if (selectedIds?.length) actions.onUngroup?.(selectedIds);
       return;
     }

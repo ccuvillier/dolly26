@@ -58,8 +58,10 @@
 .accessoires-wrapper {
     position: relative;
     z-index: 100;
-    pointer-events: fill;
-
+    
+}
+#poupee > g.accessoires-layer {
+    pointer-events: all;
     .handle {
         width: 8px;
         height: 8px;
@@ -76,12 +78,13 @@
     .closeAcc {
         fill: url('../components/images/picto-close.svg') 0 0;
     }
+    .rotate-handle {
+        cursor: url('../components/images/picto-rotate.svg') 15 15, grab;
+        stroke: transparent;
+        fill: transparent;
+        pointer-events: stroke !important;
+        transform-origin: center center;
+    }
+
 }
 
-.rotate-handle {
-    cursor: url('../components/images/picto-rotate.svg') 15 15, grab;
-    stroke: transparent;
-    fill: transparent;
-    pointer-events: stroke;
-    transform-origin: center center;
-}

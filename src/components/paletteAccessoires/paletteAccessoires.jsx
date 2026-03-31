@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { accessoiresPalette } from "./data/accessoiresData";
+import CenteredSVG from "./CenteredSVG";
 import { useDraggable } from "../../hooks/useDraggable";
 
 export default function PaletteAccessoires({ onAddAccessoire, onClose }) {
@@ -9,6 +10,7 @@ export default function PaletteAccessoires({ onAddAccessoire, onClose }) {
       x: window.innerWidth / 2,
       y: window.innerHeight / 2
     });
+
 
   return (
     <div id="paletteAccessoires"
@@ -32,22 +34,14 @@ export default function PaletteAccessoires({ onAddAccessoire, onClose }) {
         {accessoiresPalette.map((item, index) => {
           const Component = item.component;
 
+
           return (
             <div
               key={index}
               title={item.type}
               onClick={() => onAddAccessoire(item)}
             >
-              <svg
-                width={50}
-                height={50}
-                viewBox="0 0 800 800"
-                className="svg"
-              >
-                  <g transform="scale(12)">
-                    <Component />
-                  </g>
-              </svg>
+              <CenteredSVG Component={Component} size={60} />
             </div>
           );
         })}

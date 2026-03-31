@@ -11,63 +11,51 @@ import { usePickerClick } from "../hooks/usePickerClick.js";
 import { DEFAULT_TISSU } from "../constants/defaultTissu";
 import { ComposantsPoupee } from "../utils/composantsPoupee.js";
 import SVGPart from "./SVGPart";
+import SelectionAccessoires from "./paletteAccessoires/SelectionAccessoires";
+import useGroupBBox from "../hooks/useGroupBBox.js";
 
-export default function PoupeeView({
-  id,
-  peau,
-  yeux,
-  levres,
-  cheveux,
-  nomCoiffure,
-  setNomCoiffure,
-  chaussuresColor,
-  nomChaussures,
-  setNomChaussures,
-  tissusZones,
-  setTissusZones,
-  nomHaut,
-  setNomHaut,
-  tissuHaut,
-  setTissuHaut,
-  nomBas,
-  setNomBas,
-  tissuBas,
-  setTissuBas,
-  
-  accessoires,
-  accessoireActions,
-  //setSelectedAccessoireId,
-  //selectedAccessoireId,
+export default function PoupeeView(props) {
+  const {
+    id,
+    peau, yeux, levres, cheveux,
+    nomCoiffure, setNomCoiffure,
+    chaussuresColor, nomChaussures, setNomChaussures,
+    tissusZones, setTissusZones,
+    nomHaut, setNomHaut, tissuHaut, setTissuHaut,
+    nomBas, setNomBas, tissuBas, setTissuBas,
+    accessoires, accessoireActions,
+    selectedIds, setSelectedIds,
+    openPicker, closePicker,
+    showAccessoires, revoirGrille
+  } = props;
 
-  selectedIds,
-  setSelectedIds,
-
-  //addClonedAccessoire,
-  handleChangeAccessoireTissu,
-
-  openPicker,
-  closePicker,
-  showAccessoires,
-  revoirGrille
-}) {
+  const { data, setData, onGroup, onUngroup } = accessoireActions;
 
   const zonesTissus = {
     haut: { data: tissuHaut, set: setTissuHaut },
     bas: { data: tissuBas, set: setTissuBas }
   };
-  
 
   const viewportRef = useRef(null);
-  const [globalScale, setGlobalScale] = useState(1);
-  const [activeCarousel, setActiveCarousel] = useState(null); // "coiffure" | "haut" | "bas" | "chaussures" | null
+  const transformWrapperRef = useRef(null);
+   const [activeCarousel, setActiveCarousel] = useState(null); // "coiffure" | "haut" | "bas" | "chaussures" | null
 
-  // ----------------- AFFICHAGE DES ÉLÉMENTS -----------------
+
+  const [globalScale, setGlobalScale] = useState(1);
+  const [scale, setScale] = useState(1);
+  const RESET_ZOOM = 1;
+  const [dimensions, setDimensions] = useState({});
+  const handleMeasure = (id, size) => {
+    setDimensions(prev => ({ ...prev, [id]: size }));
+  };
+
+  // ================= ZONES TISSUS =================
   const coiffureAAfficher = nomCoiffure ? { component: ComposantsPoupee.cheveux[nomCoiffure] } : null;
   const hautAAfficher = nomHaut ? { component: ComposantsPoupee.hauts[nomHaut], zones: tissuHaut ? Object.keys(tissuHaut) : [] } : null;
   const basAAfficher = nomBas ? { component: ComposantsPoupee.bas[nomBas], zones: tissuBas ? Object.keys(tissuBas) : [] } : null;
   const chaussuresAAfficher = nomChaussures ? { component: ComposantsPoupee.chaussures[nomChaussures] } : null;
 
-  const handleSelectHair = (name) => { setNomCoiffure(name); setActiveCarousel(null); };
+   const handleSelectHair = (name) => { setNomCoiffure(name); setActiveCarousel(null); };
   const handleSelectHaut = (name) => { setNomHaut(name); setActiveCarousel(null); };
   const handleSelectBas = (name) => { setNomBas(name); setActiveCarousel(null); };
   const handleSelectChaussures = (name) => { setNomChaussures(name); setActiveCarousel(null); };
@@ -77,17 +65,10 @@ export default function PoupeeView({
     setActiveCarousel(null);
     showAccessoires(null);
     closePicker();
-    setSelectedIds([]);;
+    setSelected(null);
   };
-  
-  const showCarousel = () => { closeAll(); setActiveCarousel("coiffure"); };
-  const showHaut = () => { closeAll(); setActiveCarousel("haut"); };
-  const showBas = () => { closeAll(); setActiveCarousel("bas"); };
-  const showChaussures = () => { closeAll(); setActiveCarousel("chaussures"); };
-  const showAccessoiresMenu = () => { closeAll(); showAccessoires("accessoires"); };
-  const handleRevoirGrille = () => { closeAll(); revoirGrille(); };
 
-  // ----------------- CONSTRUIRE LES ZONES A COLORER -----------------
+
   useEffect(() => {
     const newZones = {};
     ["haut", "bas"].forEach(part => {
@@ -106,18 +87,12 @@ export default function PoupeeView({
     setTissusZones(prev => {
       const prevStr = JSON.stringify(prev);
       const newStr = JSON.stringify(newZones);
-
       if (prevStr === newStr) return prev;
-
       return newZones;
     });
   }, [basAAfficher, hautAAfficher, zonesTissus, id, setTissusZones]);
 
-  // ----------------- GESTION DU ZOOM -----------------
-  const transformWrapperRef = useRef(null);
-  const [scale, setScale] = useState(1);
-  const RESET_ZOOM = 1;
-
+  // ================= ZOOM =================
   const handleSliderChange = (e) => {
     const targetScale = parseFloat(e.target.value);
     const factor = Math.log(targetScale / scale);
@@ -129,73 +104,137 @@ export default function PoupeeView({
     setScale(targetScale);
   };
 
-  // ----------------- GESTION DES DRAG ET CLICK -----------------
+  // ================= PICKERS =================
   const pickers = {
     peau: usePickerClick(openPicker, "color", "peau", () => peau),
     levres: usePickerClick(openPicker, "color", "levres", () => levres),
     yeux: usePickerClick(openPicker, "color", "yeux", () => yeux),
     cheveux: usePickerClick(openPicker, "color", "cheveux", () => cheveux),
     chaussures: usePickerClick(openPicker, "color", "chaussures", () => chaussuresColor),
-
     bas: usePickerClick(openPicker, "tissu", "bas"),
     haut: usePickerClick(openPicker, "tissu", "haut")
   };
 
-  const peauClick = usePickerClick(openPicker, "color", "peau", () => peau);
-  const levresClick = usePickerClick(openPicker, "color", "levres", () => levres);
-  const yeuxClick = usePickerClick(openPicker, "color", "yeux", () => yeux);
-  const hairClick = usePickerClick(openPicker, "color", "cheveux", () => cheveux);
-  const chaussuresClick = usePickerClick(openPicker, "color", "chaussures", () => chaussuresColor);
-  const basClick = usePickerClick(openPicker, "tissu", "bas");
-  const hautClick = usePickerClick(openPicker, "tissu", "haut");
+  // ================= ROOT NODES =================
+  const rootNodes = data.accessoires.filter(acc => !acc.parentGroupId);
 
-  // ----------------- RENDU -----------------
+  // ================= ACCESSOIRE TREE =================
+  function AccessoireTree({ node, accessoires, dimensions, selectedIds, globalScale, accessoireActions }) {
+    const { getGroupBBox } = useGroupBBox(accessoires, dimensions);
+    const handleDelete = () => {
+      accessoireActions.onDelete([node.id]);
+    };
+
+    if (node.type === "group") {
+      const bbox = getGroupBBox(node) || { x: 0, y: 0, width: 0, height: 0 };
+      const offsetX = Number.isFinite(bbox.x) ? bbox.x : 0;
+      const offsetY = Number.isFinite(bbox.y) ? bbox.y : 0;
+
+      // filtrer les enfants inexistants
+      const children = (node.childrenIds || [])
+        .map(id => accessoires.find(acc => acc.id === id))
+        .filter(Boolean);
+
+        
+      return (
+        <g transform={`translate(${node.pos?.x || 0}, ${node.pos?.y || 0}) scale(${node.scale || 1})`}>
+          {children.map(child => (
+            <AccessoireTree
+              viewportRef={viewportRef}
+              key={child.id}
+              node={child}
+              accessoires={accessoires}
+              dimensions={dimensions}
+              selectedIds={selectedIds}
+              setSelectedIds={setSelectedIds}
+              globalScale={globalScale}
+              accessoireActions={accessoireActions}
+              openPicker={openPicker}
+            />
+          ))}
+
+          {selectedIds.includes(node.id) && (
+            <SelectionAccessoires
+              viewportRef={viewportRef}
+              safeWidth={bbox.width}
+              safeHeight={bbox.height}
+              offsetX={offsetX}
+              offsetY={offsetY}
+              scale={node.scale || 1}
+              globalScale={globalScale}
+              selectedIds={selectedIds}
+              setSelectedIds={setSelectedIds}
+              onDelete={handleDelete}
+              /*onRotate={(e) => accessoireActions.startRotateGroup(e, node.id)}
+              onScale={(e, corner) => accessoireActions.startScaleGroup(e, corner, node.id)}
+              onDuplicate={() => accessoireActions.duplicateGroup(node.id)}*/
+              openPicker={openPicker}
+            />
+          )}
+        </g>
+      );
+    }
+
+    // Accessoire simple
+    return (
+      <Accessoire
+        acc={node}
+        viewportRef={viewportRef}
+        globalScale={globalScale}
+        accessoireActions={{
+  ...accessoireActions,
+  onDelete: handleDelete
+}}
+        selectedIds={selectedIds}
+        setSelectedIds={setSelectedIds}
+        dimensions={dimensions}
+        openPicker={openPicker}
+      />
+    );
+  }
+
+
+  // ================= RENDU =================
   return (
     <div id="poupeeView" className="zoomIn">
       <Menu
-        onShowCarousel={showCarousel}
-        onShowCarouselHauts={showHaut}
-        onShowCarouselBas={showBas}
-        onShowCarouselChaussures={showChaussures}
-        onShowAccessoires={showAccessoiresMenu}
-        onRevoirGrille={handleRevoirGrille}
+        onShowCarousel={() => setActiveCarousel("coiffure")}
+        onShowCarouselHauts={() => setActiveCarousel("haut")}
+        onShowCarouselBas={() => setActiveCarousel("bas")}
+        onShowCarouselChaussures={() => setActiveCarousel("chaussures")}
+        onShowAccessoires={() => showAccessoires("accessoires")}
+        onRevoirGrille={revoirGrille}
       />
 
       <TransformWrapper
         ref={transformWrapperRef}
-        centerOnInit={true}
+        centerOnInit
         defaultScale={1}
-        defaultPositionX={0}
-        defaultPositionY={0}
         limitToBounds={false}
-        wheel={{ step: 0.1, wheelDisabled: false }}
+        wheel={{ step: 0.1 }}
         pinch={{ step: 5 }}
         doubleClick={{ disabled: true }}
         onZoomStop={(ref) => setScale(ref.state.scale)}
-        onTransformed={(instance) => setGlobalScale(instance.state.scale)}
+        onTransformed={(ref) => setGlobalScale(ref.state.scale)}
         minScale={0.5}
         maxScale={4}
-        onPanningStart={() => document.getElementById("poupeeView").classList.add("dragging")}
-        onPanningStop={() => document.getElementById("poupeeView").classList.remove("dragging")}
+        onPanningStart={() => document.getElementById("poupeeView")?.classList.add("dragging")}
+        onPanningStop={() => document.getElementById("poupeeView")?.classList.remove("dragging")}
       >
         {({ zoomIn, zoomOut, resetTransform }) => (
           <>
             {/* Zoom slider */}
             <div id="zoomSlider" onMouseDown={(e) => e.stopPropagation()} onTouchStart={(e) => e.stopPropagation()}>
-              <div className="rangeWrapper">
-                <input
-                  type="range"
-                  min="0.5"
-                  max="4"
-                  step="0.01"
-                  value={scale}
-                  onChange={handleSliderChange}
-                />
-              </div>
+              <input
+                type="range"
+                min="0.5"
+                max="4"
+                step="0.01"
+                value={scale}
+                onChange={handleSliderChange}
+              />
               <span className="zoomValue">{Math.round(scale * 100)}%</span>
-              <button className="reset" onClick={(e) => { e.stopPropagation(); resetTransform(); setScale(RESET_ZOOM); }}>
-                Reset
-              </button>
+              <button className="reset" onClick={(e) => { e.stopPropagation(); resetTransform(); setScale(RESET_ZOOM); }}>Reset</button>
             </div>
 
             <TransformComponent>
@@ -206,47 +245,44 @@ export default function PoupeeView({
                 <svg ref={viewportRef} id="poupee" viewBox="0 0 800 800" width="100%" height="100%" preserveAspectRatio="xMinYMin meet">
                   {/* CORPS */}
                   <FilleNue peau={peau} yeux={yeux} levres={levres} onColorPeau={pickers.peau} onColorLevres={pickers.levres} onColorYeux={pickers.yeux} />
-
+                  
                   {/* CHEVEUX */}
                   {activeCarousel !== "coiffure" ? (
                     <SVGPart type="cheveux" component={coiffureAAfficher?.component} color={cheveux} onMouseDown={pickers.cheveux} />
-                  ) : null}
-
+                  ) : null}                  
+                  
                   {/* BAS */}
                   {activeCarousel !== "bas" ? (
                     <SVGPart type="bas" component={basAAfficher?.component} zones={basAAfficher?.zones} tissusZones={tissusZones} onMouseDown={pickers.bas} />
                   ) : null}
-
+                  
                   {/* HAUT */}
                   {activeCarousel !== "haut" ? (
                     <SVGPart type="haut" component={hautAAfficher?.component} zones={hautAAfficher?.zones} tissusZones={tissusZones} onMouseDown={pickers.haut} />
                   ) : null}
-
+                  
                   {/* CHAUSSURES */}
                   {activeCarousel !== "chaussures" ? (
                     <SVGPart type="chaussures" component={chaussuresAAfficher?.component} color={chaussuresColor} onMouseDown={pickers.chaussures} />
                   ) : null}
+                
 
-                  {/* ACCESSOIRES */}
-                  {accessoires?.map(acc => (
-                    <Accessoire
-                      key={acc.id}
-                      acc={acc}
-
-                      //setSelectedAccessoireId={setSelectedAccessoireId}
-                      //selectedAccessoireId={selectedAccessoireId}
-
-                      selectedIds={selectedIds}
-                      setSelectedIds={setSelectedIds}
-
-                      accessoireActions={accessoireActions}
-                      onClosePicker={closePicker}
-                      openPicker={openPicker}
-                      tissuAccessoire={acc.tissu}
-                      viewportRef={viewportRef}
-                      globalScale={globalScale} 
-                    />
-                  ))}
+                  <g className="accessoires-layer">
+                    {rootNodes.map(node => (
+                      <AccessoireTree
+                        key={node.id}
+                        node={node}
+                        accessoires={data.accessoires}
+                        dimensions={dimensions}
+                        selectedIds={selectedIds}
+                        globalScale={globalScale}
+                        onMeasure={handleMeasure}
+                        accessoireActions={accessoireActions}
+                        viewportRef={viewportRef}
+                        openPicker={openPicker}
+                      />
+                    ))}
+                  </g>
                 </svg>
 
                 {/* CAROUSELS */}
@@ -259,7 +295,6 @@ export default function PoupeeView({
           </>
         )}
       </TransformWrapper>
-      
     </div>
   );
 }
