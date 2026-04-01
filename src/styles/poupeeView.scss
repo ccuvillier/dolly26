@@ -135,25 +135,25 @@ svg .dash {
     .rangeWrapper {
         position: absolute;
         width: 200px;
-
-        input[type="range"] {
-            transform: rotate(90deg);
-            transform-origin: left;
-            appearance: none;
-            height: 6px;
-            background: #ddd;
-            border-radius: 5px;
-            width: 100%;
-        }
-        /* Track */
-        input[type="range"]::-webkit-slider-thumb {
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            background: #ff4d6d;
-            border-radius: 50%;
-            cursor: pointer;
-        }
+    } 
+    
+    input[type="range"] {
+        transform: rotate(90deg);
+        transform-origin: left;
+        appearance: none;
+        height: 6px;
+        background: #ddd;
+        border-radius: 5px;
+        width: 200px;
+    }
+    /* Track */
+    input[type="range"]::-webkit-slider-thumb {
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        background: #ff4d6d;
+        border-radius: 50%;
+        cursor: pointer;
     }
     
     .zoomValue {

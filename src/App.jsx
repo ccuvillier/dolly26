@@ -161,13 +161,20 @@ export default function App() {
     zoneId: crypto.randomUUID()
   });
 
-  const cloneAccessoire = (acc) => ({
-    ...acc,
-    id: crypto.randomUUID(),
-    x: acc.x + 20,
-    y: acc.y + 20,
-    tissu: { ...acc.tissu, instanceId: crypto.randomUUID() }
-  });
+  const cloneAccessoire = (acc) => {
+    const newAcc = {
+      ...acc,
+      id: crypto.randomUUID(), // nouvel id
+      x: acc.x + 20,           // petit décalage
+      y: acc.y + 20,
+      tissu: { ...acc.tissu, instanceId: crypto.randomUUID() }
+    };
+
+    setData(prev => ({
+      ...prev,
+      accessoires: [...prev.accessoires, newAcc]
+    }));
+  };
 
 
   // ------------------ ACCESSOIRES ACTIONS -------------

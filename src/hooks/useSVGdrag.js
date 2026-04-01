@@ -14,7 +14,8 @@ export default function useSVGdrag({ viewportRef, initialPos, onDragEnd }) {
   }, [initialPos.x, initialPos.y]);
 
   const getSVGPoint = (event) => {
-    if (!viewportRef.current) return { x: 0, y: 0 };
+    if (!viewportRef.current) return pos;
+
     const svg = viewportRef?.current;
     const point = svg.createSVGPoint();
     point.x = event.clientX;
@@ -27,7 +28,7 @@ export default function useSVGdrag({ viewportRef, initialPos, onDragEnd }) {
     const svg = viewportRef?.current;
      if (!svg) {
       console.warn("SVG non monté, drag annulé");
-      return; // ne fait rien si svg pas prêt
+      return; 
     }
     const svgPoint = getSVGPoint(event);
 
@@ -39,7 +40,7 @@ export default function useSVGdrag({ viewportRef, initialPos, onDragEnd }) {
       y: svgPoint.y - pos.y
     });
 
-    setIsDragging(true); // seul flag local à cet accessoire
+    setIsDragging(true);
   };
 
   useEffect(() => {
@@ -65,7 +66,10 @@ export default function useSVGdrag({ viewportRef, initialPos, onDragEnd }) {
 
     const handleUp = () => {
       if (hasMovedRef.current) {
-        onDragEnd?.(pos); // commit une seule fois
+        onDragEnd?.(pos); 
+      }
+      if (!hasMovedRef.current) {
+        onClick?.(); // simule un click si pas de drag
       }
       hasMovedRef.current = false;
       setIsDragging(false);

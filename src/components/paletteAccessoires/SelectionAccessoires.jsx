@@ -47,7 +47,7 @@ const SelectionAccessoires = ({
           e.stopPropagation();
           onRotate?.(e);
         }}
-        style={{ strokeWidth: 20 / globalScale, stroke: "red", pointerEvents: "none" }}
+        style={{ strokeWidth: 20 / globalScale, stroke: "transparent" }}
       />
 
       {/* Scale */}
@@ -88,7 +88,6 @@ const SelectionAccessoires = ({
           width={20 / globalScale}
           height={20 / globalScale}
           onClick={(e) => {
-            console.log("CLICK sur accessoire");
             e.stopPropagation();
             onDelete?.();
           }}

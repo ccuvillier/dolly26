@@ -65,7 +65,10 @@ export default function Accessoire({
   const { pos, startDrag } = useSVGDrag({
     viewportRef,
     initialPos: { x: acc.x, y: acc.y },
-    onDragEnd: (p) => onUpdate(acc.id, p)
+    onDragEnd: (p) => {
+      console.log("DRAG END", p);
+      onUpdate(acc.id, p);
+    }
   });
 
    // ================= SCALE =================
@@ -124,16 +127,16 @@ export default function Accessoire({
       transform={`translate(${pos?.x}, ${pos?.y})`}
       onMouseDown={(e) => { 
         e.stopPropagation(); 
+        if (e.target.closest(".pictos")) return;
         startDrag(e); 
-        handleSelect(e, acc.id) }}
+      }}
+      onClick={(e) => {
+        e.stopPropagation();
+        if (e.defaultPrevented) return;
+        handleSelect(e, acc.id);
+      }}
     >
-      <g ref={contentRef} transform={`scale(${tempScale}) rotate(${Number.isFinite(tempRotation) ? tempRotation : 0}, ${cx}, ${cy})`}>
-        {Component ? (
-          <Component accId={acc.id} tissuAccessoire={localTissu} />
-        ) : (
-          <rect width={baseWidth} height={baseWidth} fill="none" stroke="red" />
-        )}
-      </g>
+      
 
       {isSelected && (
         <SelectionAccessoires
@@ -156,6 +159,7 @@ export default function Accessoire({
           onDelete={() => accessoireActions.onDelete([acc.id])}
           onClone={(e) => {
             e.stopPropagation();
+            console.log("CLONE", acc.id)
             onClone(acc);
           }}
 
@@ -164,6 +168,14 @@ export default function Accessoire({
           openPicker={openPicker}
         />
       )}
+
+      <g ref={contentRef} transform={`scale(${tempScale}) rotate(${Number.isFinite(tempRotation) ? tempRotation : 0}, ${cx}, ${cy})`}>
+        {Component ? (
+          <Component accId={acc.id} tissuAccessoire={localTissu} />
+        ) : (
+          <rect width={baseWidth} height={baseWidth} fill="none" stroke="red" />
+        )}
+      </g>
     </g>
   );
 }
