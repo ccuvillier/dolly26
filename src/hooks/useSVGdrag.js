@@ -68,9 +68,7 @@ export default function useSVGdrag({ viewportRef, initialPos, onDragEnd }) {
       if (hasMovedRef.current) {
         onDragEnd?.(pos); 
       }
-      if (!hasMovedRef.current) {
-        onClick?.(); // simule un click si pas de drag
-      }
+
       hasMovedRef.current = false;
       setIsDragging(false);
     };

@@ -162,18 +162,13 @@ export default function App() {
   });
 
   const cloneAccessoire = (acc) => {
-    const newAcc = {
+    return {
       ...acc,
-      id: crypto.randomUUID(), // nouvel id
-      x: acc.x + 20,           // petit décalage
+      id: crypto.randomUUID(),
+      x: acc.x + 20,
       y: acc.y + 20,
       tissu: { ...acc.tissu, instanceId: crypto.randomUUID() }
     };
-
-    setData(prev => ({
-      ...prev,
-      accessoires: [...prev.accessoires, newAcc]
-    }));
   };
 
 
@@ -269,7 +264,12 @@ export default function App() {
 
   const onClone = (acc) => {
     const clone = cloneAccessoire(acc);
-    addAccessoire(clone);
+
+    setData(prev => ({
+      ...prev,
+      accessoires: [...prev.accessoires, clone]
+    }));
+
     setSelectedIds([clone.id]);
   };
   

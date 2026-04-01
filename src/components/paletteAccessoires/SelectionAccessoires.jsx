@@ -130,7 +130,7 @@ const SelectionAccessoires = ({
           height={20 / globalScale}
           onClick={(e) => {
             e.stopPropagation();
-            onClone?.(acc.id);
+            onClone?.();
           }}
         />
       </g>

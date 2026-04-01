@@ -19,7 +19,7 @@ export default function Accessoire({
   onMeasure,
   dimensions
 }) {
-  const { onUpdate, onDelete, onClone, handleChangeAccessoireTissu, onMove, onGroup, onUngroup } = accessoireActions ?? {};
+  const { onUpdate, onDelete, onClone: cloneAction, handleChangeAccessoireTissu, onMove, onGroup, onUngroup, onCopy } = accessoireActions ?? {};
   const Component = ACCESSOIRES_COMPONENTS[acc.type];
 
   const isSelected =
@@ -152,16 +152,8 @@ export default function Accessoire({
           onRotate={startRotate}
           onScale={startScale}
 
-          /*onDelete={(e) => {
-            e.stopPropagation();
-            onDelete([acc.id]);
-          }}*/
           onDelete={() => accessoireActions.onDelete([acc.id])}
-          onClone={(e) => {
-            e.stopPropagation();
-            console.log("CLONE", acc.id)
-            onClone(acc);
-          }}
+          onClone={() => {cloneAction(acc) }}
 
           tissu={acc.tissu}
           localTissu={localTissu}
