@@ -63,6 +63,7 @@ const SelectionAccessoires = ({
             height={handleSize}
             onMouseDown={(e) => onScale(e, corner)}
             strokeWidth={1 / globalScale}
+            stroke="#000"
           />
         );
       })}

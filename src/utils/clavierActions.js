@@ -21,7 +21,6 @@ export const SHORTCUTS = {
 
 
 
-// clavierActions.js
 export function createKeyboardHandler({ getSelectedIds, actions }) {
   return (e) => {
     const selectedIds = getSelectedIds(); // ids sélectionnés
@@ -48,12 +47,14 @@ export function createKeyboardHandler({ getSelectedIds, actions }) {
     // ------------------ COPY / PASTE ------------------
     if (isCtrl && e.key.toLowerCase() === "c") {
       e.preventDefault();
+      if (!actions?.onCopy) return;
       if (selectedIds?.length) actions.onCopy?.(selectedIds);
       return;
     }
 
     if (isCtrl && e.key.toLowerCase() === "v") {
       e.preventDefault();
+      if (!actions?.onPaste) return;
       actions.onPaste?.();
       return;
     }

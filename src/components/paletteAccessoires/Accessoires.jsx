@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { ACCESSOIRES_COMPONENTS } from "./data/componentsRegistry";
 import useSVGDrag from "../../hooks/useSVGdrag";
 import useSVGScale from "../../hooks/useSVGscale";
@@ -13,28 +13,51 @@ export default function Accessoire({
   selectedIds,
   setSelectedIds,
   accessoireActions,
+  onDeleteSingle,
   openPicker,
   onClosePicker,
   globalScale,
   onMeasure,
   dimensions
 }) {
-  const { onUpdate, onDelete, onClone: cloneAction, handleChangeAccessoireTissu, onMove, onGroup, onUngroup, onCopy } = accessoireActions ?? {};
+  const {
+    onUpdate = () => {},
+    onDelete = () => {},
+    onClone = () => {},
+    onCopy = () => {},
+    onPaste = () => {},
+    onMove = () => {},
+    onGroup = () => {},
+    onUngroup = () => {},
+    handleChangeAccessoireTissu = () => {}
+  } = accessoireActions ?? {};
+
   const Component = ACCESSOIRES_COMPONENTS[acc.type];
 
   const isSelected =
     Array.isArray(selectedIds) && selectedIds.includes(acc.id);
 
   //============ HELPER POUR TOUCHES CLAVIER ========
-  useEffect(() => {
-    const handler = createKeyboardHandler({
+  const keyboardHandler = useCallback(
+    (e) => createKeyboardHandler({
       getSelectedIds: () => selectedIds,
-      accessoireActions: accessoireActions
-    });
+      actions: {
+        onUpdate,
+        onDelete,
+        onCopy,
+        onPaste,
+        onMove,
+        onGroup,
+        onUngroup
+      }
+    })(e),
+    [selectedIds, onUpdate, onDelete, onCopy, onPaste, onMove, onGroup, onUngroup]
+  );
 
-    document.addEventListener("keydown", handler);
-      return () => document.removeEventListener("keydown", handler);
-    }, [selectedIds, accessoireActions]); 
+  useEffect(() => {
+    document.addEventListener("keydown", keyboardHandler);
+    return () => document.removeEventListener("keydown", keyboardHandler);
+  }, [keyboardHandler]);
  
 
   // sélection de plusieurs accessoires SHIFT+click
@@ -66,7 +89,6 @@ export default function Accessoire({
     viewportRef,
     initialPos: { x: acc.x, y: acc.y },
     onDragEnd: (p) => {
-      console.log("DRAG END", p);
       onUpdate(acc.id, p);
     }
   });
@@ -152,7 +174,7 @@ export default function Accessoire({
           onRotate={startRotate}
           onScale={startScale}
 
-          onDelete={() => accessoireActions.onDelete([acc.id])}
+          onDelete={() => onDeleteSingle()}
           onClone={() => {cloneAction(acc) }}
 
           tissu={acc.tissu}

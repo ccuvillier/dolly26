@@ -164,7 +164,8 @@ export default function PoupeeView(props) {
               globalScale={globalScale}
               selectedIds={selectedIds}
               setSelectedIds={setSelectedIds}
-              onDelete={handleDelete}
+              accessoireActions={accessoireActions}
+              onDeleteSingle={handleDelete}
               /*onRotate={(e) => accessoireActions.startRotateGroup(e, node.id)}
               onScale={(e, corner) => accessoireActions.startScaleGroup(e, corner, node.id)}
               onDuplicate={() => accessoireActions.duplicateGroup(node.id)}*/
@@ -181,10 +182,8 @@ export default function PoupeeView(props) {
         acc={node}
         viewportRef={viewportRef}
         globalScale={globalScale}
-        accessoireActions={{
-  ...accessoireActions,
-  onDelete: handleDelete
-}}
+        accessoireActions={accessoireActions}
+        onDeleteSingle={handleDelete}
         selectedIds={selectedIds}
         setSelectedIds={setSelectedIds}
         dimensions={dimensions}
