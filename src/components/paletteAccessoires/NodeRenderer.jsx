@@ -1,4 +1,6 @@
+import React from "react";
 import Accessoire from "./Accessoires";
+import SelectionAccessoires from "./SelectionAccessoires";
 
 export default function NodeRenderer({
   node,
@@ -12,15 +14,47 @@ export default function NodeRenderer({
   dimensions,
   onMeasure
 }) {
+  const isGroup = node.type === "group";
 
-  // ===== GROUP =====
-  if (node.type === "group") {
-    const children = data.accessoires.filter(
-      a => a.parentGroupId === node.id
+  if (isGroup) {
+    // Récupérer les enfants du groupe
+    const children = data.accessoires.filter(a => a.parentGroupId === node.id);
+
+    // Calculer le bbox global du groupe
+    const bbox = children.reduce(
+      (acc, child) => {
+        const d = dimensions[child.id] || { width: 65, height: 65 };
+        const x = child.x || 0;
+        const y = child.y || 0;
+        acc.minX = Math.min(acc.minX, x);
+        acc.minY = Math.min(acc.minY, y);
+        acc.maxX = Math.max(acc.maxX, x + d.width);
+        acc.maxY = Math.max(acc.maxY, y + d.height);
+        return acc;
+      },
+      { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity }
     );
 
+    // définir le centre pour les transformations globales
+    const width = bbox.maxX - bbox.minX;
+    const height = bbox.maxY - bbox.minY;
+    const offsetX = bbox.minX;
+    const offsetY = bbox.minY;
+    const cx = width / 2;
+    const cy = height / 2;
+
+    const isSelected = selectedIds.includes(node.id);
+
+  
+
     return (
-      <g transform={`translate(${node.pos?.x || 0}, ${node.pos?.y || 0}) scale(${node.scale || 1})`}>
+      <g className="group"
+        transform={`translate(${node.pos?.x || 0}, ${node.pos?.y || 0}) scale(${node.scale || 1})`}
+        onClick={(e) => {
+          e.stopPropagation();
+          setSelectedIds([node.id]);
+        }}
+      >
         {children.map(child => (
           <NodeRenderer
             key={child.id}
@@ -36,22 +70,42 @@ export default function NodeRenderer({
             onMeasure={onMeasure}
           />
         ))}
+
+        {isSelected && (
+          <SelectionAccessoires
+            acc={node}
+            offsetX={offsetX}
+            offsetY={offsetY}
+            safeWidth={width}
+            safeHeight={height}
+            scale={node.scale || 1}
+            rotation={node.rotation || 0}
+            cx={cx}
+            cy={cy}
+            globalScale={globalScale}
+            onDelete={() => accessoireActions.onDelete(node)}
+            onClone={() => accessoireActions.onCloneGroup(node)}
+            onScale={(s) => accessoireActions.onScaleGroup(node, s)}
+            onRotate={(r) => accessoireActions.onRotateGroup(node, r)}
+            onDrag={(pos) => accessoireActions.onDragGroup(node, pos)}
+          />
+        )}
       </g>
     );
   }
 
-  // ===== SINGLE =====
+  // Single accessoire
   return (
     <Accessoire
       acc={node}
       viewportRef={viewportRef}
-      globalScale={globalScale}
-      accessoireActions={accessoireActions}
       selectedIds={selectedIds}
       setSelectedIds={setSelectedIds}
+      accessoireActions={accessoireActions}
+      globalScale={globalScale}
       dimensions={dimensions}
-      openPicker={openPicker}
       onMeasure={onMeasure}
+      openPicker={openPicker}
     />
   );
 }

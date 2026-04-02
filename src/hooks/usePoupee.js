@@ -152,7 +152,14 @@ export default function usePoupee(pseudo, updateData) {
   const updateField = async (field, value, commit = false) => {
     if (!pseudo || !idPoupee) return;
 
-    await savePoupeeField(pseudo, idPoupee, field, value);
+    await savePoupeeField(
+      pseudo,
+      idPoupee,
+      field,
+      field === "accessoires"
+        ? value.map(toFirestoreAcc)
+        : value
+    );
 
     setData(prev => {
       const newData = { ...prev, [field]: value };
@@ -222,83 +229,7 @@ export default function usePoupee(pseudo, updateData) {
     );
   };
 
-  // grouper / dégrouper
-  /*const accessoiresArray = data.accessoires;
-  const accessoiresMap = Object.fromEntries(accessoiresArray.map(acc => [acc.id, acc]));*/
-
-  const onGroup = (selectedIds) => {
-    if (!selectedIds || selectedIds.length < 2) return;
-
-    const groupId = `g_${Date.now()}`;
-
-    setData(prev => {
-      const map = Object.fromEntries(prev.accessoires.map(acc => [acc.id, acc]));
-
-      const nodes = selectedIds.map(id => map[id]).filter(Boolean);
-      if (nodes.length < 2) return prev;
-
-      const avgX = nodes.reduce((sum, n) => sum + (n.x || 0), 0) / nodes.length;
-      const avgY = nodes.reduce((sum, n) => sum + (n.y || 0), 0) / nodes.length;
-
-      const newGroup = {
-        id: groupId,
-        type: "group",
-        childrenIds: selectedIds,
-        pos: { x: avgX, y: avgY },
-        scale: 1
-      };
-
-      nodes.forEach(node => {
-        map[node.id] = {
-          ...node,
-          parentGroupId: groupId,
-          x: (node.x || 0) - avgX,
-          y: (node.y || 0) - avgY
-        };
-      });
-      map[groupId] = newGroup;
-
-      const updated = {
-        ...prev,
-        accessoires: Object.values(map)
-      };
-
-      return updated;
-    });
-  };
-
-  const onUngroup = (selectedIds) => {
-    console.log("ici");
-    setData(prev => {
-      const map = Object.fromEntries(prev.accessoires.map(acc => [acc.id, acc]));
-      
-      selectedIds.forEach(id => {
-        const group = map[id];
-        if (!group || group.type !== "group") return;
-
-        group.childrenIds.forEach(childId => {
-          const child = map[childId];
-          if (!child) return;
-
-          map[childId] = {
-            ...child,
-            parentGroupId: null,
-            x: (child.x || 0) + (group.pos?.x || 0),
-            y: (child.y || 0) + (group.pos?.y || 0)
-          };
-        });
-
-        delete map[id];
-      });
-
-      const updated = {
-        ...prev,
-        accessoires: Object.values(map)
-      };
-
-      return updated;
-    });
-  };
+  
 
   // ---------------- SPECIFIC METHODS ----------------
   const updateNomCoiffure = (v) => updateField("nomCoiffure", v);
@@ -350,7 +281,6 @@ export default function usePoupee(pseudo, updateData) {
     addAccessoire,
     deleteAccessoire,
     updateAccessoireTissu,
-    onGroup,
-    onUngroup
+    updateField
   };
 }

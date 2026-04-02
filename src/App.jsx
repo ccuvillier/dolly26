@@ -8,7 +8,7 @@ import usePoupee from "./hooks/usePoupee";
 import useCreationPoupee from "./hooks/useCreationPoupee";
 import useStylePicker from "./hooks/useStylePicker";
 import { DEFAULT_TISSU } from "./constants/defaultTissu";
-import { createKeyboardHandler } from "./utils/clavierActions";
+import { SHORTCUTS, createKeyboardHandler } from "./utils/clavierActions";
 
 import './App.scss';
 
@@ -80,8 +80,7 @@ export default function App() {
     updateAccessoire,
     deleteAccessoire,
     updateAccessoireTissu,
-    onGroup,
-    onUngroup
+    updateField
   } = usePoupee(pseudo, updateData);
 
   // ------------------- HOOK CREATION -------------------
@@ -123,6 +122,13 @@ export default function App() {
   // --------------- IDS DES ACCESSOIRES -----------
 
   const [selectedIds, setSelectedIds] = useState([]);
+  useEffect(() => {
+      // Retirer les IDs qui n'existent plus
+      setSelectedIds(prev =>
+        prev.filter(id => data.accessoires.some(a => a.id === id))
+      );
+    }, [data.accessoires]);
+
 
   /*--------- DRAG D'UN ACCESSOIRE --------*/
   const handleMoveAccessoire = ({ ids, dx, dy }) => {
@@ -142,11 +148,8 @@ export default function App() {
     updateData(newData);
   };
 
-  /*--------- SUPPRIMER --------
-  const handleDeleteAccessoire = async (ids) => {
-    await deleteAccessoire(ids);  // attendre que l'updateData soit fait
-    setSelectedIds([]);
-  };*/
+  /*--------- SUPPRIMER -------- */
+
   const handleDeleteAccessoire = async (target) => {
     const accessoires = data.accessoires;
 
@@ -304,7 +307,112 @@ export default function App() {
     }));
 
     setSelectedIds([clone.id]);
+
   };
+
+  // ----------------- GROUP -----------------
+  const onGroup = (selectedIds) => {
+    if (!selectedIds || selectedIds.length < 2) return;
+
+    const map = Object.fromEntries(data.accessoires.map(acc => [acc.id, acc]));
+
+    const nodes = selectedIds.map(id => map[id]).filter(Boolean);
+    if (nodes.length < 2) return;
+
+    // Calcul du centre du groupe
+    const avgX = nodes.reduce((sum, n) => sum + (n.x || 0), 0) / nodes.length;
+    const avgY = nodes.reduce((sum, n) => sum + (n.y || 0), 0) / nodes.length;
+
+    const groupId = `g-${Date.now()}`;
+    const newGroup = {
+      id: groupId,
+      type: "group",
+      childrenIds: selectedIds,
+      pos: { x: avgX, y: avgY },
+      scale: 1
+    };
+
+    // Mettre à jour les enfants avec coordonnées relatives
+    nodes.forEach(node => {
+      map[node.id] = {
+        ...node,
+        parentGroupId: groupId,
+        x: (node.x || 0) - avgX,
+        y: (node.y || 0) - avgY
+      };
+    });
+    map[groupId] = newGroup;
+
+    const updated = {
+      ...data,
+      accessoires: Object.values(map)
+    };
+
+    // 🔥 UI + historique
+    updateData(updated);
+
+    // 🔥 BDD
+    updateField(
+      "accessoires",
+      updated.accessoires.map(acc => {
+        const { component, ...safe } = acc;
+        return safe;
+      })
+    );
+
+    // Sélectionner directement le groupe
+    setSelectedIds([groupId]);
+  };
+
+  // ----------------- UNGROUP -----------------
+  const onUngroup = (selectedIds) => {
+    if (!selectedIds || !selectedIds.length) return;
+
+    const map = Object.fromEntries(data.accessoires.map(acc => [acc.id, acc]));
+
+    let newSelected = [];
+
+    selectedIds.forEach(id => {
+      const group = map[id];
+      if (!group || group.type !== "group") return;
+
+      // Recalculer les coordonnées absolues pour les enfants
+      group.childrenIds.forEach(childId => {
+        const child = map[childId];
+        if (!child) return;
+
+        map[childId] = {
+          ...child,
+          parentGroupId: null,
+          x: (child.x || 0) + (group.pos?.x || 0),
+          y: (child.y || 0) + (group.pos?.y || 0)
+        };
+
+        newSelected.push(childId);
+      });
+
+      delete map[id];
+    });
+
+    const updated = {
+      ...data,
+      accessoires: Object.values(map)
+    };
+
+    updateData(updated);
+
+    updateField(
+      "accessoires",
+      updated.accessoires.map(acc => {
+        const { component, ...safe } = acc;
+        return safe;
+      })
+    );
+
+    // Sélectionner directement tous les anciens enfants
+    setSelectedIds(newSelected);
+  };
+
   
   const accessoireActions = {
     data,
@@ -327,16 +435,19 @@ export default function App() {
 
   /* ------------- ACTIONS CLAVIER ----------------*/
   useEffect(() => {
+    if (!accessoireActions || !data) return;
+
     const handler = createKeyboardHandler({
       getSelectedIds: () => selectedIds,
       actions: {
-        ...accessoireActions
-      }
+        ...accessoireActions, // onGroup, onUngroup, onDelete, onCopy, onPaste, etc.
+      },
+      data, // nécessaire pour vérifier le type des éléments (group ou accessoire)
     });
 
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
-  }, [selectedIds, accessoireActions]);
+  }, [selectedIds, accessoireActions, data]);
 
 
 

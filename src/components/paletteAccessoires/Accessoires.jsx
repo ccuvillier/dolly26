@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ACCESSOIRES_COMPONENTS } from "./data/componentsRegistry";
+import SelectionAccessoires from "./SelectionAccessoires";
 import useSVGDrag from "../../hooks/useSVGdrag";
 import useSVGScale from "../../hooks/useSVGscale";
 import useSVGRotate from "../../hooks/useSVGrotate";
 import useSVGBBox from "../../hooks/useSVGBox";
-import SelectionAccessoires from "./SelectionAccessoires";
-//import { createKeyboardHandler } from "../../utils/clavierActions"
 
 export default function Accessoire({
   acc,
@@ -13,33 +12,22 @@ export default function Accessoire({
   selectedIds,
   setSelectedIds,
   accessoireActions,
-  onDeleteSingle,
   openPicker,
   onClosePicker,
   globalScale,
   onMeasure,
   dimensions
 }) {
-  const {
-    onUpdate = () => {},
-    onDelete = () => {},
-    onClone = () => {},
-    onCopy = () => {},
-    onPaste = () => {},
-    onMove = () => {},
-    onGroup = () => {},
-    onUngroup = () => {},
-    handleChangeAccessoireTissu = () => {}
-  } = accessoireActions ?? {};
 
   const Component = ACCESSOIRES_COMPONENTS[acc.type];
 
-  //const isSelected = Array.isArray(selectedIds) && selectedIds.includes(acc.id);
+  //const isSelected = acc && Array.isArray(selectedIds) && selectedIds.includes(acc.id);
   const selectionKey = acc.parentGroupId ?? acc.id;
-  const isSelected = selectedIds.includes(selectionKey);
-
+  const isSelected = Array.isArray(selectedIds) && selectedIds.includes(selectionKey);
+  //const isSelected = selectedIds.includes(acc.parentGroupId ?? acc.id);
   
-   // ================= SIZE =================
+  
+  // ================= SIZE =================
   const contentRef = useRef(null);
   const baseWidth = 65;
   
@@ -49,11 +37,12 @@ export default function Accessoire({
     viewportRef,
     initialPos: { x: acc.x, y: acc.y },
     onDragEnd: (p) => {
-      onUpdate(acc.id, p);
+      accessoireActions.onUpdate(acc.id, p);
     }
   });
 
-   // ================= SCALE =================
+
+  // ================= SCALE =================
   const { tempScale, startScale } = useSVGScale({
     initialScale: acc.scale,
     onScaleEnd: (finalScale) => {
@@ -78,8 +67,9 @@ export default function Accessoire({
   useEffect(() => setLocalTissu(acc.tissu), [acc.tissu]);
 
 
-  // ================= BBOX SINGLE ACCESSOIRE =================
+  // ================= BBOX =================
   const handleSize = 10 / globalScale;
+
   const bbox = useSVGBBox(contentRef, [tempScale, tempRotation, localTissu], handleSize);
   useEffect(() => {
     if (!bbox || !onMeasure) return;
@@ -96,29 +86,21 @@ export default function Accessoire({
   // =========== SELECTION ACCESSOIRES ===============
   const handleSelect = (e) => {
     e.stopPropagation();
-
     const id = acc.parentGroupId ?? acc.id;
-
-    setSelectedIds(prev => {
-      if (e.shiftKey) {
-        return prev.includes(id) ? prev : [...prev, id];
-      }
-      return [id];
-    });
+    setSelectedIds(prev => e.shiftKey ? [...new Set([...prev, id])] : [id]);
   };
   
-
   const safeWidth = Number.isFinite(bbox?.width) ? bbox.width : baseWidth || 0;
   const safeHeight = Number.isFinite(bbox?.height) ? bbox.height : baseWidth || 0;
-
   // centre de rotation / scale
   const cx = safeWidth / 2;
   const cy = safeHeight / 2;
+  
 
   // ================= RENDER =================
   return (
     <g
-      className={`svg accessoires-wrapper no-pan ${isSelected ? "selected" : ""}`}
+      className={`svg accessoires-wrapper ${isSelected ? "selected" : ""}`}
       transform={`translate(${pos?.x}, ${pos?.y})`}
       onClick={handleSelect}
       onMouseDown={(e) => {
@@ -127,7 +109,7 @@ export default function Accessoire({
       }}
     >      
 
-      {isSelected && (
+      {isSelected && !acc.parentGroupId && (
         <SelectionAccessoires
           acc={acc}
           safeWidth={safeWidth || baseWidth}

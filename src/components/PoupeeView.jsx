@@ -11,8 +11,8 @@ import { usePickerClick } from "../hooks/usePickerClick.js";
 import { DEFAULT_TISSU } from "../constants/defaultTissu";
 import { ComposantsPoupee } from "../utils/composantsPoupee.js";
 import SVGPart from "./SVGPart";
-import SelectionAccessoires from "./paletteAccessoires/SelectionAccessoires";
-import useGroupBBox from "../hooks/useGroupBBox.js";
+//import SelectionAccessoires from "./paletteAccessoires/SelectionAccessoires";
+//import useGroupBBox from "../hooks/useGroupBBox.js";
 import NodeRenderer from "./paletteAccessoires/NodeRenderer";
 
 export default function PoupeeView(props) {
@@ -30,7 +30,7 @@ export default function PoupeeView(props) {
     showAccessoires, revoirGrille
   } = props;
 
-  const { data, setData, onGroup, onUngroup } = accessoireActions;
+  const { data, setData } = accessoireActions;
 
   const zonesTissus = {
     haut: { data: tissuHaut, set: setTissuHaut },
@@ -143,7 +143,6 @@ export default function PoupeeView(props) {
         maxScale={4}
         onPanningStart={() => document.getElementById("poupeeView")?.classList.add("dragging")}
         onPanningStop={() => document.getElementById("poupeeView")?.classList.remove("dragging")}
-        panning={{ excluded: ["no-pan"] }}
       >
         {({ zoomIn, zoomOut, resetTransform }) => (
           <>
