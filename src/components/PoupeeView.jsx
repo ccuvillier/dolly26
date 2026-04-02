@@ -13,6 +13,7 @@ import { ComposantsPoupee } from "../utils/composantsPoupee.js";
 import SVGPart from "./SVGPart";
 import SelectionAccessoires from "./paletteAccessoires/SelectionAccessoires";
 import useGroupBBox from "../hooks/useGroupBBox.js";
+import NodeRenderer from "./paletteAccessoires/NodeRenderer";
 
 export default function PoupeeView(props) {
   const {
@@ -55,7 +56,7 @@ export default function PoupeeView(props) {
   const basAAfficher = nomBas ? { component: ComposantsPoupee.bas[nomBas], zones: tissuBas ? Object.keys(tissuBas) : [] } : null;
   const chaussuresAAfficher = nomChaussures ? { component: ComposantsPoupee.chaussures[nomChaussures] } : null;
 
-   const handleSelectHair = (name) => { setNomCoiffure(name); setActiveCarousel(null); };
+  const handleSelectHair = (name) => { setNomCoiffure(name); setActiveCarousel(null); };
   const handleSelectHaut = (name) => { setNomHaut(name); setActiveCarousel(null); };
   const handleSelectBas = (name) => { setNomBas(name); setActiveCarousel(null); };
   const handleSelectChaussures = (name) => { setNomChaussures(name); setActiveCarousel(null); };
@@ -115,83 +116,6 @@ export default function PoupeeView(props) {
     haut: usePickerClick(openPicker, "tissu", "haut")
   };
 
-  // ================= ROOT NODES =================
-  const rootNodes = data.accessoires.filter(acc => !acc.parentGroupId);
-
-  // ================= ACCESSOIRE TREE =================
-  function AccessoireTree({ node, accessoires, dimensions, selectedIds, globalScale, accessoireActions }) {
-    const { getGroupBBox } = useGroupBBox(accessoires, dimensions);
-    const handleDelete = () => {
-      accessoireActions.onDelete([node.id]);
-    };
-
-    if (node.type === "group") {
-      const bbox = getGroupBBox(node) || { x: 0, y: 0, width: 0, height: 0 };
-      const offsetX = Number.isFinite(bbox.x) ? bbox.x : 0;
-      const offsetY = Number.isFinite(bbox.y) ? bbox.y : 0;
-
-      // filtrer les enfants inexistants
-      const children = (node.childrenIds || [])
-        .map(id => accessoires.find(acc => acc.id === id))
-        .filter(Boolean);
-
-        
-      return (
-        <g transform={`translate(${node.pos?.x || 0}, ${node.pos?.y || 0}) scale(${node.scale || 1})`}>
-          {children.map(child => (
-            <AccessoireTree
-              viewportRef={viewportRef}
-              key={child.id}
-              node={child}
-              accessoires={accessoires}
-              dimensions={dimensions}
-              selectedIds={selectedIds}
-              setSelectedIds={setSelectedIds}
-              globalScale={globalScale}
-              accessoireActions={accessoireActions}
-              openPicker={openPicker}
-            />
-          ))}
-
-          {selectedIds.includes(node.id) && (
-            <SelectionAccessoires
-              viewportRef={viewportRef}
-              safeWidth={bbox.width}
-              safeHeight={bbox.height}
-              offsetX={offsetX}
-              offsetY={offsetY}
-              scale={node.scale || 1}
-              globalScale={globalScale}
-              selectedIds={selectedIds}
-              setSelectedIds={setSelectedIds}
-              accessoireActions={accessoireActions}
-              onDeleteSingle={handleDelete}
-              /*onRotate={(e) => accessoireActions.startRotateGroup(e, node.id)}
-              onScale={(e, corner) => accessoireActions.startScaleGroup(e, corner, node.id)}
-              onDuplicate={() => accessoireActions.duplicateGroup(node.id)}*/
-              openPicker={openPicker}
-            />
-          )}
-        </g>
-      );
-    }
-
-    // Accessoire simple
-    return (
-      <Accessoire
-        acc={node}
-        viewportRef={viewportRef}
-        globalScale={globalScale}
-        accessoireActions={accessoireActions}
-        onDeleteSingle={handleDelete}
-        selectedIds={selectedIds}
-        setSelectedIds={setSelectedIds}
-        dimensions={dimensions}
-        openPicker={openPicker}
-      />
-    );
-  }
-
 
   // ================= RENDU =================
   return (
@@ -219,6 +143,7 @@ export default function PoupeeView(props) {
         maxScale={4}
         onPanningStart={() => document.getElementById("poupeeView")?.classList.add("dragging")}
         onPanningStop={() => document.getElementById("poupeeView")?.classList.remove("dragging")}
+        panning={{ excluded: ["no-pan"] }}
       >
         {({ zoomIn, zoomOut, resetTransform }) => (
           <>
@@ -267,20 +192,23 @@ export default function PoupeeView(props) {
                 
 
                   <g className="accessoires-layer">
-                    {rootNodes.map(node => (
-                      <AccessoireTree
-                        key={node.id}
-                        node={node}
-                        accessoires={data.accessoires}
-                        dimensions={dimensions}
-                        selectedIds={selectedIds}
-                        globalScale={globalScale}
-                        onMeasure={handleMeasure}
-                        accessoireActions={accessoireActions}
-                        viewportRef={viewportRef}
-                        openPicker={openPicker}
-                      />
-                    ))}
+                    {data.accessoires
+                      .filter(acc => !acc.parentGroupId) // nodes racines
+                      .map(node => (
+                        <NodeRenderer
+                          key={node.id}
+                          node={node}
+                          data={data}
+                          accessoireActions={accessoireActions}
+                          selectedIds={selectedIds}
+                          setSelectedIds={setSelectedIds}
+                          globalScale={globalScale}
+                          viewportRef={viewportRef}
+                          openPicker={openPicker}
+                          dimensions={dimensions}
+                          onMeasure={handleMeasure}
+                        />
+                      ))}
                   </g>
                 </svg>
 

@@ -3,8 +3,7 @@ import PictoTrash from "../images/picto-trash.svg";
 import PictoClone from "../images/picto-clone.svg";
 
 const SelectionAccessoires = ({
-  //baseWidth,
-  //baseHeight,
+  acc,
   safeWidth,
   safeHeight,
   scale,
@@ -21,9 +20,9 @@ const SelectionAccessoires = ({
   onColor,
   tissu,
   localTissu,
-  acc,
   openPicker
 }) => {
+  //console.log("props reçus dans SelectionAccessoires", { acc });
   
   const hasOffset = Number.isFinite(offsetX) && Number.isFinite(offsetY);
   
@@ -32,7 +31,6 @@ const SelectionAccessoires = ({
 
   const boxWidth = safeWidth * scale;
   const boxHeight = safeHeight * scale;
-
 
   return (
     <g transform={hasOffset ? `translate(${offsetX}, ${offsetY})` : `translate(0, 0)`} onMouseDown={(e) => e.stopPropagation()}>

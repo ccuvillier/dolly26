@@ -8,6 +8,7 @@ import usePoupee from "./hooks/usePoupee";
 import useCreationPoupee from "./hooks/useCreationPoupee";
 import useStylePicker from "./hooks/useStylePicker";
 import { DEFAULT_TISSU } from "./constants/defaultTissu";
+import { createKeyboardHandler } from "./utils/clavierActions";
 
 import './App.scss';
 
@@ -35,7 +36,7 @@ export default function App() {
 
     setHistory(prev => {
       const snapshot = JSON.parse(JSON.stringify(current));
-      //console.log("✅ HISTORY +1");
+      console.log("✅ HISTORY +1");
       return [...prev, snapshot];
     });
 
@@ -95,7 +96,6 @@ export default function App() {
     cancelCreation
   } = useCreationPoupee();
 
-  const [selectedIds, setSelectedIds] = useState([]);
 
   // ------------------- PICKERS -------------------
   const { picker, openPicker, closePicker } = useStylePicker();
@@ -106,7 +106,6 @@ export default function App() {
   //const [selectedAccessoireId, setSelectedAccessoireId] = useState(null);
   const showAccessoires = (state = "accessoires") => setActivePalette(state);
 
-  
 
   // ------------------ COULEURS ACTIONS ----------------
   const couleurActions = {
@@ -119,6 +118,11 @@ export default function App() {
   const applyColor = (target, color) => {
     couleurActions[target]?.(color);
   };
+
+  
+  // --------------- IDS DES ACCESSOIRES -----------
+
+  const [selectedIds, setSelectedIds] = useState([]);
 
   /*--------- DRAG D'UN ACCESSOIRE --------*/
   const handleMoveAccessoire = ({ ids, dx, dy }) => {
@@ -138,9 +142,38 @@ export default function App() {
     updateData(newData);
   };
 
-  /*--------- SUPPRIMER --------*/
+  /*--------- SUPPRIMER --------
   const handleDeleteAccessoire = async (ids) => {
     await deleteAccessoire(ids);  // attendre que l'updateData soit fait
+    setSelectedIds([]);
+  };*/
+  const handleDeleteAccessoire = async (target) => {
+    const accessoires = data.accessoires;
+
+    let ids = [];
+
+    // 🔥 CAS 1 : appelé par clavier → tableau d'ids
+    if (Array.isArray(target)) {
+      ids = target;
+
+    // 🔥 CAS 2 : node (click UI)
+    } else if (target.type === "group") {
+      ids = accessoires
+        .filter(a => a.parentGroupId === target.id)
+        .map(a => a.id);
+
+    } else if (target.parentGroupId) {
+      ids = accessoires
+        .filter(a => a.parentGroupId === target.parentGroupId)
+        .map(a => a.id);
+
+    } else {
+      ids = [target.id];
+    }
+
+    console.log("DELETE IDS 👉", ids);
+
+    await deleteAccessoire(ids);
     setSelectedIds([]);
   };
 
@@ -291,6 +324,21 @@ export default function App() {
       await updateAccessoireTissu(id, newTissu);
     }
   };
+
+  /* ------------- ACTIONS CLAVIER ----------------*/
+  useEffect(() => {
+    const handler = createKeyboardHandler({
+      getSelectedIds: () => selectedIds,
+      actions: {
+        ...accessoireActions
+      }
+    });
+
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [selectedIds, accessoireActions]);
+
+
 
 
   const annulerPoupee = () => {
