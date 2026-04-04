@@ -32,13 +32,31 @@ export default function Accessoire({
   const baseWidth = 65;
   
 
-  // ================= DRAG =================
+  // =========== DRAG INDIVIDUEL =================
   const { pos, startDrag } = useSVGDrag({
     viewportRef,
     initialPos: { x: acc.x, y: acc.y },
-    onDragEnd: (p) => {
-      accessoireActions.onUpdate(acc.id, p);
+
+    onDrag: ({ dx, dy }) => {
+      accessoireActions.onMove({ ids: [acc.id], dx, dy });
     }
+    
+    /*onDrag: ({ dx, dy }) => {
+      if (acc.parentGroupId) {
+        accessoireActions.onMove({
+          ids: [acc.parentGroupId],
+          dx,
+          dy
+        });
+        console.log('drag')
+      } else {
+        accessoireActions.onMove({
+          ids: [acc.id],
+          dx,
+          dy
+        });
+      }
+    }*/
   });
 
 
@@ -100,15 +118,25 @@ export default function Accessoire({
   // ================= RENDER =================
   return (
     <g
-      className={`svg accessoires-wrapper ${isSelected ? "selected" : ""}`}
+      className={`svg accessoires-wrapper ${isSelected ? "selected" : ""} no-pan`}
       transform={`translate(${pos?.x}, ${pos?.y})`}
       onClick={handleSelect}
-      onMouseDown={(e) => {
-        e.stopPropagation(); 
-        startDrag(e); 
-      }}
-    >      
-
+      /**/
+    > 
+      <rect width={safeWidth} height={safeHeight} fill="transparent" stroke="transparent" stroke-width="0"
+        onMouseDown={(e) => {
+          e.stopPropagation(); 
+          startDrag(e); 
+        }} />
+      <g ref={contentRef} transform={`scale(${tempScale}) rotate(${Number.isFinite(tempRotation) ? tempRotation : 0}, ${cx}, ${cy})`}>
+        {Component ? (
+          
+          <Component accId={acc.id} tissuAccessoire={localTissu} />
+        ) : (
+          <rect width={baseWidth} height={baseWidth} fill="none" stroke="red" />
+        )}
+      </g>
+      
       {isSelected && !acc.parentGroupId && (
         <SelectionAccessoires
           acc={acc}
@@ -122,6 +150,7 @@ export default function Accessoire({
 
           onRotate={startRotate}
           onScale={startScale}
+          startDrag={startDrag}
 
           onDelete={() => accessoireActions.onDelete(acc)}
           onClone={() => accessoireActions.onClone(acc) }
@@ -132,13 +161,7 @@ export default function Accessoire({
         />
       )}
 
-      <g ref={contentRef} transform={`scale(${tempScale}) rotate(${Number.isFinite(tempRotation) ? tempRotation : 0}, ${cx}, ${cy})`}>
-        {Component ? (
-          <Component accId={acc.id} tissuAccessoire={localTissu} />
-        ) : (
-          <rect width={baseWidth} height={baseWidth} fill="none" stroke="red" />
-        )}
-      </g>
+      
     </g>
   );
 }

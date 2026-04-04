@@ -1,6 +1,7 @@
 import React from "react";
 import Accessoire from "./Accessoires";
 import SelectionAccessoires from "./SelectionAccessoires";
+import useSVGDrag from "../../hooks/useSVGdrag";
 
 export default function NodeRenderer({
   node,
@@ -45,6 +46,18 @@ export default function NodeRenderer({
 
     const isSelected = selectedIds.includes(node.id);
 
+    // =========== drag du group ================
+    const { pos, startDrag } = useSVGDrag({
+      viewportRef,
+      initialPos: { x: node.pos?.x || 0, y: node.pos?.y || 0 },
+      onDrag: ({ dx, dy }) => {
+        const ids = data.accessoires
+          .filter(a => a.parentGroupId === node.id)
+          .map(a => a.id);
+        accessoireActions.onMove({ ids, dx, dy });
+      }
+    });
+
   
 
     return (
@@ -71,7 +84,7 @@ export default function NodeRenderer({
           />
         ))}
 
-        {isSelected && (
+         {isSelected && (
           <SelectionAccessoires
             acc={node}
             offsetX={offsetX}
@@ -84,10 +97,11 @@ export default function NodeRenderer({
             cy={cy}
             globalScale={globalScale}
             onDelete={() => accessoireActions.onDelete(node)}
-            onClone={() => accessoireActions.onCloneGroup(node)}
-            onScale={(s) => accessoireActions.onScaleGroup(node, s)}
-            onRotate={(r) => accessoireActions.onRotateGroup(node, r)}
-            onDrag={(pos) => accessoireActions.onDragGroup(node, pos)}
+            onClone={() => accessoireActions.onClone(node)}
+            startDrag={startDrag}
+            //onScale={(s) => accessoireActions.onScaleGroup(node, s)}
+            //onRotate={(r) => accessoireActions.onRotateGroup(node, r)}
+            //onDrag={(pos) => accessoireActions.onDragGroup(node, pos)}
           />
         )}
       </g>

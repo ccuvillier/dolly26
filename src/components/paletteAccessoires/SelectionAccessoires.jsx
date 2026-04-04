@@ -17,12 +17,12 @@ const SelectionAccessoires = ({
   onScale,
   onDelete,
   onClone,
+  startDrag,
   onColor,
   tissu,
   localTissu,
   openPicker
 }) => {
-  //console.log("props reçus dans SelectionAccessoires", { acc });
   
   const hasOffset = Number.isFinite(offsetX) && Number.isFinite(offsetY);
   
@@ -33,7 +33,14 @@ const SelectionAccessoires = ({
   const boxHeight = safeHeight * scale;
 
   return (
-    <g transform={hasOffset ? `translate(${offsetX}, ${offsetY})` : `translate(0, 0)`} onMouseDown={(e) => e.stopPropagation()}>
+    <g className="bbox no-pan" transform={hasOffset ? `translate(${offsetX}, ${offsetY})` : `translate(0, 0)`}  height={boxHeight} width={boxWidth}
+      onMouseDown={(e) => e.stopPropagation()}
+    >
+      <rect width={boxWidth} height={boxHeight} fill="transparent" stroke-width="0"
+      onMouseDown={(e) => {
+        e.stopPropagation(); 
+        startDrag(e); 
+      }}/>
       {/* Rotate */}
       <rect
         className="rotate-handle"

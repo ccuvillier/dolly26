@@ -30,13 +30,13 @@ export default function App() {
 
 
     if (isEqual(current, newData)) {
-      console.log("ignoré : aucune modification réelle");
+      //console.log("ignoré : aucune modification réelle");
       return;
     }
 
     setHistory(prev => {
       const snapshot = JSON.parse(JSON.stringify(current));
-      console.log("✅ HISTORY +1");
+      //console.log("✅ HISTORY +1");
       return [...prev, snapshot];
     });
 
@@ -298,16 +298,74 @@ export default function App() {
     setSelectedIds([newAcc.id]);
   };
 
+  // CLONE ACCESSOIRES
   const onClone = (acc) => {
-    const clone = cloneAccessoire(acc);
+    if (!acc) return;
 
-    setData(prev => ({
-      ...prev,
-      accessoires: [...prev.accessoires, clone]
-    }));
+    const map = Object.fromEntries(data.accessoires.map(a => [a.id, a]));
 
-    setSelectedIds([clone.id]);
+    // 🔹 CLONE SIMPLE
+    if (acc.type !== "group") {
+      const clone = cloneAccessoire(acc);
 
+      const updated = {
+        ...data,
+        accessoires: [...data.accessoires, clone]
+      };
+
+      // UI + historique
+      updateData(updated);
+
+      // 🔥 BDD
+      updateField(
+        "accessoires",
+        updated.accessoires.map(({ component, ...rest }) => rest)
+      );
+
+      setSelectedIds([clone.id]);
+      return;
+    }
+
+    // 🔹 CLONE GROUPE
+    const newGroupId = `g_${crypto.randomUUID()}`;
+
+    const clonedChildren = acc.childrenIds.map(childId => {
+      const child = map[childId];
+      if (!child) return null;
+
+      const cloned = cloneAccessoire(child);
+
+      return {
+        ...cloned,
+        parentGroupId: newGroupId
+      };
+    }).filter(Boolean);
+
+    const newGroup = {
+      ...acc,
+      id: newGroupId,
+      childrenIds: clonedChildren.map(c => c.id),
+      pos: {
+        x: (acc.pos?.x || 0) + 20,
+        y: (acc.pos?.y || 0) + 20
+      }
+    };
+
+    const updated = {
+      ...data,
+      accessoires: [...data.accessoires, newGroup, ...clonedChildren]
+    };
+
+    // UI + historique
+    updateData(updated);
+
+    // 🔥 BDD
+    updateField(
+      "accessoires",
+      updated.accessoires.map(({ component, ...rest }) => rest)
+    );
+
+    setSelectedIds([newGroupId]);
   };
 
   // ----------------- GROUP -----------------

@@ -143,6 +143,7 @@ export default function PoupeeView(props) {
         maxScale={4}
         onPanningStart={() => document.getElementById("poupeeView")?.classList.add("dragging")}
         onPanningStop={() => document.getElementById("poupeeView")?.classList.remove("dragging")}
+        panning={{ excluded: ["no-pan"] }}
       >
         {({ zoomIn, zoomOut, resetTransform }) => (
           <>
@@ -162,7 +163,7 @@ export default function PoupeeView(props) {
 
             <TransformComponent>
               <div
-                onMouseDown={() => setSelectedIds([])}
+                onClick={(e) => { if (e.defaultPrevented) return; setSelectedIds([]); }}
                 style={{ position: "absolute", width: "100vw", height: "100vh", pointerEvents: "all" }}
               >
                 <svg ref={viewportRef} id="poupee" viewBox="0 0 800 800" width="100%" height="100%" preserveAspectRatio="xMinYMin meet">

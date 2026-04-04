@@ -79,5 +79,23 @@ export function createKeyboardHandler({ getSelectedIds, actions, data }) {
       }
       return;
     }
+
+
+    // ------------------ DEPLACEMENT AVEC FLÈCHES ------------------
+    if (!selectedIds?.length) return; // pas d'ids → pas de déplacement
+
+    const moveStep = 1; // pixels ou unité SVG
+    let dx = 0, dy = 0;
+    switch (e.key) {
+      case "ArrowUp": dy = -moveStep; break;
+      case "ArrowDown": dy = moveStep; break;
+      case "ArrowLeft": dx = -moveStep; break;
+      case "ArrowRight": dx = moveStep; break;
+    }
+
+    if (dx !== 0 || dy !== 0) {
+      e.preventDefault();
+      actions.onMove?.({ ids: selectedIds, dx, dy });
+    }
   };
 }
